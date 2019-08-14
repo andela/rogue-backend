@@ -4,8 +4,11 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "test": "mocha --require @babel/register 'src/**/**test.js'",
+    "dev:start": "nodemon --exec babel-node src/index.js",
+    "build": "babel src --out-dir build",
+    "start": "node build/index.js",
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
@@ -30,6 +33,12 @@
   },
   "devDependencies": {
     "coveralls": "^3.0.6",
-    "nyc": "^14.1.1"
+    "nyc": "^14.1.1",
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "nodemon": "^1.19.1"
   }
 }
