@@ -1,4 +1,4 @@
-Barefoot Nomad - Making company travel and accomodation easy and convinient.
+Barefoot Nomad - Making company travel and accommodation easy and convenient.
 =======
 
 ## Vision
