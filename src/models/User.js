@@ -52,5 +52,4 @@ UserSchema.methods.toAuthJSON = function () {
     email: this.email
   };
 };
-
 mongoose.model('User', UserSchema);
