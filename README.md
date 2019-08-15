@@ -1,3 +1,5 @@
+[![](https://img.shields.io/badge/Reviewed_By-Hound-blueviolet)](https://houndci.com)
+
 Barefoot Nomad - Making company travel and accommodation easy and convenient.
 =======
 
