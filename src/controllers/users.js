@@ -1,5 +1,8 @@
-const { Sequelize, sequelize } = require('../models/index')
+/* eslint-disable linebreak-style */
+import { Sequelize, sequelize } from '../models/index';
+
 const Users = require('../models/user')(sequelize, Sequelize.DataTypes);
+
 const timeStamp = Date.now().toString();
 const id = Math.round(parseInt(timeStamp, 10) / 1000);
 console.log(id, typeof id)
