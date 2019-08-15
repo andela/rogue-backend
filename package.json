@@ -25,10 +25,13 @@
     "method-override": "^2.3.10",
     "methods": "^1.1.2",
     "mongoose": "^5.2.2",
-    "mongoose-unique-validator": "^2.0.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "pg": "^7.12.1",
+    "pg-hstore": "^2.3.3",
     "request": "^2.87.0",
+    "sequelize": "^5.14.0",
+    "sequelize-cli": "^5.5.0",
     "underscore": "^1.9.1"
   },
   "devDependencies": {
