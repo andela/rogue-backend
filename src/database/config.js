@@ -6,7 +6,8 @@ const databaseEnvDetails = {
   password: process.env.DB_CONFIG_PASSWORD,
   host: process.env.DB_CONFIG_HOST,
   port: process.env.DB_CONFIG_PORT,
-  dialect: 'postgres'
+  dialect: 'postgres',
+  operatorsAliases: false
 };
 
 const config = {
@@ -19,7 +20,12 @@ const config = {
     ...databaseEnvDetails
   },
   production: {
-    DATABASE_URL: process.env.DATABASE_URL
+    DATABASE_URL: process.env.DATABASE_URL,
+    dialect: 'postgres',
+    protocol: 'postgres',
+    dialectOptions: {
+      ssl: true
+    }
   }
 };
 
