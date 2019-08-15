@@ -2,21 +2,21 @@
 import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
-import sequelizeConfig from '../database/config'
-require('dotenv').config();
+import sequelizeConfig from '../database/config';
+import dotenv from 'dotenv';
+dotenv.config();
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV;
 const config = sequelizeConfig[env];
 
 const db = {};
-console.log(process.env.DATABASE_URL)
 let sequelize;
 if (env !== 'production') {
   const { database, username, password } = sequelizeConfig[env];
-  sequelize = new Sequelize(database, username, password, config)
+  sequelize = new Sequelize(database, username, password, config);
 }
 else {
-  sequelize = new Sequelize(process.env.DATABASE_URL, config);
+  sequelize = new Sequelize(process.env.DATABASE_URL);
 }
 
 fs
@@ -39,3 +39,4 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
+

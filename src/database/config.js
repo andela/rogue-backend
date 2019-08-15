@@ -21,12 +21,8 @@ const config = {
   },
   production: {
     DATABASE_URL: process.env.DATABASE_URL,
-    dialect: 'postgres',
-    protocol: 'postgres',
-    dialectOptions: {
-      ssl: true
-    }
   }
 };
 
 export default config;
+

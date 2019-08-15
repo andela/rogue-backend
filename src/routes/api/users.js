@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const router = require("express").Router();
+import express from 'express';
+const router = express.Router();
 const passport = require("passport");
-const { Users } = require('../../controllers/index')
+import { Users } from '../../controllers/index';
 router.get("/user", function (req, res, next) {
     User.findById(req.payload.id)
         .then(function (user) {
@@ -83,6 +83,8 @@ router.post("/users", function (req, res, next) {
         })
         .catch(next);
 });
-router.post('/auth/signup', Users.create)
+router.post('/auth/signup', Users.create);
 
 module.exports = router;
+
+

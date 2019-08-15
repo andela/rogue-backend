@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
     id: { type: DataTypes.INTEGER, primaryKey: true }
   }, {});
   User.associate = function (models) {
-    // associations can be defined here
   };
   return User;
 };
