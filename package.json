@@ -4,7 +4,7 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require @babel/register 'src/**/**test.js'",
+    "test": "mocha --require @babel/register 'src/**/**.test.js' --no-timeout ",
     "dev:start": "nodemon --exec babel-node src/index.js",
     "build": "babel src --out-dir build",
     "start": "node build/index.js"
@@ -38,6 +38,9 @@
     "@babel/node": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.2.0",
     "nodemon": "^1.19.1"
   }
 }
