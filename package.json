@@ -4,7 +4,8 @@
   "description": "A Social platform for the creative at heart",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require @babel/register 'src/**/**.test.js' --no-timeout ",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "test": "nyc mocha --require @babel/register 'src/**/**.test.js' --no-timeout ",
     "dev:start": "nodemon --exec babel-node src/index.js",
     "build": "babel src --out-dir build",
     "start": "node build/index.js"
@@ -34,6 +35,12 @@
     "underscore": "^1.9.1"
   },
   "devDependencies": {
+    "coveralls": "^3.0.6",
+    "nyc": "^14.1.1",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-import": "^2.18.2",
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
