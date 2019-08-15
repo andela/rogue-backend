@@ -1,5 +1,6 @@
-const router = require("express").Router();
-const Users = require('../../controllers/users')
+import express from 'express';
+import Users from '../../controllers/users';
+const router = express.Router();
 
 
 router.post('/auth/signup', Users.create)
