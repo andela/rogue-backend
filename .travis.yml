@@ -12,13 +12,14 @@ directories:
 
 
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
+  - psql -c 'create database travisdb;' -U postgres
 
 install:
   - npm install
 script:
   - npm run test
+  - npm run coveralls
 
 
-after_script:
-  - npm run coverage
+
+
