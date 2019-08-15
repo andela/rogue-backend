@@ -46,7 +46,6 @@ UserSchema.methods.setPassword = function (password) {
     .pbkdf2Sync(password, this.salt, 10000, 512, 'sha512')
     .toString('hex');
 };
-
 UserSchema.methods.toAuthJSON = function () {
   return {
     username: this.username,

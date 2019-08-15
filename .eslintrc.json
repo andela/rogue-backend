@@ -15,7 +15,7 @@
       "error",
       {
         "max": 1,
-        "maxEOF": 0
+        "maxEOF": 1
       }
     ],
     "consistent-return": 0,
