@@ -1,10 +1,9 @@
 language: node_js
 node_js:
-  - stable
-  - 8.9.4
+  - "8"
 
 services:
-  - postgresql
+   - postgresql
 
 cache:
 directories:
@@ -12,13 +11,12 @@ directories:
 
 
 before_script:
-  - psql -c 'create database travisdb;' -U postgres
 
-install:
-  - npm install
+  - psql -c 'create database travis_db;' -U postgres
+
+
 script:
   - npm run test
-  - npm run coveralls
 
 
 
