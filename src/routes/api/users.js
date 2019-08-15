@@ -86,5 +86,3 @@ router.post("/users", function (req, res, next) {
 router.post('/auth/signup', Users.create);
 
 module.exports = router;
-
-
