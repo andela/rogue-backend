@@ -32,6 +32,7 @@
     "request": "^2.87.0",
     "sequelize": "^5.14.0",
     "sequelize-cli": "^5.5.0",
+    "swagger-ui-express": "^4.0.7",
     "underscore": "^1.9.1"
   },
   "devDependencies": {
