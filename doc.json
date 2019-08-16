@@ -1,0 +1,16 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Making company travel and accommodation easy and convenient.",
+    "version": "1.0.0",
+    "title": "Barefoot Nomad",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "nuelojay22@gmail.com"
+    },
+    "license": {
+      "name": "GNU General Public License",
+      "url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
+    }
+  }
+}
