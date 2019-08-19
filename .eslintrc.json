@@ -34,6 +34,7 @@
         "maxEOF": 1
       }
     ],
+    "no-console": ["error", { "allow": ["warn"] }],
     "consistent-return": 0,
     "no-param-reassign": 0,
     "comma-dangle": 0,

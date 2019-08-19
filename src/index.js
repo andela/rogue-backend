@@ -2,7 +2,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import userRoute from './routes/api/users';
 import swaggerUI from 'swagger-ui-express';
 import doc from '../doc.json';
 
@@ -16,11 +15,10 @@ app.use(cors())
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(doc));
 
 app.get('/', (req, res) => res.status(200).send({ message: 'Welcome to Barefoot Nomad' }));
-app.use('/api/v1', userRoute);
 app.all('*', (req, res) => res.send({ message: 'route not found' }));
 
 app.listen(port, () => {
-    console.info(`Listening from port ${port}`);
+    console.info(`Server is up and listening on port ${port}`);
 });
 
 export default app;
