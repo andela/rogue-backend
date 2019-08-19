@@ -1,11 +1,10 @@
-const mongoose = require("mongoose");
-const router = require("express").Router();
+import express from 'express';
+const router = express.Router();
 const passport = require("passport");
-const User = mongoose.model("User");
-
-router.get("/user", function(req, res, next) {
+import { Users } from '../../controllers/index';
+router.get("/user", function (req, res, next) {
     User.findById(req.payload.id)
-        .then(function(user) {
+        .then(function (user) {
             if (!user) {
                 return res.sendStatus(401);
             }
@@ -14,9 +13,9 @@ router.get("/user", function(req, res, next) {
         .catch(next);
 });
 
-router.put("/user", function(req, res, next) {
+router.put("/user", function (req, res, next) {
     User.findById(req.payload.id)
-        .then(function(user) {
+        .then(function (user) {
             if (!user) {
                 return res.sendStatus(401);
             }
@@ -38,14 +37,14 @@ router.put("/user", function(req, res, next) {
                 user.setPassword(req.body.user.password);
             }
 
-            return user.save().then(function() {
+            return user.save().then(function () {
                 return res.json({ user: user.toAuthJSON() });
             });
         })
         .catch(next);
 });
 
-router.post("/users/login", function(req, res, next) {
+router.post("/users/login", function (req, res, next) {
     if (!req.body.user.email) {
         return res.status(422).json({ errors: { email: "can't be blank" } });
     }
@@ -53,7 +52,7 @@ router.post("/users/login", function(req, res, next) {
     if (!req.body.user.password) {
         return res.status(422).json({ errors: { password: "can't be blank" } });
     }
-    passport.authenticate("local", { session: false }, function(
+    passport.authenticate("local", { session: false }, function (
         err,
         user,
         info
@@ -65,12 +64,13 @@ router.post("/users/login", function(req, res, next) {
         if (user) {
             return res.json({ user: user.toAuthJSON() });
         } else {
+            z
             return res.status(422).json(info);
         }
     })(req, res, next);
 });
 
-router.post("/users", function(req, res, next) {
+router.post("/users", function (req, res, next) {
     const user = new User();
 
     user.username = req.body.user.username;
@@ -78,10 +78,12 @@ router.post("/users", function(req, res, next) {
     user.setPassword(req.body.user.password);
 
     user.save()
-        .then(function() {
+        .then(function () {
             return res.json({ user: user.toAuthJSON() });
         })
         .catch(next);
 });
+router.post('/auth/signup', Users.create);
 
 module.exports = router;
+
