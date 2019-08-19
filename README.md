@@ -49,68 +49,13 @@ Admins can update bookings
 Admins can delete bookings
 ```
 
-
 ## Installation and Running the Application
 
-Ensure that you have nodejs and npm installed in your computer
-
-* Clone this repository into your named folder
-
-```bash
-git clone https://github.com/andela/rogue-backend.git
-```
-
-* Install the project dependencies
-
-```bash
-yarn install
-```
-* Create all tables by running migrations
-
-```bash
-sequelize db:migrate
-```
-
-* Start the application
-
-```bash
-yarn dev-start
-```
-* To run test 
-```bash
-yarn test
-```
-
-
-## Test the endpoints
-
-The application can be tested locally through localhost on port 3000 or through the live [url](https://) using postman
-
-1. Run the application while postman is open
-2. Go to postman and test against the endpoints below with the required property:-
-
-### Endpoints to test
-
-Method        | Endpoint      | Enable a user to: |
-------------- | ------------- | ---------------
-POST  | api/v1/auth/signup  | Create user account  |
-POST  | api/v1/auth/signin  | Login a user |
-POST  | api/v1/auth/forgot_password  | user can reset password |
-POST  | api/v1/auth/user/<:user_id>/confirm  | user can confirm registration |
-POST  | api/v1/travel  | Create a travel request |
-POST  | api/v1/accommodation/  | Create accommodation requests|
-POST  | api/v1/requests/<:request-id> | user can rate a request |
-GET  | api/v1/requests/ | Get all requests |
-GET  | api/v1/requests/<:request-id> | user can view a particular request |
-GET  | api/v1/booking/<:booking-id> | user can see all reviews of a booking  |
-GET  | api/v1/booking/<:booking-type> | user can view bookings of specific category  |
-GET  | api/v1/user/<:user-id>/sign_out | user can log out |
-PATCH  | api/v1/requests/<:requests-id> | user can update requests 
-PATCH  | api/v1/booking/<:booking-id>/soldout  | Admin can mark a booking as "not available" so users will know it's no longer available
-PATCH  | api/v1/booking/<:booking-id>  | Admin can update a booking |
-DELETE  | api/v1/requests/<:request-id>  | Delete a request |
-DELETE  | api/v1/requests/<:booking-id>  | Delete a booking |
-
+* Clone the repository using: `git clone https://github.com/andela/rogue-backend.git`
+* Run `yarn install` To install the project dependencies
+* Run `sequelize db:migrate` To create all tables by running migrations
+* Run `yarn dev-start` To start the application
+* Run `yarn test` to run test
 
 ## Contributors
 * [Ademola Hussain](https://github.com/Daymorelah)
