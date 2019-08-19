@@ -6,37 +6,28 @@
 [![Build Status](https://travis-ci.com/andela/rogue-backend.svg?branch=develop)](https://travis-ci.com/andela/rogue-backend)
 
 # Barefoot Nomad
-Barefoot Nomad is an application that will enable its "Company Nomads" book their international travel and accommodation lobally, easily and convinient across all the locations/centers where the company has its operation.
+Barefoot Nomad is an application that will enable its "Company Nomads" book their international travel and accommodation globally, easily and conveniently across all the locations/centers where the company has its operation.
 
 ### Vision
-Our vision is to make global travel and accommodation easy and convenient for the strong workforce of savvy membersof staff, by leveraging the modern web.
+Our vision is to make global travel and accommodation easy and convenient for the strong workforce of savvy members of staff, by leveraging the modern web.
 
 ### Technologies
+* [Es6+ Javascript](https://www.ecma-international.org/ecma-262/9.0/index.html) The project was written with ES6 syntax and above.
+* [Node/Express](https://nodejs.org/en/) A JavaScript runtime built on Chrome's V8 JavaScript engine.
+* [PostgreSQL](https://www.postgresql.org/) The World's Most Advanced Open Source Relational Database.
+* [Swagger](https://swagger.io/) Used for API documentation. Simplify API development for developers by helping to document APIs.
+* [Pivotal Tracker](https://www.pivotaltracker.com) A project management tool used to manage the app.
+* [Figma](https://www.figma.com/) Used for design mockups. It helps teams to design, prototype, and collaborate all in the browser.
+* [Yarn](https://yarnpkg.com/lang/en/) Used as the package manager for the app. A fast, reliable, and secure dependency management system.
 
-Backend        | Frontend    
-------------- | ------------
-Javascript - Node/Express  | Es6+ Javascript
-PostgreSQL  | React/Redux   
 
 
 ### UI Design
-The design of the User Interface is done using Figma. Find link to the mockups [here](https://www.pivotaltracker.com/n/projects/2354440)
-
-
-### Project management, 
-The tool used for the project management is Pivotal Tracker
-
-* See the project stories [here](https://www.pivotaltracker.com/n/projects/2354440).
-
-
-### GitHub Pages link for UI Frontend
-
+The mockups for the app design can be viewed [here](https://www.pivotaltracker.com/n/projects/2354440)
 [Barefoot Nomad/UI link](https://)
 
 ### REST API Docs
 The Api documentation is done using swagger. View [Barefoot Nomad API Documentation](https://)
-
-
 
 ### Required Features
 
@@ -63,29 +54,32 @@ Admins can delete bookings
 
 Ensure that you have nodejs and npm installed in your computer
 
-a. Clone this repository into your named folder
+* Clone this repository into your named folder
 
 ```bash
-git clone -b develop git@github.com:andela/rogue-backend.git
+git clone https://github.com/andela/rogue-backend.git
 ```
 
-b. Install the project dependencies
+* Install the project dependencies
 
 ```bash
-npm install
+yarn install
 ```
-c. Create all tables by running migrations
+* Create all tables by running migrations
 
 ```bash
 sequelize db:migrate
 ```
 
-c. start the application
+* Start the application
 
 ```bash
-npm ren dev:start
+yarn dev-start
 ```
-
+* To run test 
+```bash
+yarn test
+```
 
 
 ## Test the endpoints
@@ -119,7 +113,7 @@ DELETE  | api/v1/requests/<:booking-id>  | Delete a booking |
 
 
 ## Contributors
-
+* [Ademola Hussain](https://github.com/Daymorelah)
 * [Nwodo Christian Chukwuemeka](https://github.com/userName)
 * [Atawodi Emmanuel](https://github.com/userName)
 * [Abiola Ojo](https://github.com/userName)
