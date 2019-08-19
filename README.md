@@ -124,4 +124,4 @@ DELETE  | api/v1/requests/<:booking-id>  | Delete a booking |
 * [Okikiola Apelehin](https://github.com/userName)
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/andela/rogue-backend/blob/develop/LICENSE)
