@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "test": "nyc mocha --require @babel/register 'src/**/**.test.js' --no-timeout ",
+    "test": "set NODE_ENV=test&& nyc mocha --require @babel/register 'src/**/**.test.js' --no-timeout ",
     "dev-start": "nodemon --exec babel-node src/index.js",
     "build": "babel src --out-dir build",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "drop": "sequelize-cli db:migrate:undo:all",
+    "migrate": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:migrate"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",

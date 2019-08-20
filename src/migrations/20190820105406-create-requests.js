@@ -1,25 +1,29 @@
-/* eslint-disable linebreak-style */
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Users', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Requests', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    firstName: {
+    userId: {
+      type: Sequelize.INTEGER
+    },
+    origin: {
       type: Sequelize.STRING
     },
-    lastName: {
+    destination: {
       type: Sequelize.STRING
     },
-    email: {
+    flightDate: {
       type: Sequelize.STRING
     },
-    password: {
-      type: Sequelize.STRING
+    returnDate: {
+      type: Sequelize.DATEONLY
     },
-
+    accommodationId: {
+      type: Sequelize.INTEGER
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE
@@ -30,5 +34,6 @@ module.exports = {
     }
   }),
   // eslint-disable-next-line no-unused-vars
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Users')
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Requests')
 };
+
