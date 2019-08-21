@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-
+//import dotenv from 'dotenv';
+const dotenv= require("dotenv");
 dotenv.config();
 const databaseEnvDetails = {
   username: process.env.DB_CONFIG_USERNAME,
@@ -15,8 +15,9 @@ const config = {
     ...databaseEnvDetails
   },
   test: {
-    database: process.env.DB_CONFIG_TEST,
-    ...databaseEnvDetails
+    //database: process.env.DB_CONFIG_TEST,
+    //...databaseEnvDetails
+    database: process.env.DATABASE_TEST_URL,
   },
   production: {
     DATABASE_URL: process.env.DATABASE_URL,
