@@ -55,13 +55,13 @@ class UserController {
         const tokenCreated = await Authentication.getToken({
           id: userFound.id,
           username: userFound.username,
-          role: userFound.roleId,
+          role: userFound.role,
         });
         if (tokenCreated) {
           const userDetails = {
             id: userFound.dataValues.id,
             username: userFound.dataValues.username,
-            role: userFound.dataValues.roleId,
+            role: userFound.dataValues.role,
             token: tokenCreated,
           };
           return HelperMethods.requestSuccessful(res, {
@@ -180,6 +180,42 @@ class UserController {
       return HelperMethods
         .serverError(res, 'Could not complete your registration. '
         + 'Please re-register.');
+    } catch (error) {
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Verify a user's email
+  * Route: POST: /updateuser
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof UserController
+ */
+  static async updatedUser(req, res) {
+    const payload = req.decoded;
+    const { role, email } = req.body;
+    try {
+      if (payload.role !== 'Super Administrator') {
+        return HelperMethods.clientError(res, 'Only a super admin'
+        + 'can update user role', 401);
+      }
+      const userToUpdate = await models.User.findOne({ where: { email } });
+      if (!userToUpdate) {
+        return HelperMethods.clientError(res,
+          'User not found', 404);
+      }
+      if (userToUpdate.role === role) {
+        return HelperMethods.clientError(res, `user is already a ${role}`, 409);
+      }
+      await userToUpdate.update({ role });
+      return HelperMethods
+        .requestSuccessful(res, {
+          success: true,
+          message: 'updated',
+          data: userToUpdate
+        }, 200);
     } catch (error) {
       return HelperMethods.serverError(res);
     }
