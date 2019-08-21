@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors())
+app.use(cors());
 
 // api doc
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(doc));

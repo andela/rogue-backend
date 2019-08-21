@@ -1,11 +1,22 @@
-module.exports = (sequelize, DataTypes) => {
+export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    name: DataTypes.STRING,
+    firstName: DataTypes.STRING,
+    lastName: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
-    id: { type: DataTypes.INTEGER, primaryKey: true }
-  }, {});
-  User.associate = function (models) {
-  };
+  }, {
+    classMethods: {
+      associate: (models) => {
+        User.hasMany(models.Requests, {
+          onDelete: 'CASCADE',
+          foreignKey: 'UserId'
+        });
+        User.hasOne(models.Accomodations, {
+          foreignKey: 'UserId',
+          onDelete: 'CASCADE'
+        });
+      }
+    }
+  });
   return User;
 };
