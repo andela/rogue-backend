@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
 const databaseEnvDetails = {
   username: process.env.DB_CONFIG_USERNAME,
   password: process.env.DB_CONFIG_PASSWORD,
