@@ -25,7 +25,12 @@ export default (sequelize, DataTypes) => {
             throw new Error('User details already exist.');
           }
         }
-      }
+      },
+    },
+    isVerified: DataTypes.BOOLEAN,
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -43,6 +48,25 @@ export default (sequelize, DataTypes) => {
           args: true,
           msg: 'Password field cannot be empty.'
         }
+      }
+    }
+  },
+  {
+    classMethods: {
+      associate: models => {
+        User.hasMany(models.Requests, {
+          onDelete: 'CASCADE',
+          foreignKey: 'UserId'
+        });
+        User.hasOne(models.Accomodations, {
+          foreignKey: 'UserId',
+          onDelete: 'CASCADE'
+        });
+        User.hasOne(models.VerifyUser, {
+          foreignKey: 'userId',
+          as: 'verifiedUser',
+          onDelete: 'CASCADE',
+        });
       }
     }
   });

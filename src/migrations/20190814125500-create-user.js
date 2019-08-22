@@ -18,6 +18,12 @@ module.exports = {
     password: {
       type: Sequelize.STRING
     },
+    isVerified: {
+      type: Sequelize.BOOLEAN
+    },
+    slug: {
+      type: Sequelize.STRING
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE

@@ -82,7 +82,7 @@ const runSuccessTest = (done, object, route, code = 200) => {
     .catch(done);
 };
 
-describe('USER SIGN UP VALIDATION', () => {
+describe.only('USER SIGN UP VALIDATION', () => {
   it('should throw error 400 when user signs up with existing email', done => {
     runErrorTest(done, existingUser);
   });
