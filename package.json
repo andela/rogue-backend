@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "test": "set NODE_ENV=test&& nyc mocha --require @babel/register 'src/**/**.test.js' --exit",
+    "test": "NODE_ENV=test&& nyc mocha --require @babel/register 'src/**/**.test.js' --exit",
     "dev-start": "nodemon --exec babel-node src/index.js",
     "prestart": "rmdir /S /Q build && babel src --out-dir build",
     "start": "nodemon build/index.js",
