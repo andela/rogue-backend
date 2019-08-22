@@ -8,7 +8,6 @@ describe('Test for Post Route ', () => {
   before(() => stub);
   after(() => stub.restore());
   it('Should return a status 200 for sent email', (done) => {
-    console.log(stub('*****something'));
     request(app)
       .post('/resetpassword')
       .end((err, res) => {
