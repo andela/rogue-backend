@@ -5,18 +5,20 @@
   "main": "index.js",
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "test": "set NODE_ENV=test&& nyc mocha --require @babel/register 'src/**/**.test.js' --no-timeout ",
+    "test": "set NODE_ENV=test&& nyc mocha --require @babel/register 'src/**/**.test.js' --exit",
     "dev-start": "nodemon --exec babel-node src/index.js",
-    "build": "babel src --out-dir build",
-    "start": "node build/index.js",
+    "prestart": "rmdir /S /Q build && babel src --out-dir build",
+    "start": "nodemon build/index.js",
     "drop": "sequelize-cli db:migrate:undo:all",
-    "migrate": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:migrate"
+    "pretest": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:migrate && ./node_modules/.bin/sequelize db:seed:all"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
   "dependencies": {
+    "@sendgrid/mail": "^6.4.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
+    "cross-env": "^5.2.0",
     "dotenv": "^6.0.0",
     "ejs": "^2.6.1",
     "errorhandler": "^1.5.0",
@@ -34,6 +36,7 @@
     "request": "^2.87.0",
     "sequelize": "^5.14.0",
     "sequelize-cli": "^5.5.0",
+    "sinon": "^7.4.1",
     "swagger-ui-express": "^4.0.7",
     "underscore": "^1.9.1"
   },
