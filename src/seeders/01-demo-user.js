@@ -1,4 +1,6 @@
-import { CryptData } from '../utils';
+import {
+  CryptData
+} from '../utils';
 
 const init = async () => {
   const password = await CryptData.encryptData('password');

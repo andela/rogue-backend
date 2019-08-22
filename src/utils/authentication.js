@@ -28,7 +28,9 @@ class Authentication {
       id: payload.id,
       role: payload.role,
       username: payload.username,
-    }, process.env.JWT_SECRET, { expiresIn });
+    }, process.env.JWT_SECRET, {
+      expiresIn
+    });
     const scrambledToken = shuffleToken(token);
     return scrambledToken;
   }

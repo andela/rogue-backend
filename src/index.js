@@ -4,9 +4,13 @@ import cors from 'cors';
 import swaggerUI from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+import passport from 'passport';
 import doc from '../doc.json';
+import {
+  HelperMethods
+} from './utils';
 import routes from './routes';
-import { HelperMethods } from './utils';
+import setUpPassport from './config/passport';
 
 dotenv.config();
 
@@ -19,8 +23,17 @@ if (app.get('env') !== 'test') {
 }
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(cors());
+
+if (process.env.NODE_ENV !== 'test') {
+  setUpPassport();
+}
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // api doc
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(doc));
@@ -34,6 +47,12 @@ app.all('*', (req, res) => res.status(404).json({
 }));
 
 app.use(HelperMethods.checkExpressErrors);
+app.get('/', (req, res) => res.status(200).send({
+  message: 'Welcome to Barefoot Nomad'
+}));
+app.all('*', (req, res) => res.send({
+  message: 'route not found'
+}));
 
 app.listen(port, () => {
   console.info(`Server is up and listening on port ${port}`);

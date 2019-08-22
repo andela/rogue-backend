@@ -1,18 +1,30 @@
 import sinon from 'sinon';
 import chai from 'chai';
-import { RequestController } from '../../controllers';
+import {
+  RequestController
+} from '../../controllers';
 import models from '../../models';
 
-const { expect } = chai;
-const { Request } = models;
+const {
+  expect
+} = chai;
+const {
+  Request
+} = models;
 
 const req = {
-  decoded: { id: 'some id', }
+  decoded: {
+    id: 'some id',
+  }
 };
 
 const res = {
-  status() { return this; },
-  json(obj) { return obj; }
+  status() {
+    return this;
+  },
+  json(obj) {
+    return obj;
+  }
 };
 
 describe('unit test for the Request Controller', () => {
@@ -21,7 +33,9 @@ describe('unit test for the Request Controller', () => {
     if (stubbedMethod.restore) stubbedMethod.restore();
   });
   it('should return a server error when an unexpected error happens', async () => {
-    stubbedMethod = sinon.stub(Request, 'create').throws({ dataValues: 'some thing' });
+    stubbedMethod = sinon.stub(Request, 'create').throws({
+      dataValues: 'some thing'
+    });
     const response = await RequestController.bookATrip(req, res);
     expect(response).to.have.property('message');
     expect(response.message).to.equal('Internal server error');

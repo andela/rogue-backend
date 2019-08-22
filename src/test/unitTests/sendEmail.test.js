@@ -1,9 +1,13 @@
 import chai from 'chai';
 import sinon from 'sinon'; // eslint-disable-line import/no-extraneous-dependencies
 import sendGrid from '@sendgrid/mail';
-import { SendEmail } from '../../utils';
+import {
+  SendEmail
+} from '../../utils';
 
-const { expect } = chai;
+const {
+  expect
+} = chai;
 describe('Utility to send emails', () => {
   it('should send verification email after registration', async () => {
     const stubEmailSender = sinon.stub(SendEmail, 'emailSender').returns(true);
@@ -16,7 +20,7 @@ describe('Utility to send emails', () => {
       email: 'jideajayi11@gmail.com',
       subject: 'Test Email Sending',
       emailBody: '<p>This email is being received</p>'
-      + '<p>to test the utility that sends mail.'
+        + '<p>to test the utility that sends mail.'
     };
     const stubSendMethod = sinon.stub(sendGrid, 'send').returns(true);
     const response = await SendEmail.emailSender(details);

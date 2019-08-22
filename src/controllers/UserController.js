@@ -1,7 +1,13 @@
 import models from '../models';
-import { Authentication, SendEmail, HelperMethods } from '../utils';
+import {
+  Authentication,
+  SendEmail,
+  HelperMethods
+} from '../utils';
 
-const { User } = models;
+const {
+  User
+} = models;
 
 /**
  * Class representing the user controller
@@ -26,17 +32,24 @@ class UserController {
   }
 
   /**
-  * Login a user
-  * Route: POST: /auth/login
-  * @param {object} req - HTTP Request object
-  * @param {object} res - HTTP Response object
-  * @return {res} res - HTTP Response object
-  * @memberof UserController
- */
+   * Login a user
+   * Route: POST: /auth/login
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof UserController
+   */
   static async login(req, res) {
     try {
-      const { email, password } = req.body;
-      const userFound = await User.findOne({ where: { email } });
+      const {
+        email,
+        password
+      } = req.body;
+      const userFound = await User.findOne({
+        where: {
+          email
+        }
+      });
       if (!userFound) {
         return HelperMethods.clientError(res, 'Email or password does not exist', 400);
       }
@@ -44,7 +57,7 @@ class UserController {
         return HelperMethods.clientError(res, {
           success: false,
           message: 'You had started the registration process already. '
-          + 'Please check your email to complete your registration.'
+            + 'Please check your email to complete your registration.'
         }, 400);
       }
       const isPasswordValid = await userFound.verifyPassword(password);
@@ -77,19 +90,27 @@ class UserController {
   }
 
   /**
-  * Sign up a user
-  * Route: POST: /auth/signup
-  * @param {object} req - HTTP Request object
-  * @param {object} res - HTTP Response object
-  * @return {res} res - HTTP Response object
-  * @memberof UserController
- */
+   * Sign up a user
+   * Route: POST: /auth/signup
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof UserController
+   */
   static async signUp(req, res) {
     const {
-      email, firstName, lastName, password, username,
+      email,
+      firstName,
+      lastName,
+      password,
+      username,
     } = req.body;
     try {
-      const userExist = await User.findOne({ where: { email } });
+      const userExist = await User.findOne({
+        where: {
+          email
+        }
+      });
       if (userExist && userExist.dataValues.id) {
         if (userExist.dataValues.isVerified === false) {
           const isEmailSent = await
@@ -98,20 +119,20 @@ class UserController {
             return HelperMethods
               .requestSuccessful(res, {
                 message: 'You had started the registration '
-                + 'process earlier. '
-                + 'An email has been sent to your email address. '
-                + 'Please check your email to complete your registration.'
+                  + 'process earlier. '
+                  + 'An email has been sent to your email address. '
+                  + 'Please check your email to complete your registration.'
               }, 200);
           }
           return HelperMethods
             .serverError(res, 'Your registration could not be completed.'
-            + ' Please try again');
+              + ' Please try again');
         }
         if (userExist.dataValues.isVerified === true) {
           return HelperMethods
             .requestSuccessful(res, {
               message: 'You are a registered user on '
-              + 'this platform. Please proceed to login'
+                + 'this platform. Please proceed to login'
             }, 200);
         }
       }
@@ -130,13 +151,13 @@ class UserController {
             .requestSuccessful(res, {
               success: true,
               message: 'An email has been sent to your '
-            + 'email address. Please check your email to complete '
-            + 'your registration'
+                + 'email address. Please check your email to complete '
+                + 'your registration'
             }, 200);
         }
         return HelperMethods
           .serverError(res, 'Your registration could not be completed.'
-          + 'Please try again');
+            + 'Please try again');
       }
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
@@ -162,7 +183,10 @@ class UserController {
             res, 'You cannot perform this action. You are not a verified user.', 400
           );
         }
-        await userExist.update(req.body, { returning: true, hooks: false });
+        await userExist.update(req.body, {
+          returning: true,
+          hooks: false
+        });
         return HelperMethods
           .requestSuccessful(res, {
             success: true,
@@ -188,7 +212,9 @@ class UserController {
   static async getProfile(req, res) {
     try {
       const user = await User.findByPk(req.decoded.id, {
-        attributes: { exclude: ['password', 'isVerified'] }
+        attributes: {
+          exclude: ['password', 'isVerified']
+        }
       });
       if (user) {
         return HelperMethods.requestSuccessful(res, {
@@ -204,20 +230,22 @@ class UserController {
   }
 
   /**
-  * Verify a user's email
-  * Route: POST: /auth/verify_email
-  * @param {object} req - HTTP Request object
-  * @param {object} res - HTTP Response object
-  * @return {res} res - HTTP Response object
-  * @memberof UserController
- */
+   * Verify a user's email
+   * Route: POST: /auth/verify_email
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof UserController
+   */
   static async verifyEmail(req, res) {
     try {
       const foundUser = await User.findByPk(req.decoded.id);
       if (foundUser.dataValues.id) {
         const userUpdated = await foundUser.update({
           isVerified: true || foundUser.isVerified,
-        }, { hooks: false });
+        }, {
+          hooks: false
+        });
         if (userUpdated.dataValues.id) {
           const isEmailSent = await
           SendEmail.confirmRegistrationComplete(userUpdated.dataValues.email);
@@ -235,29 +263,36 @@ class UserController {
       }
       return HelperMethods
         .serverError(res, 'Could not complete your registration. '
-        + 'Please re-register.');
+          + 'Please re-register.');
     } catch (error) {
       return HelperMethods.serverError(res);
     }
   }
 
   /**
-  * Verify a user's email
-  * Route: POST: /update_user
-  * @param {object} req - HTTP Request object
-  * @param {object} res - HTTP Response object
-  * @return {res} res - HTTP Response object
-  * @memberof UserController
- */
+   * Verify a user's email
+   * Route: POST: /update_user
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof UserController
+   */
   static async updateUserRole(req, res) {
     const payload = req.decoded;
-    const { role, email } = req.body;
+    const {
+      role,
+      email
+    } = req.body;
     try {
       if (payload.role !== 'Super Administrator') {
         return HelperMethods.clientError(res, 'Only a super admin'
-        + ' can update user role', 401);
+          + ' can update user role', 401);
       }
-      const userToUpdate = await models.User.findOne({ where: { email } });
+      const userToUpdate = await models.User.findOne({
+        where: {
+          email
+        }
+      });
       if (!userToUpdate) {
         return HelperMethods.clientError(res,
           'User not found', 404);
@@ -265,7 +300,9 @@ class UserController {
       if (userToUpdate.role === role) {
         return HelperMethods.clientError(res, `user is already a ${role}`, 409);
       }
-      await userToUpdate.update({ role });
+      await userToUpdate.update({
+        role
+      });
       return HelperMethods
         .requestSuccessful(res, {
           success: true,
@@ -286,12 +323,20 @@ class UserController {
    */
   static async rememberUserDetails(req, res) {
     try {
-      const { id } = req.decoded;
-      const { rememberDetails } = req.body;
-      const [, [update]] = await User.update(
-        { rememberDetails },
-        { where: { id }, returning: true }
-      );
+      const {
+        id
+      } = req.decoded;
+      const {
+        rememberDetails
+      } = req.body;
+      const [, [update]] = await User.update({
+        rememberDetails
+      }, {
+        where: {
+          id
+        },
+        returning: true
+      });
 
       if (!update) {
         return HelperMethods.clientError(
@@ -316,4 +361,3 @@ class UserController {
   }
 }
 export default UserController;
-

@@ -1,4 +1,6 @@
-import { CryptData } from '../utils';
+import {
+  CryptData
+} from '../utils';
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -48,7 +50,9 @@ export default (sequelize, DataTypes) => {
         },
         async exists(value) {
           const user = await User.findOne({
-            where: { email: value }
+            where: {
+              email: value
+            }
           });
 
           if (user) {
@@ -181,8 +185,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     }
-  },
-  {
+  }, {
     classMethods: {
       associate: models => {
         User.hasMany(models.Requests, {
