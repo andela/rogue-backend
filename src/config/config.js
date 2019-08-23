@@ -11,8 +11,8 @@ const databaseEnvDetails = {
 
 const config = {
   development: {
+    ...databaseEnvDetails,
     database: process.env.DB_CONFIG_DEV,
-    ...databaseEnvDetails
   },
   test: {
     database: process.env.DB_CONFIG_TEST,
