@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "test": "NODE_ENV=test&& nyc mocha --require @babel/register 'src/**/**.test.js' --exit",
-    "dev-start": "nodemon --exec babel-node src/index.js",
-    "prestart": "rmdir /S /Q build && babel src --out-dir build",
-    "start": "nodemon build/index.js",
-    "drop": "sequelize-cli db:migrate:undo:all",
-    "pretest": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:migrate && ./node_modules/.bin/sequelize db:seed:all"
+    "test": "NODE_ENV=test yarn undo-migration && yarn migrate && yarn seed && nyc mocha --recursive --exit --require @babel/register --require @babel/polyfill 'src/**/**.test.js' --no-timeout",
+    "dev-start": "NODE_ENV=development nodemon --exec babel-node src/index.js",
+    "build": "babel src --out-dir build",
+    "start": "node build/index.js",
+    "undo-seeding": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:seed:undo:all",
+    "seed": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:seed:all",
+    "undo-migration": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:migrate:undo:all",
+    "migrate": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:migrate"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
