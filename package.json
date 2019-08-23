@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "test": "cross-env NODE_ENV=test yarn undo-migration && yarn migrate && yarn seed && nyc mocha --recursive --exit --require @babel/register --require @babel/polyfill 'src/**/**.test.js' --no-timeout",
+    "test": "NODE_ENV=test yarn undo-migration && yarn migrate && yarn seed && nyc mocha --recursive --exit --require @babel/register 'src/**/**.test.js' --no-timeout",
     "dev-start": "NODE_ENV=development && nodemon --exec babel-node src/index.js",
     "build": "babel src --out-dir build",
     "start": "node build/index.js",

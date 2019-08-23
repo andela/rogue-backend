@@ -5,6 +5,6 @@ dotenv.config();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const SendMessageObject = {
-  sendMessage: (msg) => sgMail.send(msg)
+  sendMessage: msg => sgMail.send(msg)
 };
 export default SendMessageObject;
