@@ -17,7 +17,8 @@ const resetPasswordFunction = async (request, response) => {
         html: '<button>Reset Password</>'
       };
       await sendMessage(msg);
-      response.status(200).send('Check Your Email Address, click the button and Reset Your Password');
+      response.status(200)
+        .send('Check Your Email Address, click the button and Reset Your Password');
     }
   } catch (error) {
     return response.status(400).send('Unauthorized');

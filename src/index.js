@@ -4,9 +4,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import swaggerUI from 'swagger-ui-express';
-import dotenv from 'dotenv';
 import doc from '../doc.json';
-import resetPasswordRoute from './routes/resetpassword';
+import resetPasswordRoute from './routes/Resetpassword';
 import routes from './routes/v1';
 
 dotenv.config();
@@ -22,7 +21,8 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(doc));
 
 app.use('/api/v1', routes);
 
-app.get('/', (req, res) => res.status(200).send({ message: 'Welcome to Barefoot Nomad' }));
+app.get('/', (req, res) => res.status(200)
+  .send({ message: 'Welcome to Barefoot Nomad' }));
 app.use('/', resetPasswordRoute);
 app.all('*', (req, res) => res.send({ message: 'route not found' }));
 
