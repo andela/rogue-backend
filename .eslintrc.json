@@ -7,42 +7,73 @@
     "mocha": true
   },
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 9,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     }
   },
-  "settings": { "import/resolver": { "node": { "extensions": [".js"] }}},
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js"]
+      }
+    }
+  },
   "rules": {
     "one-var": 0,
     "max-len": [1, 80, 2],
     "one-var-declaration-per-line": 0,
     "new-cap": 0,
     "eol-last": 2,
-    "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 1 }],
-    "no-console": ["error", { "allow": ["info"] }],
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxEOF": 1
+      }
+    ],
+    "no-console": [
+      "error",
+      {
+        "allow": ["info"]
+      }
+    ],
     "consistent-return": 0,
     "no-param-reassign": 0,
     "comma-dangle": 0,
-    "curly": ["error","multi-line"],
-    "import/no-unresolved": [2, { "commonjs": true }],
-    "no-shadow": ["error", { "allow": ["req", "res", "err"] }],
+    "curly": ["error", "multi-line"],
+    "import/no-unresolved": [
+      2,
+      {
+        "commonjs": true
+      }
+    ],
+    "no-shadow": [
+      "error",
+      {
+        "allow": ["req", "res", "err"]
+      }
+    ],
     "valid-jsdoc": [
-      "error", {
+      "error",
+      {
         "requireReturn": true,
         "requireReturnType": true,
         "requireParamDescription": false,
         "requireReturnDescription": true
-      }],
+      }
+    ],
     "require-jsdoc": [
-      "error", {
+      "error",
+      {
         "require": {
           "FunctionDeclaration": true,
           "MethodDefinition": true,
           "ClassDeclaration": true
         }
       }
-    ]
+    ],
+    "arrow-parens": ["error", "as-needed"]
   }
 }

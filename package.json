@@ -5,16 +5,19 @@
   "main": "index.js",
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "test": "set NODE_ENV=test&& nyc mocha --require @babel/register 'src/**/**.test.js' --no-timeout ",
+    "test": "echo NODE_ENV=test && yarn run undo-migration && yarn migrate && yarn seed && nyc mocha --recursive --exit --require @babel/register --require @babel/polyfill 'src/**/**.test.js' --no-timeout",
     "dev-start": "nodemon --exec babel-node src/index.js",
     "build": "babel src --out-dir build",
     "start": "node build/index.js",
-    "drop": "sequelize-cli db:migrate:undo:all",
-    "migrate": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:migrate"
+    "undo-seeding": "sequelize db:seed:undo:all",
+    "seed": "sequelize db:seed:all",
+    "undo-migration": "sequelize db:migrate:undo:all",
+    "migrate": "sequelize db:migrate"
   },
   "author": "Andela Simulations Programme",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
@@ -38,20 +41,21 @@
     "underscore": "^1.9.1"
   },
   "devDependencies": {
-    "coveralls": "^3.0.6",
-    "nyc": "^14.1.1",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.0.0",
-    "eslint-plugin-import": "^2.18.2",
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
+    "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "coveralls": "^3.0.6",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-import": "^2.18.2",
     "mocha": "^6.2.0",
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.1",
+    "nyc": "^14.1.1"
   }
 }

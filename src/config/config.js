@@ -16,7 +16,7 @@ const config = {
   },
   test: {
     database: process.env.DB_CONFIG_TEST,
-    ...databaseEnvDetails
+    ...databaseEnvDetails,
   },
   production: {
     DATABASE_URL: process.env.DATABASE_URL,
