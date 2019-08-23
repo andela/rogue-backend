@@ -29,6 +29,9 @@ The mockups for the app design can be viewed [here](https://www.pivotaltracker.c
 ### REST API Docs
 The Api documentation is done using swagger. View [Barefoot Nomad API Documentation](https://)
 
+### JWT Authentication
+The API endpoints are being authenticated using [JWT(Json Web Token)](https://jwt.io/).
+
 ### Required Features
 
 ```
