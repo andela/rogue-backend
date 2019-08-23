@@ -33,6 +33,6 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  // eslint-disable-next-line no-unused-vars
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Accommodations')
+
+  down: queryInterface => queryInterface.dropTable('Accommodations')
 };
