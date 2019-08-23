@@ -19,7 +19,7 @@ module.exports = {
       type: Sequelize.STRING
     },
     returnDate: {
-      type: Sequelize.DATEONLY
+      type: Sequelize.DATE
     },
     accommodationId: {
       type: Sequelize.INTEGER
