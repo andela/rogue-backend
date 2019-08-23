@@ -5,6 +5,7 @@ import cors from 'cors';
 import swaggerUI from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import doc from '../doc.json';
+import routes from './routes/v1';
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ app.use(cors());
 
 // api doc
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(doc));
+
+app.use('/api/v1', routes);
 
 app.get('/', (req, res) => res.status(200).send({ message: 'Welcome to Barefoot Nomad' }));
 app.all('*', (req, res) => res.send({ message: 'route not found' }));

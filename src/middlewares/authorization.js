@@ -2,7 +2,9 @@
 import verifyToken from '../utils/Authentication';
 
 const checkToken = (req, res, next) => {
-  const token = req.headers['x-access-token'] || req.query.token || req.headers.authorization;
+  const token = req.headers['x-access-token']
+    || req.query.token
+    || req.headers.authorization;
   if (token) {
     const response = verifyToken(token);
     if (response.success) {
