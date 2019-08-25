@@ -1,13 +1,34 @@
 import db from '../models';
+import { generateToken } from '../utils/authentication';
+import ResponseHandler from '../utils/ResponseHandler';
 
-// eslint-disable-next-line import/prefer-default-export
+const sendSuccess = (res, { dataValues }, status) => {
+  const { id, email } = dataValues;
+  const token = generateToken({ id, email });
+  ResponseHandler.success(res, { ...dataValues, token }, status);
+};
+
+const sendError = (res, err) => {
+  const { message } = err.errors ? err.errors[0] : err;
+  ResponseHandler.error(res, message);
+};
+
 export const signUp = async (req, res) => {
   try {
     const user = await db.User.create(req.body);
-    res.status(201).json({ user });
+    sendSuccess(res, user, 201);
   } catch (err) {
-    const status = 400;
-    const error = err.errors[0].message;
-    res.status(status).json({ status, error });
+    sendError(res, err);
+  }
+};
+
+export const signIn = async (req, res) => {
+  try {
+    const { email = '' } = req.body;
+    const user = await db.User.findOne({ where: { email } });
+    if (!user) throw Error('User is not registered');
+    sendSuccess(res, user, 200);
+  } catch (err) {
+    sendError(res, err);
   }
 };

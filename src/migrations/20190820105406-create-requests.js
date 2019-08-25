@@ -7,7 +7,11 @@ module.exports = {
       type: Sequelize.INTEGER
     },
     userId: {
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      references: {
+        model: 'Users',
+        key: 'id'
+      }
     },
     origin: {
       type: Sequelize.STRING
@@ -21,8 +25,10 @@ module.exports = {
     returnDate: {
       type: Sequelize.DATEONLY
     },
-    accommodationId: {
-      type: Sequelize.INTEGER
+    reason: {
+      type: Sequelize.ENUM,
+      values: ['BUSINESS', 'VACATION', 'EXPEDITION'],
+      defaultValue: 'BUSINESS'
     },
     createdAt: {
       allowNull: false,
@@ -33,7 +39,6 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  // eslint-disable-next-line no-unused-vars
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Requests')
-};
 
+  down: queryInterface => queryInterface.dropTable('Requests')
+};
