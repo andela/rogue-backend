@@ -8,7 +8,10 @@ const req = {
   query: {
     token: () => {}
   },
-  headers: { 'x-access-token': () => undefined }
+  body: {
+    token: () => {}
+  },
+  headers: { 'x-access-token': undefined }
 };
 const res = {};
 const next = () => {};
@@ -26,7 +29,7 @@ describe('Unit test for the Authorization utility function', () => {
     expect(req.decoded.message).to.equal('token found in query');
   });
   it('should check the request body for a token', async () => {
-    req.body = () => {}; req.query = () => undefined;
+    req.body.token = () => {}; req.query.token = undefined;
     stubbedMethod = sinon
       .stub(Authentication, 'verifyToken')
       .returns({ success: true, message: 'token found in body' });
