@@ -1,14 +1,9 @@
 export default (sequelize, DataTypes) => {
   const Request = sequelize.define('Request', {
-    userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        notNull: {
-          args: true,
-          msg: 'User is required.'
-        }
-      }
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
     },
     origin: {
       type: DataTypes.STRING,
@@ -52,8 +47,14 @@ export default (sequelize, DataTypes) => {
   });
 
   Request.associate = models => {
-    Request.belongsTo(models.User);
-    Request.belongsTo(models.Accommodation);
+    Request.belongsTo(models.User, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE',
+    });
+    Request.belongsTo(models.Accommodation, {
+      foreignKey: 'accommodationId',
+      onDelete: 'CASCADE',
+    });
   };
 
   return Request;

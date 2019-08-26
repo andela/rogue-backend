@@ -6,4 +6,4 @@ eslint:
 markdown:
   enabled: true
 
-fail_on_violations: true
+fail_on_violations: false

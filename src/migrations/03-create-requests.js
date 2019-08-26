@@ -1,34 +1,44 @@
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Requests', {
     id: {
-      allowNull: false,
-      autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4
     },
     userId: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.UUID,
       references: {
         model: 'Users',
         key: 'id'
       }
     },
     origin: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      allowNull: false,
     },
     destination: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      allowNull: false,
     },
     flightDate: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
+      allowNull: false,
     },
     returnDate: {
-      type: Sequelize.DATEONLY
+      type: Sequelize.DATEONLY,
+      allowNull: false,
     },
     reason: {
       type: Sequelize.ENUM,
       values: ['BUSINESS', 'VACATION', 'EXPEDITION'],
       defaultValue: 'BUSINESS'
+    },
+    accommodationId: {
+      type: Sequelize.UUID,
+      references: {
+        model: 'Accommodations',
+        key: 'id'
+      }
     },
     createdAt: {
       allowNull: false,

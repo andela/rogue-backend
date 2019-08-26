@@ -1,29 +1,34 @@
 import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
-import dotenv from 'dotenv';
-import sequelizeConfig from '../config/config';
+import databaseConfig from '../config/config';
 
-dotenv.config();
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV;
-const config = sequelizeConfig[env];
-
-const db = {};
+let configEnv;
 let sequelize;
-if (env !== 'production') {
-  const { database, username, password } = sequelizeConfig[env];
-  sequelize = new Sequelize(database, username, password, config);
+const db = {};
+
+if (process.env.NODE_ENV === 'production') {
+  configEnv = databaseConfig.production;
 } else {
-  sequelize = new Sequelize(process.env.DATABASE_URL);
+  configEnv = process.env.NODE_ENV === 'test' ? databaseConfig.test
+    : databaseConfig.development;
+}
+
+if (configEnv.use_env_variable) {
+  sequelize = new Sequelize(process.env[configEnv.use_env_variable], configEnv);
+} else {
+  sequelize = new Sequelize(
+    configEnv.database, configEnv.username, configEnv.password, configEnv
+  );
 }
 
 fs.readdirSync(__dirname)
-  .filter(
-    file => file.indexOf('.') !== 0 && file !== basename && file.slice(-3) === '.js'
-  )
-  .forEach(file => {
-    const model = sequelize.import(path.join(__dirname, file));
+  .filter(file => (file.indexOf('.') !== 0)
+    && (file !== basename)
+    && (file.slice(-3) === '.js'))
+  .forEach(modelFile => {
+    const model = sequelize.import(path.join(__dirname, modelFile));
     db[model.name] = model;
   });
 
@@ -33,4 +38,7 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-export { sequelize, Sequelize };
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;

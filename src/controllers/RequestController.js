@@ -1,25 +1,39 @@
-import db from '../models';
-import ResponseHandler from '../utils/ResponseHandler';
+import models from '../models';
+import { HelperMethods } from '../utils';
 
-// eslint-disable-next-line import/prefer-default-export
-export const bookTrip = async (req, res) => {
-  try {
-    const { id: userId } = req.user;
-    const { body } = req;
-    const { dataValues } = await db.Request.create({ ...body, userId });
-    ResponseHandler.success(res, dataValues, 201);
-  } catch (err) {
-    let message;
-    if (err instanceof db.Sequelize.ForeignKeyConstraintError) {
-      if (err.index.includes('accommodationId')) {
-        message = 'Accommodation does not exist.';
+const { Request } = models;
+
+/**
+ * Class representing the Request controller
+ * @class RequestController
+ * @description request controller
+ */
+class RequestController {
+  /**
+  * Book a Trip
+  * Route: POST: /request
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+ */
+  static async bookATrip(req, res) {
+    try {
+      const { id } = req.decoded;
+      const { body } = req;
+      const { dataValues } = await Request.create({ ...body, userId: id });
+      if (dataValues.id) {
+        HelperMethods.requestSuccessful(res, {
+          success: true,
+          message: 'Trip booked successfully',
+          tripCreated: dataValues,
+        }, 201);
       }
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
     }
-
-    if (!message) {
-      message = err.errors ? err.errors[0].message : err.message;
-    }
-
-    ResponseHandler.error(res, message);
   }
-};
+}
+
+export default RequestController;
