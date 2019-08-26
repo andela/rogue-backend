@@ -1,9 +1,39 @@
-import bcrypt from 'bcrypt';
+import { CryptData } from '../utils';
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Username is required.',
+        }
+      }
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'First name is required.',
+        }
+      }
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'Last name is required.',
+        }
+      }
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -27,26 +57,28 @@ export default (sequelize, DataTypes) => {
         }
       },
     },
-    isVerified: DataTypes.BOOLEAN,
-    slug: {
-      type: DataTypes.STRING,
-      allowNull: true,
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
+        notEmpty: {
+          msg: 'Password is required.',
+        },
         len: {
-          args: [6],
-          msg: 'Password must be at least 6 characters long.'
-        },
-        isAlphanumeric: {
-          args: true,
-          msg: 'Password must be alphanumeric only.'
-        },
-        notNull: {
-          args: true,
-          msg: 'Password field cannot be empty.'
+          args: [6, 150],
+          msg: 'Password must be more than 5 characters'
+        }
+      }
+    },
+    profileImage: {
+      type: DataTypes.STRING,
+      validate: {
+        isUrl: {
+          msg: 'The URL sent is not a valid URL.'
         }
       }
     }
@@ -55,33 +87,30 @@ export default (sequelize, DataTypes) => {
     classMethods: {
       associate: models => {
         User.hasMany(models.Requests, {
-          onDelete: 'CASCADE',
-          foreignKey: 'UserId'
-        });
-        User.hasOne(models.Accomodations, {
-          foreignKey: 'UserId',
-          onDelete: 'CASCADE'
-        });
-        User.hasOne(models.VerifyUser, {
           foreignKey: 'userId',
-          as: 'verifiedUser',
-          onDelete: 'CASCADE',
+          as: 'users_request',
         });
       }
     }
   });
 
-  User.beforeCreate(user => {
-    user.password = bcrypt.hashSync(user.password, 10);
+  User.beforeCreate(async user => {
+    user.password = await CryptData.encryptData(user.password);
   });
 
-  User.beforeUpdate(user => {
-    user.password = bcrypt.hashSync(user.password, 10);
+  User.beforeUpdate(async user => {
+    user.password = await CryptData.encryptData(user.password);
   });
 
   User.associate = models => {
     User.hasMany(models.Request);
   };
 
+  // eslint-disable-next-line func-names
+  User.prototype.verifyPassword = async function (clearPassword) {
+    const isPasswordCorrect = await CryptData
+      .decryptData(clearPassword, this.password);
+    return isPasswordCorrect;
+  };
   return User;
 };

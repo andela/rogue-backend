@@ -1,57 +1,33 @@
 import chai from 'chai';
-// eslint-disable-next-line import/no-unresolved
-import { shuffleToken, generateToken, verifyToken } from '../../utils/authentication';
+import { Authentication } from '../../utils';
 
 const { expect } = chai;
 
-const payload = {
-  email: 'johndoe23@gmail.com',
-  password: '1234567'
+const data = {
+  id: 'ec0d84a1-4195-4a98-b46c-5976e1839a06',
+  role: 1,
+  username: 'john134'
 };
 
-describe.only('Tests for the authentication helper methods', () => {
-  describe('should generate a token', () => {
-    it('should return a shuffled token', () => {
-      const token = generateToken(payload);
-      expect(token).to.be.a('string');
-      expect(token.split('.').length - 1).to.be.equal(2);
-      expect(token.split('.')).to.be.an('array');
-      expect(token.split('.').length).to.be.equal(3);
-    });
+describe('Tests for authentication helper methods', () => {
+  it('should generate a shuffled token', async () => {
+    const token = await Authentication.getToken(data);
+    expect(token).to.be.a('string');
   });
 
-  describe('should shuffle token', () => {
-    it('should shuffle the generated token and return it to it\'s original state', () => {
-      const token = generateToken(payload);
-      const initialToken = shuffleToken(token);
-      expect(initialToken).to.be.a('string');
-    });
+  it('it should unscramble token and validate', async () => {
+    const token = await Authentication.getToken(data);
+    const responsePayload = await Authentication.verifyToken(token);
+    expect(responsePayload.id).to.be.equal('ec0d84a1-4195-4a98-b46c-5976e1839a06');
+    expect(responsePayload.role).to.be.equal(1);
+    expect(responsePayload.username).to.be.equal('john134');
+    expect(responsePayload).to.be.a('object');
   });
 
-  describe('The token should be shuffled back to it\'s original generated format, and verified', () => {
-    it('it should shuffle the token and verify it and return a response of success true if the token is valid', () => {
-      const token = generateToken(payload);
-      const responsePayload = verifyToken(token);
-      expect(token).to.be.a('string');
-      expect(responsePayload).to.be.an('object');
-      expect(responsePayload).to.haveOwnProperty('success' && 'decodedPayload');
-      expect(responsePayload.success).to.be.equal(true);
-      expect(responsePayload.decodedPayload).to.be.an('object');
-      expect(responsePayload.decodedPayload).to.haveOwnProperty('email');
-      expect(responsePayload.decodedPayload).to.haveOwnProperty('password');
-      expect(responsePayload.decodedPayload.email).to.be.a('string');
-      expect(responsePayload.decodedPayload.password).to.be.a('string');
-    });
-
-    it('it should shuffle the token and verify it and return a response of success false if the token is invalid', () => {
-      const token = generateToken(payload);
-      const invalidToken = shuffleToken(token);
-      const responsePayload = verifyToken(invalidToken);
-      expect(token).to.be.a('string');
-      expect(invalidToken).to.be.a('string');
-      expect(responsePayload).to.be.an('object');
-      expect(responsePayload).to.haveOwnProperty('success');
-      expect(responsePayload.success).to.be.equal(false);
-    });
+  it('should return a response of success false if the token is invalid', async () => {
+    const invalidToken = await Authentication.verifyToken('wer#rergfdfgt454rFEF%$Ff3fw');
+    expect(invalidToken).to.be.an('object');
+    expect(invalidToken).to.haveOwnProperty('success');
+    expect(invalidToken.success).to.be.equal(false);
   });
 });
