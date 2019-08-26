@@ -4,9 +4,12 @@ import cors from 'cors';
 import swaggerUI from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+import dotenv from 'dotenv';
 import doc from '../doc.json';
 import routes from './routes';
 import { HelperMethods } from './utils';
+
+dotenv.config();
 
 dotenv.config();
 
