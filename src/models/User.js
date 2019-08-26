@@ -57,6 +57,101 @@ export default (sequelize, DataTypes) => {
         }
       },
     },
+    gender: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [4],
+          msg: 'Gender must be at least 4 characters long.'
+        },
+      }
+    },
+    birthdate: {
+      type: DataTypes.STRING,
+      validate: {
+        isDate: true,
+      }
+    },
+    preferredLanguage: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [4],
+          msg: 'Language must be at least 4 characters long.'
+        },
+      }
+    },
+    preferredCurrency: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [3],
+          msg: 'Currency must be at least 3 characters long.'
+        },
+      }
+    },
+    city: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [3],
+          msg: 'City must be at least 3 characters long.'
+        },
+      }
+    },
+    state: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [3],
+          msg: 'State must be at least 3 characters long.'
+        },
+      }
+    },
+    zip: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [3],
+          msg: 'Zip must be at least 3 characters long.'
+        },
+      }
+    },
+    country: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [3],
+          msg: 'Country must be at least 3 characters long.'
+        },
+      }
+    },
+    role: {
+      type: DataTypes.ENUM(['Super Administrator', 'Travel Administrator',
+        'Travel Team Member', 'Manager', 'Requester'])
+    },
+    department: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [6],
+          msg: 'Department must be at least 6 characters long.'
+        },
+      }
+    },
+    lineManager: {
+      type: DataTypes.STRING,
+      validate: {
+        len: {
+          args: [6],
+          msg: 'Line manager must be at least 6 characters long.'
+        },
+      }
+    },
+    hasProfile: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     isVerified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -72,11 +167,7 @@ export default (sequelize, DataTypes) => {
           args: [6, 150],
           msg: 'Password must be more than 5 characters'
         }
-      },
-    },
-    role: {
-      type: DataTypes.ENUM(['Super Administrator', 'Travel Administrator',
-        'Travel Team Member', 'Manager', 'Requester'])
+      }
     },
     profileImage: {
       type: DataTypes.STRING,
@@ -85,7 +176,7 @@ export default (sequelize, DataTypes) => {
           msg: 'The URL sent is not a valid URL.'
         }
       }
-    }
+    },
   },
   {
     classMethods: {

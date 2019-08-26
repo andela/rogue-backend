@@ -21,6 +21,45 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    gender: {
+      type: Sequelize.STRING
+    },
+    birthdate: {
+      type: Sequelize.DATE
+    },
+    preferredLanguage: {
+      type: Sequelize.STRING
+    },
+    preferredCurrency: {
+      type: Sequelize.STRING
+    },
+    city: {
+      type: Sequelize.STRING
+    },
+    state: {
+      type: Sequelize.STRING
+    },
+    zip: {
+      type: Sequelize.STRING
+    },
+    country: {
+      type: Sequelize.STRING
+    },
+    role: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: 'Requester'
+    },
+    department: {
+      type: Sequelize.STRING
+    },
+    lineManager: {
+      type: Sequelize.STRING
+    },
+    hasProfile: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
     isVerified: {
       type: Sequelize.BOOLEAN,
       defaultValue: false
@@ -31,11 +70,6 @@ module.exports = {
     },
     profileImage: {
       type: Sequelize.STRING,
-    },
-    role: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      defaultValue: 'Requester'
     },
     createdAt: {
       allowNull: false,
