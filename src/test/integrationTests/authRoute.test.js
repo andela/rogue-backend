@@ -1,22 +1,14 @@
-/* eslint-disable camelcase */
 import chai, { expect, should } from 'chai';
 import chaiHTTP from 'chai-http';
 import server from '../..';
 
 should();
 chai.use(chaiHTTP);
-const route = '/api/v1/auth/signup';
-const validUser = {
-  firstName: 'John',
-  lastName: 'Doe',
+const signupRoute = '/api/v1/auth/signup';
+const signinRoute = '/api/v1/auth/signin';
+const existingUser = {
   email: 'demo@demo.com',
-  password: 'doN0tCopyMyPa55word'
-};
-const validUser2 = {
-  firstName: 'zayn',
-  lastName: 'malik',
-  email: 'zaynMalik@gmail.com',
-  password: 'doNotCoppyMy55word'
+  password: 'password'
 };
 
 const shortPassword = {
@@ -52,58 +44,97 @@ const nullPassword = {
   email: 'john3@doe.com'
 };
 
-const runTest = (done, object = {}, code) => {
+const user = {
+  firstName: 'Jane',
+  lastName: 'Doe',
+  email: 'jane042@doe.com',
+  password: 'aPa55w0rD'
+};
+
+const runErrorTest = (done, object, route = signupRoute) => {
+  chai
+    .request(server)
+    .post(route)
+    .send(object)
+    .then(res => {
+      expect(res).to.have.status(400);
+      const { body, status: statusCode } = res;
+      expect(body).to.be.an('object');
+      expect(body).to.have.property('error');
+      expect(body).to.have.property('success');
+      const { status } = body;
+      expect(status).to.eql(statusCode);
+      done();
+    })
+    .catch(done);
+};
+
+const runSuccessTest = (done, object, route, code = 200) => {
   chai
     .request(server)
     .post(route)
     .send(object)
     .then(res => {
       expect(res).to.have.status(code);
-      const { body } = res;
+      const { body, status: statusCode } = res;
       expect(body).to.be.an('object');
-      expect(res.status).to.eql(code);
+      expect(body).to.have.property('data');
+      expect(body).to.have.property('success');
+      const { data, success } = body;
+      expect(success).to.be.eql(true);
+      expect(data).to.be.an('object');
+      expect(data).to.have.property('id');
+      expect(data).to.have.property('token');
+      const { status } = body;
+      expect(status).to.eql(statusCode);
       done();
     })
     .catch(done);
 };
 
-describe('USER VALIDATION TEST', () => {
+describe.only('USER SIGN UP VALIDATION', () => {
   it('should throw error 400 when user signs up with existing email', done => {
-    runTest(done, validUser, 400);
+    runErrorTest(done, existingUser);
   });
 
   it('should throw error 400 when user signs up with a short password', done => {
-    runTest(done, shortPassword, 400);
+    runErrorTest(done, shortPassword);
   });
 
   it('should throw error 400 when user signs up with a non-alphanumeric password', done => {
-    runTest(done, nonAlphaNumPassword, 400);
+    runErrorTest(done, nonAlphaNumPassword);
   });
 
   it('should throw error 400 when user signs up with an invalid email', done => {
-    runTest(done, invalidEmail, 400);
+    runErrorTest(done, invalidEmail);
   });
 
   it('should throw error 400 when user signs up with a null email', done => {
-    runTest(done, nullEmail, 400, 'status');
+    runErrorTest(done, nullEmail);
   });
 
   it('should throw error 400 when user signs up with a null password', done => {
-    runTest(done, nullPassword, 400);
+    runErrorTest(done, nullPassword);
   });
 
   it('should throw error 400 when user signs up with a null email and null password', done => {
-    runTest(done, nullEmail, 400);
+    runErrorTest(done);
   });
-  it('should return a token after successful registration', done => {
-    chai.request(server)
-      .post('/api/v1/auth/signup')
-      .send(validUser2)
-      .end((err, res) => {
-        console.log(res.body);
-        expect(res.status).to.equal(201);
-        expect(res.body).to.have.keys('token', 'status');
-        done();
-      });
+});
+
+describe('USER SIGN UP ROUTE', () => {
+  it('should create a new user', done => {
+    runSuccessTest(done, user, signupRoute, 201);
+  });
+});
+
+describe('USER SIGN IN ROUTE', () => {
+  it('should sign in an existing user', done => {
+    runSuccessTest(done, existingUser, signinRoute);
+  });
+
+  it('should throw error 400 when user signs in with an unregistered user', done => {
+    const unregisteredUser = { ...user, email: 'unregistered@user.com' };
+    runErrorTest(done, unregisteredUser, signinRoute);
   });
 });

@@ -1,3 +1,5 @@
+import bcrypt from 'bcryptjs';
+
 module.exports = {
   up: queryInterface => queryInterface.bulkInsert(
     'Users',
@@ -6,7 +8,7 @@ module.exports = {
         firstName: 'John',
         lastName: 'Doe',
         email: 'demo@demo.com',
-        password: 'doN0tCopyMyPa55word',
+        password: bcrypt.hashSync('password', 10),
         createdAt: new Date(),
         updatedAt: new Date()
       }

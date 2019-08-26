@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 module.exports = {
   up: (queryInterface, Sequelize) => queryInterface.createTable('Users', {
     id: {
@@ -19,10 +18,12 @@ module.exports = {
     password: {
       type: Sequelize.STRING
     },
-    role: {
+    isVerified: {
+      type: Sequelize.BOOLEAN
+    },
+    slug: {
       type: Sequelize.STRING
     },
-
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE
@@ -32,6 +33,6 @@ module.exports = {
       type: Sequelize.DATE
     }
   }),
-  // eslint-disable-next-line no-unused-vars
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Users')
+
+  down: queryInterface => queryInterface.dropTable('Users')
 };

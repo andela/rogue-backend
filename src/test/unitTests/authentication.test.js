@@ -9,7 +9,7 @@ const payload = {
   password: '1234567'
 };
 
-describe('Tests for the authentication helper methods', () => {
+describe.only('Tests for the authentication helper methods', () => {
   describe('should generate a token', () => {
     it('should return a shuffled token', () => {
       const token = generateToken(payload);

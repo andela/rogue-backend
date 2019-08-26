@@ -1,7 +1,10 @@
 import express from 'express';
+
 import UserController from '../../controllers/UserController';
-import Sanitizer from '../../middlewares/sanitizer';
+
 const router = express.Router();
-router.post('/signup',Sanitizer.signupSanitizer, UserController.signUpController);
+router.post('/signup', UserController.signUpController);
+//router.post('/signin', signIn);
+//router.patch('/verifyaccount', verifyUser);
 
 export default router;
