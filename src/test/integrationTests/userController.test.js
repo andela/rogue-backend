@@ -128,5 +128,19 @@ describe('Integration tests for the user controller', () => {
       expect(response.body.message)
         .to.equal('Invalid request. All fields are required');
     });
+
+    it('should return client error when user details is missing', async () => {
+      const userDetails = {
+        password: 'johndoe@wemail.com',
+      };
+      const response = await chai.request(app).post('/api/v1/auth/login')
+        .send(userDetails);
+      expect(response.status).to.deep.equal(400);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message)
+        .to.equal('Invalid request. All fields are required');
+    });
   });
 });
