@@ -3,10 +3,10 @@ import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import app from '../../index';
 import { UserController } from '../../controllers';
+import { SendEmail } from '../../utils';
 
 chai.use(chaiHttp);
 const { expect } = chai;
-
 describe('Integration tests for the user controller', () => {
   describe('Test general error handling and welcome message', () => {
     it('should send an error when there is an unforeseen error', async () => {
@@ -141,6 +141,56 @@ describe('Integration tests for the user controller', () => {
       expect(response.body).to.have.property('message');
       expect(response.body.message)
         .to.equal('Invalid request. All fields are required');
+    });
+  });
+  describe('Test Reset password controller', () => {
+    it('should send an email to users for password reset', async () => {
+      const userDetails = { email: 'mbanelsonifeanyi@gmail.com' };
+      const stubSendMethod = sinon.stub(SendEmail, 'resetPassword').returns(true);
+      const response = await chai.request(app).post('/api/v1/resetpassword')
+        .send(userDetails);
+      expect(response.status).to.deep.equal(200);
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message)
+        .to.equal('An email has been sent to you check your email address');
+      sinon.assert.calledOnce(stubSendMethod);
+      stubSendMethod.restore();
+    });
+    it('should return client error when user details is missing', async () => {
+      const userDetails = '';
+      const response = await chai.request(app).post('/api/v1/resetpassword')
+        .send(userDetails);
+      expect(response.status).to.deep.equal(400);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message)
+        .to.equal('Invalid request. All fields are required');
+    });
+    it('should return client error when user details is missing', async () => {
+      const response = await chai.request(app).post('/api/v1/resetpassword')
+        .send();
+      expect(response.status).to.deep.equal(400);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message)
+        .to.equal('Invalid request. All fields are required');
+    });
+    it('should return error for unknown email', async () => {
+      const userDetails = {
+        email: 'mbanelsonifeanyijohndoe@wemail.com',
+      };
+      const response = await chai.request(app).post('/api/v1/resetpassword')
+        .send(userDetails);
+      expect(response.status).to.deep.equal(400);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message.message)
+        .to.equal('Email does not exist');
     });
   });
 });

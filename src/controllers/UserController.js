@@ -2,7 +2,6 @@ import models from '../models';
 import { Authentication, SendEmail, HelperMethods } from '../utils';
 
 const { User } = models;
-
 /**
  * Class representing the user controller
  * @class UserController
@@ -20,7 +19,8 @@ class UserController {
     const tokenCreated = await Authentication.getToken(userExist, '1h');
     if (tokenCreated) {
       const isEmailSent = await
-      SendEmail.verifyEmail(userExist.email, userExist.firstName, tokenCreated);
+      SendEmail
+        .verifyEmail(userExist.email, userExist.firstName, tokenCreated);
       return isEmailSent;
     }
   }
@@ -47,7 +47,7 @@ class UserController {
         return HelperMethods.clientError(res, {
           success: false,
           message: 'You had started the registration process already. '
-          + 'Please check your email to complete your registration.'
+            + 'Please check your email to complete your registration.'
         }, 400);
       }
       const isPasswordValid = await userFound.verifyPassword(password);
@@ -72,7 +72,8 @@ class UserController {
         }
         return HelperMethods.serverError(res);
       }
-      return HelperMethods.clientError(res, 'Email or password does not exist', 400);
+      return HelperMethods
+        .clientError(res, 'Email or password does not exist', 400);
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
@@ -101,20 +102,20 @@ class UserController {
             return HelperMethods
               .requestSuccessful(res, {
                 message: 'You had started the registration '
-                + 'process earlier. '
-                + 'An email has been sent to your email address. '
-                + 'Please check your email to complete your registration.'
+                  + 'process earlier. '
+                  + 'An email has been sent to your email address. '
+                  + 'Please check your email to complete your registration.'
               }, 200);
           }
           return HelperMethods
             .serverError(res, 'Your registration could not be completed.'
-            + ' Please try again');
+              + ' Please try again');
         }
         if (userExist.dataValues.isVerified === true) {
           return HelperMethods
             .requestSuccessful(res, {
               message: 'You are a registered user on '
-              + 'this platform. Please proceed to login'
+                + 'this platform. Please proceed to login'
             }, 200);
         }
       }
@@ -133,13 +134,13 @@ class UserController {
             .requestSuccessful(res, {
               success: true,
               message: 'An email has been sent to your '
-            + 'email address. Please check your email to complete '
-            + 'your registration'
+                + 'email address. Please check your email to complete '
+                + 'your registration'
             }, 200);
         }
         return HelperMethods
           .serverError(res, 'Your registration could not be completed.'
-          + 'Please try again');
+            + 'Please try again');
       }
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
@@ -166,7 +167,8 @@ class UserController {
           const isEmailSent = await
           SendEmail.confirmRegistrationComplete(userUpdated.dataValues.email);
           if (isEmailSent) {
-            const tokenCreated = await Authentication.getToken(userUpdated.dataValues);
+            const tokenCreated = await Authentication
+              .getToken(userUpdated.dataValues);
             return res.status(201).json({
               success: true,
               message: `User ${userUpdated.username} created successfully`,
@@ -179,12 +181,45 @@ class UserController {
       }
       return HelperMethods
         .serverError(res, 'Could not complete your registration. '
-        + 'Please re-register.');
+          + 'Please re-register.');
+    } catch (error) {
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Sends Emails To Users For Password Reset.
+  * Route: POST: /api/v1/resetpassword
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @param {object} next - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof UserController
+ */
+  static async resetPassword(req, res) {
+    try {
+      const { email } = req.body;
+      const userFound = await User.findOne({ where: { email } });
+      if (!userFound) {
+        return HelperMethods.clientError(res, {
+          success: false,
+          message: 'Email does not exist',
+        }, 400);
+      }
+      if (userFound) {
+        const emailSent = await SendEmail.resetPassword(email);
+        if (emailSent) {
+          return HelperMethods.requestSuccessful(res, {
+            success: true,
+            message: 'An email has been sent to you '
+            + 'check your email address'
+          }, 200);
+        }
+      }
     } catch (error) {
       return HelperMethods.serverError(res);
     }
   }
 }
-
 export default UserController;
 

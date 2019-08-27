@@ -20,9 +20,9 @@ module.exports = {
     },
     {
       id: '3821b930-ce48-4ac8-9ddf-ee3bf7980d08',
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'demo2@demo.com',
+      firstName: 'Mba',
+      lastName: 'Ifeanyi',
+      email: 'mbanelsonifeanyi@gmail.com',
       username: 'user2',
       password: await init(),
       createdAt: new Date(),

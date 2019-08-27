@@ -13,6 +13,11 @@ const authRoutes = app => {
     Validate.validateUserLogin,
     UserController.login,
   );
+  app.post(
+    '/api/v1/resetpassword',
+    Validate.validateUserEmail,
+    UserController.resetPassword,
+  );
   app.get(
     '/api/v1/auth/verify_email',
     Authorization.checkToken,

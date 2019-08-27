@@ -1,3 +1,6 @@
+// import models from '../models';
+
+// const { User } = models;
 /**
  * Trims input values from user
  * @param {object} objectWithValuesToTrim - request body to trim
@@ -54,6 +57,20 @@ class Validate {
     req.body = trimValues(req.body);
     const { password, email } = req.body;
     if (!password) return allFieldsRequired(res);
+    if (!email) return allFieldsRequired(res);
+    next();
+  }
+
+  /**
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request to the next handler
+  * @returns {object} res - Response object when query is invalid
+  * @memberof Validate
+  */
+  static validateUserEmail(req, res, next) {
+    req.body = trimValues(req.body);
+    const { email } = req.body;
     if (!email) return allFieldsRequired(res);
     next();
   }
