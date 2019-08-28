@@ -187,19 +187,19 @@ class UserController {
 
   /**
   * Verify a user's email
-  * Route: POST: /updateuser
+  * Route: POST: /update_user
   * @param {object} req - HTTP Request object
   * @param {object} res - HTTP Response object
   * @return {res} res - HTTP Response object
   * @memberof UserController
  */
-  static async updatedUser(req, res) {
+  static async updateUserRole(req, res) {
     const payload = req.decoded;
     const { role, email } = req.body;
     try {
       if (payload.role !== 'Super Administrator') {
         return HelperMethods.clientError(res, 'Only a super admin'
-        + 'can update user role', 401);
+        + ' can update user role', 401);
       }
       const userToUpdate = await models.User.findOne({ where: { email } });
       if (!userToUpdate) {
@@ -213,8 +213,7 @@ class UserController {
       return HelperMethods
         .requestSuccessful(res, {
           success: true,
-          message: 'updated',
-          data: userToUpdate
+          message: 'Role updated successfully',
         }, 200);
     } catch (error) {
       return HelperMethods.serverError(res);
