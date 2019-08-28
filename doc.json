@@ -41,7 +41,8 @@
             "in": "header",
             "required": true,
             "type": "string",
-            "description": ""
+            "description": "",
+            "value": "application/json"
           },
           {
             "name": "Body",
@@ -92,7 +93,7 @@
           "400": {
             "description": "Bad Request",
             "schema": {
-              "$ref": "#/definitions/NullfieldValidation"
+              "$ref": "#/definitions/Error"
             },
             "examples": {
               "application/json": {
@@ -104,35 +105,102 @@
           "default": {
             "description": "Internal Server Error",
             "schema": {
-              "$ref": "#/definitions/NullfieldValidation"
+              "$ref": "#/definitions/Error"
             },
             "examples": {
               "application/json": {
                 "success": false,
-                "message": "Your registration could not be completed.Please try again"
+                "message": "Your registration could not be completed. Please try again"
               }
             }
           }
         }
       }
     },
-    "/": {
+    "/auth/login": {
       "post": {
         "description": "Verifies that the user is a valid User",
         "summary": "Login",
         "tags": [
-          "Misc"
+          "Auth Route"
         ],
-        "operationId": "UnnammedEndpointPost",
+        "operationId": "LoginPost",
         "deprecated": false,
         "produces": [
-          "application/json"
+          "application/json; charset=utf-8"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "",
+            "value": "application/json"
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
-            "headers": {}
+            "schema": {
+              "$ref": "#/definitions/success1"
+            },
+            "examples": {
+              "application/json; charset=utf-8": {
+                "data": {
+                  "success": true,
+                  "message": "Login successful",
+                  "userDetails": {
+                    "id": "7ca002b0-84ff-4c4b-84fc-0c060aa3755f",
+                    "username": "nonnypy10",
+                    "token": "4LUXqyXyfo9I-LXpIFsOtVTHcogJSeEoGhnjmnImKzx.9BTMxMTO5YjN1EjOiAHelJCLwEzN2ATO2YTNxojI0FWaiwiIwETewlnbu9mbiojIl1WYuJXZzVnIsIiZ1UzNzEWYwYDMjBTLjZGN40iY0MGNtYmZ0gTLwImMwATYjdjI6ICZpJye.9JCVXpkI6ICc5RnIsIiN1IzUIJiOicGbhJye"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "type": "string",
+                "default": "*"
+              },
+              "Content-Length": {
+                "type": "string",
+                "default": "365"
+              },
+              "ETag": {
+                "type": "string",
+                "default": "W/\"16d-lrc94WEbHwyNMtbvpUIuDh3shcc\""
+              },
+              "Date": {
+                "type": "string",
+                "default": "Tue, 27 Aug 2019 11:51:50 GMT"
+              },
+              "Connection": {
+                "type": "string",
+                "default": "keep-alive"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "message": "Email or password does not exist"
+              }
+            }
           }
         }
       }
@@ -202,11 +270,31 @@
         "message"
       ]
     },
-    "NullfieldValidation": {
-      "title": "NullfieldValidation",
+    "LoginRequest": {
+      "title": "LoginRequest",
+      "example": {
+        "email": "demo1@demo.com",
+        "password": "password"
+      },
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "Error": {
+      "title": "Error",
       "example": {
         "success": false,
-        "message": "The \"username\" field is required"
+        "message": "Email or password does not exist"
       },
       "type": "object",
       "properties": {
@@ -220,6 +308,83 @@
       "required": [
         "success",
         "message"
+      ]
+    },
+    "success1": {
+      "title": "success1",
+      "example": {
+        "data": {
+          "success": true,
+          "message": "Login successful",
+          "userDetails": {
+            "id": "7ca002b0-84ff-4c4b-84fc-0c060aa3755f",
+            "username": "nonnypy10",
+            "token": "4LUXqyXyfo9I-LXpIFsOtVTHcogJSeEoGhnjmnImKzx.9BTMxMTO5YjN1EjOiAHelJCLwEzN2ATO2YTNxojI0FWaiwiIwETewlnbu9mbiojIl1WYuJXZzVnIsIiZ1UzNzEWYwYDMjBTLjZGN40iY0MGNtYmZ0gTLwImMwATYjdjI6ICZpJye.9JCVXpkI6ICc5RnIsIiN1IzUIJiOicGbhJye"
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Data1"
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "Data1": {
+      "title": "Data1",
+      "example": {
+        "success": true,
+        "message": "Login successful",
+        "userDetails": {
+          "id": "7ca002b0-84ff-4c4b-84fc-0c060aa3755f",
+          "username": "nonnypy10",
+          "token": "4LUXqyXyfo9I-LXpIFsOtVTHcogJSeEoGhnjmnImKzx.9BTMxMTO5YjN1EjOiAHelJCLwEzN2ATO2YTNxojI0FWaiwiIwETewlnbu9mbiojIl1WYuJXZzVnIsIiZ1UzNzEWYwYDMjBTLjZGN40iY0MGNtYmZ0gTLwImMwATYjdjI6ICZpJye.9JCVXpkI6ICc5RnIsIiN1IzUIJiOicGbhJye"
+        }
+      },
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "userDetails": {
+          "$ref": "#/definitions/UserDetails"
+        }
+      },
+      "required": [
+        "success",
+        "message",
+        "userDetails"
+      ]
+    },
+    "UserDetails": {
+      "title": "UserDetails",
+      "example": {
+        "id": "7ca002b0-84ff-4c4b-84fc-0c060aa3755f",
+        "username": "nonnypy10",
+        "token": "4LUXqyXyfo9I-LXpIFsOtVTHcogJSeEoGhnjmnImKzx.9BTMxMTO5YjN1EjOiAHelJCLwEzN2ATO2YTNxojI0FWaiwiIwETewlnbu9mbiojIl1WYuJXZzVnIsIiZ1UzNzEWYwYDMjBTLjZGN40iY0MGNtYmZ0gTLwImMwATYjdjI6ICZpJye.9JCVXpkI6ICc5RnIsIiN1IzUIJiOicGbhJye"
+      },
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "token"
       ]
     }
   },
