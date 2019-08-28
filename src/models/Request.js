@@ -35,7 +35,10 @@ export default (sequelize, DataTypes) => {
         }
       }
     },
-    returnDate: DataTypes.DATEONLY,
+    returnDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: true
+    },
     accommodationId: {
       type: DataTypes.INTEGER
     },

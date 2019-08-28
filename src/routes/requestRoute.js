@@ -7,6 +7,11 @@ const requestRoutes = app => {
     Validate.validateUserInput,
     Authorization.checkToken,
     RequestController.bookATrip);
+
+  app.post('/api/v1/request/book_return_trip',
+    Authorization.checkToken,
+    Validate.validateUserInput,
+    RequestController.bookAReturnTrip);
 };
 
 export default requestRoutes;
