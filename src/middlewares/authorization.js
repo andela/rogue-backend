@@ -40,11 +40,10 @@ class Authorization {
    * to unauthorized user
    */
   static async confirmUser(req, res, next) {
-    if (req.decoded.id !== req.params.id) {
-      return HelperMethods.clientError(res, {
-        success: false,
-        message: 'you are not authorized to perform this action'
-      }, 400);
+    if (req.decoded.id !== req.body.id) {
+      return HelperMethods.clientError(res,
+        'You can only update your profile',
+        400);
     }
     next();
   }

@@ -67,7 +67,7 @@ export default (sequelize, DataTypes) => {
       }
     },
     birthdate: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       validate: {
         isDate: true,
       }
