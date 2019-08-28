@@ -1,3 +1,4 @@
+import { HelperMethods } from '../utils';
 /**
  * Trims input values from user
  * @param {object} objectWithValuesToTrim - request body to trim
@@ -118,6 +119,27 @@ class Validate {
         success: false,
         message: '"rememberDetails" field is required and must be a boolean',
       });
+    }
+    next();
+  }
+
+  /**
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request to the next handler
+  * @returns {object} res - Response object when query is invalid
+  * @memberof Validate
+  */
+  static validateMulticity(req, res, next) {
+    const { destination, flightDate } = req.body;
+    if (!destination || typeof (destination) !== 'object'
+    || !destination[1]) {
+      return HelperMethods.clientError(res, 'destination as to be more than one');
+    }
+    if (!flightDate || typeof (flightDate) !== 'object'
+  || flightDate.length !== destination.length) {
+      return HelperMethods.clientError(res,
+        'please input flightDate for all destinations');
     }
     next();
   }

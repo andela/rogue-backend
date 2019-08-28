@@ -21,7 +21,9 @@ class RequestController {
     try {
       const { id } = req.decoded;
       const { body } = req;
-      const { dataValues } = await Request.create({ ...body, userId: id });
+      const { dataValues } = await Request.create({
+        ...body, userId: id
+      });
       if (dataValues.id) {
         HelperMethods.requestSuccessful(res, {
           success: true,
@@ -70,6 +72,8 @@ class RequestController {
   /**
   * Get pending requests
   * Route: GET: /request
+  * Book a Trip
+  * Route: POST: /request/multicity
   * @param {object} req - HTTP Request object
   * @param {object} res - HTTP Response object
   * @return {res} res - HTTP Response object
@@ -170,6 +174,37 @@ class RequestController {
         res, 'This request has already been rejected',
         400
       );
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Book a Multicity Trip
+  * Route: POST: /request/multicity
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+ */
+  static async bookMulticity(req, res) {
+    try {
+      const { id } = req.decoded;
+      const { body } = req;
+      const { destination, flightDate, origin } = body;
+      const { dataValues } = await Request.create({
+        origin,
+        userId: id,
+        multiDestination: destination,
+        multiflightDate: flightDate,
+      });
+      if (dataValues.id) {
+        HelperMethods.requestSuccessful(res, {
+          success: true,
+          message: 'Trip booked successfully',
+        }, 201);
+      }
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);

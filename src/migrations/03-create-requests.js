@@ -16,17 +16,8 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    destination: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    flightDate: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
     returnDate: {
       type: Sequelize.DATEONLY,
-      allowNull: true,
     },
     reason: {
       type: Sequelize.ENUM,
@@ -44,6 +35,22 @@ module.exports = {
       type: Sequelize.ENUM,
       values: ['open', 'approved', 'rejected'],
       defaultValue: 'open'
+    },
+    returnTrip: {
+      type: Sequelize.BOOLEAN,
+      allowNull: true,
+    },
+    destination: {
+      type: Sequelize.STRING
+    },
+    flightDate: {
+      type: Sequelize.STRING
+    },
+    multiDestination: {
+      type: Sequelize.ARRAY(Sequelize.STRING),
+    },
+    multiflightDate: {
+      type: Sequelize.ARRAY(Sequelize.DATEONLY),
     },
     createdAt: {
       allowNull: false,
