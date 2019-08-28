@@ -16,17 +16,8 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    destination: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    flightDate: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
     returnDate: {
       type: Sequelize.DATEONLY,
-      allowNull: true,
     },
     reason: {
       type: Sequelize.ENUM,
@@ -39,6 +30,10 @@ module.exports = {
         model: 'Accommodations',
         key: 'id'
       }
+    },
+    return_trip: {
+      type: Sequelize.BOOLEAN,
+      allowNull: true,
     },
     createdAt: {
       allowNull: false,

@@ -12,6 +12,11 @@ const requestRoutes = app => {
     Authorization.checkToken,
     Validate.validateUserInput,
     RequestController.bookAReturnTrip);
+
+  app.post('/api/v1/request/multicity',
+    Validate.validateMulticity,
+    Authorization.checkToken,
+    RequestController.bookMulticity);
 };
 
 export default requestRoutes;

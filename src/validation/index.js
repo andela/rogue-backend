@@ -100,7 +100,46 @@ class Validate {
     if (emptyField) return allFieldsRequired(res, emptyField);
     next();
   }
+
+  /**
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request to the next handler
+   * @returns {object} res - Response object when query is invalid
+   * @memberof Validate
+   */
+  static validateRememberDetailsUpdate(req, res, next) {
+    req.body = trimValues(req.body);
+    const emptyField = checkForEmptyFields(req.body);
+    if (emptyField) return allFieldsRequired(res, emptyField);
+    const { rememberDetails } = req.body;
+    if ((rememberDetails !== 'true') && (rememberDetails !== 'false')) {
+      return res.status(400).send({
+        success: false,
+        message: '"rememberDetails" field is required and must be a boolean',
+      });
+    }
+    next();
+  }
+
+  /**
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request to the next handler
+  * @returns {object} res - Response object when query is invalid
+  * @memberof Validate
+  */
+  static validateMulticity(req, res, next) {
+    const { origin, destination, flightDate } = req.body;
+    if (!origin) return allFieldsRequired(res);
+    if (!destination || typeof (destination) !== 'object') {
+      return allFieldsRequired(res, 'destination as to be more than one');
+    }
+    if (!flightDate || typeof (destination) !== 'object') {
+      return allFieldsRequired(res, 'please input flightDate for all destinations');
+    }
+    next();
+  }
 }
 
 export default Validate;
-

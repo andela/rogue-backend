@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../index';
@@ -74,24 +75,57 @@ describe('Integration tests for the request controller', () => {
   });
   describe('Validation tests for the book a trip features', () => {
     it('should not book a one way trip when a required detail is missing', async () => {
-      delete tripDetails.flightDate;
+      delete tripDetails.origin;
       const response = await chai.request(app).post('/api/v1/request/book_trip')
         .set('x-access-token', token).send(tripDetails);
       expect(response.status).to.equal(400);
       expect(response.body).to.have.property('message');
-      expect(response.body.message).to.equal('The "flightDate" field is required');
+      expect(response.body.message)
+        .to.equal('The "origin" field is required');
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
     });
     it('should not book a return trip when a required detail is missing', async () => {
-      delete tripDetails.returnDate;
+      delete tripDetails.origin;
       const response = await chai.request(app).post('/api/v1/request/book_return_trip')
         .set('x-access-token', token).send(tripDetails);
       expect(response.status).to.equal(400);
       expect(response.body).to.have.property('message');
-      expect(response.body.message).to.equal('The returnDate field is required.');
+      expect(response.body.message)
+        .to.equal('The "origin" field is required');
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
     });
+  });
+  it('should allow a registered user to book a multcity trip', async () => {
+    const response = await chai.request(app).post('/api/v1/request/multicity')
+      .set('x-access-token', token).send({
+        origin: 'Onipan',
+        destination: ['mile12', 'okoko'],
+        flightDate: ['2019-06-27', '2019-06-25'],
+        accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
+        userId: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
+        return_trip: true,
+        reason: 'EXPEDITION'
+      });
+    expect(response.status).to.equal(201);
+    expect(response.body.data).to.have.property('message');
+    expect(response.body.data.message).to.equal('Trip booked successfully');
+    expect(response.body.data).to.have.property('success');
+    expect(response.body.data.success).to.equal(true);
+  });
+  it('should not book a trip when a required detail is missing', async () => {
+    const response = await chai.request(app).post('/api/v1/request/multicity')
+      .set('x-access-token', token).send({
+        returnDate: '2019-03-21',
+        accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
+        return_trip: true,
+        userId: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
+        reason: 'EXPEDITION',
+      });
+    expect(response.status).to.equal(400);
+    expect(response.body).to.have.property('message');
+    expect(response.body).to.have.property('success');
+    expect(response.body.success).to.equal(false);
   });
 });
