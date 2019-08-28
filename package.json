@@ -7,7 +7,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "test": "NODE_ENV=test yarn undo:migration && NODE_ENV=test yarn migrate && NODE_ENV=test yarn undo:seed && NODE_ENV=test yarn seed && NODE_ENV=test nyc --reporter=html --reporter=text mocha --exit --require @babel/register --require @babel/polyfill src/test/index.js",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "dev-start": "NODE_ENV=development nodemon --exec babel-node src/index.js",
+    "dev-start": "set NODE_ENV=development && nodemon --exec babel-node src/index.js",
     "build": "babel src --out-dir build",
     "start": "node build/index.js",
     "undo:seed": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize db:seed:undo:all",

@@ -12,5 +12,221 @@
       "name": "GNU General Public License",
       "url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
     }
-  }
+  },
+  "host": "localhost:3000",
+  "basePath": "/api/v1",
+  "schemes": [],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "description": "Creates a new User ",
+        "summary": "User registration",
+        "tags": [
+          "Auth Route"
+        ],
+        "operationId": "Localhost3000ApiV1AuthSignupPost",
+        "deprecated": false,
+        "produces": [
+          "application/json; charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": ""
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UserregistrationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            },
+            "examples": {
+              "application/json; charset=utf-8": {
+                "data": {
+                  "message": "You had started the registration process earlier. An email has been sent to your email address. Please check your email to complete your registration."
+                }
+              }
+            },
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "type": "string",
+                "default": "*"
+              },
+              "Content-Length": {
+                "type": "string",
+                "default": "173"
+              },
+              "ETag": {
+                "type": "string",
+                "default": "W/\"ad-uO2ImKAmPOrdyu15MtppJ4QciIE\""
+              },
+              "Date": {
+                "type": "string",
+                "default": "Tue, 27 Aug 2019 10:02:46 GMT"
+              },
+              "Connection": {
+                "type": "string",
+                "default": "keep-alive"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/NullfieldValidation"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "message": "The \"username\" field is required"
+              }
+            }
+          },
+          "default": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/NullfieldValidation"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "message": "Your registration could not be completed.Please try again"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "post": {
+        "description": "Verifies that the user is a valid User",
+        "summary": "Login",
+        "tags": [
+          "Misc"
+        ],
+        "operationId": "UnnammedEndpointPost",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {}
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "UserregistrationRequest": {
+      "title": "UserregistrationRequest",
+      "example": {
+        "firstName": "Justice",
+        "lastName": "Amadi",
+        "email": "nonsoamadi@aol.com",
+        "password": "amadijustice300",
+        "username": "user 1"
+      },
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "email",
+        "password"
+      ]
+    },
+    "Success": {
+      "title": "Success",
+      "example": {
+        "data": {
+          "message": "You had started the registration process earlier. An email has been sent to your email address. Please check your email to complete your registration."
+        }
+      },
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Data"
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "Data": {
+      "title": "Data",
+      "example": {
+        "message": "You had started the registration process earlier. An email has been sent to your email address. Please check your email to complete your registration."
+      },
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "NullfieldValidation": {
+      "title": "NullfieldValidation",
+      "example": {
+        "success": false,
+        "message": "The \"username\" field is required"
+      },
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "success",
+        "message"
+      ]
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth Route",
+      "description": "Routes for user signup and login"
+    }
+  ]
 }
