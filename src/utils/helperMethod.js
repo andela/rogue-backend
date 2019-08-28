@@ -73,6 +73,20 @@ class HelperMethods {
       });
     }
   }
+
+  /**
+   * A method used to send sequelize validation error
+   * @param {object} newDate - This will update the date of birth
+   * @param {object} oldDate - This is User's current date of birth
+   * @returns {string} date - Contains the date of birth
+   */
+  static returnDate(newDate, oldDate) {
+    if (newDate) {
+      const date = new Date(newDate);
+      return date.toLocaleDateString();
+    }
+    return oldDate;
+  }
 }
 
 export default HelperMethods;

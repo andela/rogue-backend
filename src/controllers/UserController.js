@@ -148,6 +148,76 @@ class UserController {
   }
 
   /**
+   *
+   * @description method that updates user's profile settings
+   * @static
+   * @param {object} req HTTP Request object
+   * @param {object} res HTTP Response object
+   * @returns {object} HTTP Response object
+   * @memberof ProfileController
+   */
+  static async updateProfile(req, res) {
+    const userId = req.params.id;
+    try {
+      const user = await User.findOne({ where: { id: userId } });
+      try {
+        const birthDate = HelperMethods.returnDate(req.body.birthDate, user.birthDate);
+        await user.update({
+          firstName: req.body.firstName || user.firstName,
+          lastName: req.body.lastName || user.lastName,
+          password: req.body.password || user.password,
+          gender: req.body.gender || user.gender,
+          birthDate,
+          preferredLanguage:
+            req.body.preferredLanguage || user.preferredLanguage,
+          preferredCurrency:
+            req.body.preferredCurrency || user.preferredCurrency,
+          city: req.body.city || user.city,
+          state: req.body.state || user.state,
+          zip: req.body.zip || user.zip,
+          country: req.body.country || user.country,
+          profileImage: req.body.profileImage || user.profileImage,
+          role: req.body.role || user.role,
+          department: req.body.department || user.department,
+          lineManager: req.body.lineManager || user.lineManager
+        });
+      } catch (error) {
+        return HelperMethods.clientError(res, error, 400);
+      }
+      return HelperMethods
+        .requestSuccessful(res, {
+          success: true,
+          user,
+        }, 200);
+    } catch (err) {
+      return HelperMethods.clientError(res, 'User does not exist', 404);
+    }
+  }
+
+  /**
+   *
+   * @description method that gets current user's settings
+   * @static
+   * @param {object} req client request
+   * @param {object} res server response
+   * @returns {object} server response object
+   * @memberof ProfileController
+   */
+  static async getProfile(req, res) {
+    const userId = req.params.id;
+    try {
+      const user = await User.findOne({ where: { id: userId } });
+      HelperMethods
+        .requestSuccessful(res, {
+          success: true,
+          user,
+        }, 200);
+    } catch (error) {
+      return HelperMethods.clientError(res, 'User does not exist', 404);
+    }
+  }
+
+  /**
   * Verify a user's email
   * Route: POST: /auth/verify_email
   * @param {object} req - HTTP Request object

@@ -27,6 +27,27 @@ class Authorization {
     req.decoded = verifiedToken;
     next();
   }
+
+  /**
+   *
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request
+   * to the next handler
+   * @returns {callback} next - The callback that passes the request
+   * to the next handler
+   * @returns {object} res - Response object containing an error due
+   * to unauthorized user
+   */
+  static async confirmUser(req, res, next) {
+    if (req.decoded.id !== req.params.id) {
+      return HelperMethods.clientError(res, {
+        success: false,
+        message: 'you are not authorized to perform this action'
+      }, 400);
+    }
+    next();
+  }
 }
 
 export default Authorization;
