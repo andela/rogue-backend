@@ -158,40 +158,30 @@ class UserController {
    */
   static async updateProfile(req, res) {
     const userId = req.params.id;
-    try {
-      const user = await User.findOne({ where: { id: userId } });
+
+    const user = await User.findByPk(userId);
+    if (user) {
       try {
-        const birthDate = HelperMethods.returnDate(req.body.birthDate, user.birthDate);
-        await user.update({
-          firstName: req.body.firstName || user.firstName,
-          lastName: req.body.lastName || user.lastName,
-          password: req.body.password || user.password,
-          gender: req.body.gender || user.gender,
-          birthDate,
-          preferredLanguage:
-            req.body.preferredLanguage || user.preferredLanguage,
-          preferredCurrency:
-            req.body.preferredCurrency || user.preferredCurrency,
-          city: req.body.city || user.city,
-          state: req.body.state || user.state,
-          zip: req.body.zip || user.zip,
-          country: req.body.country || user.country,
-          profileImage: req.body.profileImage || user.profileImage,
-          role: req.body.role || user.role,
-          department: req.body.department || user.department,
-          lineManager: req.body.lineManager || user.lineManager
-        });
+        await user.update(req.body);
+        const {
+          firstName, lastName, id, updatedAt
+        } = user;
+        return HelperMethods
+          .requestSuccessful(res, {
+            success: true,
+            message: 'profile updated successfully',
+            userDetails: {
+              id,
+              firstName,
+              lastName,
+              updatedAt
+            },
+          }, 200);
       } catch (error) {
-        return HelperMethods.clientError(res, error, 400);
+        return HelperMethods.clientError(res, error.message, 400);
       }
-      return HelperMethods
-        .requestSuccessful(res, {
-          success: true,
-          user,
-        }, 200);
-    } catch (err) {
-      return HelperMethods.clientError(res, 'User does not exist', 404);
     }
+    return HelperMethods.serverError(res, 'User does not exist');
   }
 
   /**
@@ -205,16 +195,17 @@ class UserController {
    */
   static async getProfile(req, res) {
     const userId = req.params.id;
-    try {
-      const user = await User.findOne({ where: { id: userId } });
-      HelperMethods
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] }
+    });
+    if (user) {
+      return HelperMethods
         .requestSuccessful(res, {
           success: true,
-          user,
+          userDetails: user,
         }, 200);
-    } catch (error) {
-      return HelperMethods.clientError(res, 'User does not exist', 404);
     }
+    return HelperMethods.serverError(res, 'User does not exist');
   }
 
   /**

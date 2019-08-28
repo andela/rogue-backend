@@ -5,9 +5,7 @@ import app from '../../index';
 import { UserController } from '../../controllers';
 
 chai.use(chaiHttp);
-chai.should();
 const { expect } = chai;
-let token;
 
 describe('Integration tests for the user controller', () => {
   describe('Test general error handling and welcome message', () => {
@@ -110,7 +108,6 @@ describe('Integration tests for the user controller', () => {
     it('should log a user in when valid details are given', async () => {
       const response = await chai.request(app).post('/api/v1/auth/login')
         .send({ email: 'demo1@demo.com', password: 'password' });
-      token = response.body.data.userDetails.token;
       expect(response.status).to.deep.equal(200);
       expect(response.body.data).to.have.property('message');
       expect(response.body.data.message).to.equal('Login successful');
@@ -131,6 +128,7 @@ describe('Integration tests for the user controller', () => {
       expect(response.body.message)
         .to.equal('Invalid request. All fields are required');
     });
+
     it('should return client error when user details is missing', async () => {
       const userDetails = {
         password: 'johndoe@wemail.com',
@@ -145,94 +143,89 @@ describe('Integration tests for the user controller', () => {
         .to.equal('Invalid request. All fields are required');
     });
   });
-  describe('Test updating a user profile', () => {
-    it('Should not update user without email', done => {
-      chai.request(app)
-        .patch('/api/v1/update_user')
-        .send({
-          email: '', role: 'Travel Administrator',
-        })
-        .set({
-          'x-access-token': token
-        })
-        .end((err, res) => {
-          res.should.have.status(400);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.should.have.property('success');
-          res.body.success.should.equal(false);
-          done();
-        });
-    });
-    it('should not update a wrong email', done => {
-      chai.request(app)
-        .patch('/api/v1/update_user')
-        .send({
-          email: 'uryyeh@gmail.com', role: 'Travel Administrator',
-        })
-        .set({
-          'x-access-token': token
-        })
-        .end((err, res) => {
-          res.should.have.status(404);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.should.have.property('success');
-          res.body.success.should.equal(false);
-          done();
-        });
-    });
-    it('should update user role', done => {
-      chai.request(app)
-        .patch('/api/v1/update_user')
-        .send({
-          email: 'demo3@demo.com', role: 'Travel Administrator',
-        })
-        .set({
-          'x-access-token': token
-        })
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('data');
-          done();
-        });
-    });
-    it('should not update user role with the same role', done => {
-      chai.request(app)
-        .patch('/api/v1/update_user')
-        .send({
-          email: 'demo3@demo.com', role: 'Travel Administrator',
-        })
-        .set({
-          'x-access-token': token
-        })
-        .end((err, res) => {
-          res.should.have.status(409);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.should.have.property('success');
-          res.body.success.should.equal(false);
-          done();
-        });
-    });
-    it('should not update user without super admin token', done => {
-      chai.request(app)
-        .patch('/api/v1/update_user')
-        .send({
-          email: 'demo3@demo.com', role: 'Travel Administrator',
-        })
-        .set({
-          'x-access-token': 'weR$3%46GBvcxDsX'
-        })
-        .end((err, res) => {
-          res.should.have.status(401);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.should.have.property('success');
-          res.body.success.should.equal(false);
-          done();
-        });
+  before('Get user token', async () => {
+    const response = await chai.request(app).post('/api/v1/auth/login')
+      .send({
+        email: 'demo1@demo.com',
+        password: 'password',
+      });
+    const { token, id } = response.body.data.userDetails;
+    describe('Test profile update endpoints', () => {
+      const newData = {
+        firstName: 'Kelechi',
+        lastName: 'Janet',
+        country: 'Nigeria',
+      };
+      it('should update users profile', async () => {
+        const result = await chai.request(app).patch(`/api/v1/profile/${id}`)
+          .set('x-access-token', token)
+          .send(newData);
+        expect(result.body.data.success).to.equal(true);
+        expect(result.body.data.message).to.equal('profile updated successfully');
+        expect(result.body.data.userDetails.firstName).to
+          .equal(newData.firstName);
+        expect(result.body.data.userDetails.lastName).to
+          .equal(newData.lastName);
+        expect(result.body.data.userDetails).to
+          .have.property('id');
+      });
+
+      it('should return error when profile is updated with invalid data', async () => {
+        const result = await chai.request(app).patch(`/api/v1/profile/${id}`)
+          .set('x-access-token', token)
+          .send({
+            firstName: 'rt',
+            lastName: 'hi',
+            birthdate: 'ehegw',
+            gender: 'dj',
+          });
+        expect(result.body).to.have.property('success');
+        expect(result.body.success).to.equal(false);
+      });
+
+      it('should return error when profile is updated with invalid token', async () => {
+        const result = await chai.request(app).patch(`/api/v1/profile/${id}`)
+          .set('x-access-token', 'this is an invalid token')
+          .send(newData);
+        expect(result.body.success).to.equal(false);
+        expect(result.body.message).equal('User not authorized');
+      });
+
+      it('should return error when profile is updated by another user', async () => {
+        const anotherUsersId = 'this_id_will not work';
+        const result = await chai.request(app).patch(`/api/v1/profile/${anotherUsersId}`)
+          .set('x-access-token', token)
+          .send(newData);
+        expect(result.body.success).to.equal(false);
+        expect(result.body.message).to
+          .equal('you cannot perform this action');
+      });
+      it('should fetch users current profile settings', async () => {
+        const result = await chai.request(app).get(`/api/v1/profile/${id}`)
+          .set('x-access-token', token);
+        expect(result.body.data.success).to.equal(true);
+        expect(result.body.data.userDetails.firstName).to
+          .equal(newData.firstName);
+        expect(result.body.data.userDetails.lastName).to
+          .equal(newData.lastName);
+        expect(result.body.data.userDetails).to.have.property('id');
+      });
+
+      it('should return error when profile is fetched with invalid token', async () => {
+        const result = await chai.request(app).get(`/api/v1/profile/${id}`)
+          .set('x-access-token', 'this is an invalid token');
+        expect(result.body.success).to.equal(false);
+        expect(result.body.message).equal('User not authorized');
+      });
+
+      it('should return error when profile is fetched by another user', async () => {
+        const anotherUsersId = 'this_id_will not work';
+        const result = await chai.request(app).get(`/api/v1/profile/${anotherUsersId}`)
+          .set('x-access-token', token);
+        expect(result.body.success).to.equal(false);
+        expect(result.body.message).to
+          .equal('you cannot perform this action');
+      });
     });
   });
 });

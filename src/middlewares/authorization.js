@@ -41,10 +41,9 @@ class Authorization {
    */
   static async confirmUser(req, res, next) {
     if (req.decoded.id !== req.params.id) {
-      return HelperMethods.clientError(res, {
-        success: false,
-        message: 'you are not authorized to perform this action'
-      }, 400);
+      return HelperMethods.clientError(res,
+        'you cannot perform this action',
+        400);
     }
     next();
   }
