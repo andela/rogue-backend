@@ -72,7 +72,11 @@ export default (sequelize, DataTypes) => {
           args: [6, 150],
           msg: 'Password must be more than 5 characters'
         }
-      }
+      },
+    },
+    role: {
+      type: DataTypes.ENUM(['Super Administrator', 'Travel Administrator',
+        'Travel Team Member', 'Manager', 'Requester'])
     },
     profileImage: {
       type: DataTypes.STRING,

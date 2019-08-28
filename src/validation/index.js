@@ -57,6 +57,21 @@ class Validate {
     if (!email) return allFieldsRequired(res);
     next();
   }
+
+  /**
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request to the next handler
+  * @returns {object} res - Response object when query is invalid
+  * @memberof Validate
+  */
+  static validateRoleUpdate(req, res, next) {
+    req.body = trimValues(req.body);
+    const { email, role } = req.body;
+    if (!email) return allFieldsRequired(res);
+    if (!role) return allFieldsRequired(res);
+    next();
+  }
 }
 
 export default Validate;

@@ -5,7 +5,9 @@ import app from '../../index';
 import { UserController } from '../../controllers';
 
 chai.use(chaiHttp);
+chai.should();
 const { expect } = chai;
+let token;
 
 describe('Integration tests for the user controller', () => {
   describe('Test general error handling and welcome message', () => {
@@ -108,6 +110,7 @@ describe('Integration tests for the user controller', () => {
     it('should log a user in when valid details are given', async () => {
       const response = await chai.request(app).post('/api/v1/auth/login')
         .send({ email: 'demo1@demo.com', password: 'password' });
+      token = response.body.data.userDetails.token;
       expect(response.status).to.deep.equal(200);
       expect(response.body.data).to.have.property('message');
       expect(response.body.data.message).to.equal('Login successful');
@@ -128,7 +131,6 @@ describe('Integration tests for the user controller', () => {
       expect(response.body.message)
         .to.equal('Invalid request. All fields are required');
     });
-
     it('should return client error when user details is missing', async () => {
       const userDetails = {
         password: 'johndoe@wemail.com',
@@ -141,6 +143,96 @@ describe('Integration tests for the user controller', () => {
       expect(response.body).to.have.property('message');
       expect(response.body.message)
         .to.equal('Invalid request. All fields are required');
+    });
+  });
+  describe('Test updating a user profile', () => {
+    it('Should not update user without email', done => {
+      chai.request(app)
+        .patch('/api/v1/update_user')
+        .send({
+          email: '', role: 'Travel Administrator',
+        })
+        .set({
+          'x-access-token': token
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.should.have.property('success');
+          res.body.success.should.equal(false);
+          done();
+        });
+    });
+    it('should not update a wrong email', done => {
+      chai.request(app)
+        .patch('/api/v1/update_user')
+        .send({
+          email: 'uryyeh@gmail.com', role: 'Travel Administrator',
+        })
+        .set({
+          'x-access-token': token
+        })
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.should.have.property('success');
+          res.body.success.should.equal(false);
+          done();
+        });
+    });
+    it('should update user role', done => {
+      chai.request(app)
+        .patch('/api/v1/update_user')
+        .send({
+          email: 'demo3@demo.com', role: 'Travel Administrator',
+        })
+        .set({
+          'x-access-token': token
+        })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('data');
+          done();
+        });
+    });
+    it('should not update user role with the same role', done => {
+      chai.request(app)
+        .patch('/api/v1/update_user')
+        .send({
+          email: 'demo3@demo.com', role: 'Travel Administrator',
+        })
+        .set({
+          'x-access-token': token
+        })
+        .end((err, res) => {
+          res.should.have.status(409);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.should.have.property('success');
+          res.body.success.should.equal(false);
+          done();
+        });
+    });
+    it('should not update user without super admin token', done => {
+      chai.request(app)
+        .patch('/api/v1/update_user')
+        .send({
+          email: 'demo3@demo.com', role: 'Travel Administrator',
+        })
+        .set({
+          'x-access-token': 'weR$3%46GBvcxDsX'
+        })
+        .end((err, res) => {
+          res.should.have.status(401);
+          res.body.should.be.a('object');
+          res.body.should.have.property('message');
+          res.body.should.have.property('success');
+          res.body.success.should.equal(false);
+          done();
+        });
     });
   });
 });

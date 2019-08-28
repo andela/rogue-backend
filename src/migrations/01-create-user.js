@@ -32,6 +32,11 @@ module.exports = {
     profileImage: {
       type: Sequelize.STRING,
     },
+    role: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: 'Requester'
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE
