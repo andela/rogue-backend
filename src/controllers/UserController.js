@@ -275,6 +275,45 @@ class UserController {
       return HelperMethods.serverError(res);
     }
   }
+
+  /**
+   * Update rememberDetails column of a user
+   * Route: POST: api/v1/
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof UserController
+   */
+  static async rememberUserDetails(req, res) {
+    try {
+      const { id } = req.decoded;
+      const { rememberDetails } = req.body;
+      const [, [update]] = await User.update(
+        { rememberDetails },
+        { where: { id }, returning: true }
+      );
+
+      if (!update) {
+        return HelperMethods.clientError(
+          res, {
+            success: false,
+            message: 'User not found'
+          }, 404
+        );
+      }
+
+      return HelperMethods.requestSuccessful(
+        res, {
+          success: true,
+          message: 'Update successful',
+          rememberDetails: update.get().rememberDetails
+        }, 200
+      );
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
 }
 
 export default UserController;

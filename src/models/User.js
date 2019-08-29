@@ -177,6 +177,10 @@ export default (sequelize, DataTypes) => {
         }
       }
     },
+    rememberDetails: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
   },
   {
     classMethods: {
