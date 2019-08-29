@@ -78,6 +78,29 @@ class SendEmail {
   }
 
   /**
+   * This function sends an email to reset password
+   * @param {string} email - email address to send the message to
+   * @returns {boolean} specifies if a verification email was sent to user
+   * after registration
+  */
+  static resetPassword(email) {
+    const details = {
+      email,
+      subject: 'Reset Password - BareFoot-Nomad',
+      html: `<div>
+        <p>Click on the button below to reset your password.</p>
+        <button style="color: white; background-color: #2084ba; 
+        border: none; border-radius: 10px; text-align: center;
+        padding: 10px;">
+        <a  href="${baseUrl}"
+          style="text-decoration: none; color: white;">
+        Reset Password</a></button>
+        </div>`
+    };
+    return SendEmail.emailSender(details);
+  }
+
+  /**
    *
    * @param {object} details - Object containing info for sending email
    * @returns {boolean} sends email to users
@@ -98,29 +121,6 @@ class SendEmail {
     } catch (error) {
       return false;
     }
-  }
-
-  /**
-   * This function sends an email to reset password
-   * @param {string} email - email address to send the message to
-   * @returns {boolean} specifies if a verification email was sent to user
-   * after registration
-  */
-  static resetPassword(email) {
-    const details = {
-      email,
-      subject: 'Reset Password - BareFoot-Nomad',
-      html: `<div>
-    <p>Click on the button below to reset your password.</p>
-    <button style="color: white; background-color: #2084ba; 
-    border: none; border-radius: 10px; text-align: center;
-    padding: 10px;">
-    <a  href="${baseUrl}"
-     style="text-decoration: none; color: white;">
-    Reset Password</a></button>
-  </div>`
-    };
-    return SendEmail.emailSender(details);
   }
 }
 export default SendEmail;

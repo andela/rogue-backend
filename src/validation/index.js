@@ -158,8 +158,9 @@ class Validate {
   */
   static validateUserEmail(req, res, next) {
     req.body = trimValues(req.body);
-    const { email } = req.body;
-    if (!email) return allFieldsRequired(res, 'email');
+    const emptyField = checkForEmptyFields(req.body);
+    if (emptyField) return allFieldsRequired(res, emptyField);
+    if (!req.body.email) return allFieldsRequired(res, 'email');
     next();
   }
 
@@ -217,20 +218,6 @@ class Validate {
     const emptyField = checkForEmptyFields(req.body);
     if (emptyField) return allFieldsRequired(res, emptyField);
     if (!req.body.id) return allFieldsRequired(res, 'id');
-    next();
-  }
-
-  /**
-  * @param {object} req - Request object
-  * @param {object} res - Response object
-  * @param {callback} next - The callback that passes the request to the next handler
-  * @returns {object} res - Response object when query is invalid
-  * @memberof Validate
-  */
-  static validateUserEmail(req, res, next) {
-    req.body = trimValues(req.body);
-    const { email } = req.body;
-    if (!email) return allFieldsRequired(res, 'email');
     next();
   }
 }

@@ -49,7 +49,7 @@ module.exports = {
       id: '4712fc7e-ca41-457f-872e-4a64b79efbba',
       firstName: 'Mba',
       lastName: 'Ifeanyi',
-      email: 'mbanelsonifeanyi@gmail.com',
+      email: 'demo4@demo.com',
       username: 'user4',
       password: await init(),
       isVerified: true,
