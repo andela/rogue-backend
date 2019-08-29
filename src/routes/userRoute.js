@@ -27,6 +27,11 @@ const userRoutes = app => {
     Validate.validateRememberDetailsUpdate,
     UserController.rememberUserDetails
   );
+
+  app.post('/api/v1/reset_password',
+    Authorization.checkToken,
+    Validate.validateUserEmail,
+    UserController.resetPassword);
 };
 
 export default userRoutes;

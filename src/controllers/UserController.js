@@ -314,6 +314,40 @@ class UserController {
   }
 
   /**
+  * Sends Emails To Users For Password Reset.
+  * Route: POST: /api/v1/reset_password
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @param {object} next - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof UserController
+ */
+  static async resetPassword(req, res) {
+    try {
+      const { email } = req.body;
+      const userFound = await User.findOne({ where: { email } });
+      if (!userFound) {
+        return HelperMethods.clientError(res, {
+          success: false,
+          message: 'Email does not exist',
+        }, 400);
+      }
+      if (userFound) {
+        const emailSent = await SendEmail.resetPassword(email);
+        if (emailSent) {
+          return HelperMethods.requestSuccessful(res, {
+            success: true,
+            message: 'An email has been sent to you '
+              + 'check your email address'
+          }, 200);
+        }
+      }
+    } catch (error) {
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
    * Update rememberDetails column of a user
    * Route: POST: api/v1/
    * @param {object} req - HTTP Request object
@@ -360,4 +394,5 @@ class UserController {
     }
   }
 }
+
 export default UserController;
