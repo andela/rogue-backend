@@ -1,5 +1,6 @@
 import authRoute from './authRoute';
 import requestRoute from './requestRoute';
+import userRoute from './userRoute';
 
 /**
  * Handles request
@@ -16,6 +17,7 @@ const routes = app => {
   });
   authRoute(app);
   requestRoute(app);
+  userRoute(app);
 };
 
 export default routes;

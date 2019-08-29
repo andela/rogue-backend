@@ -14,6 +14,7 @@ module.exports = {
       email: 'demo1@demo.com',
       username: 'user1',
       isVerified: true,
+      role: 'Super Administrator',
       password: await init(),
       createdAt: new Date(),
       updatedAt: new Date()
@@ -24,7 +25,9 @@ module.exports = {
       lastName: 'Ifeanyi',
       email: 'mbanelsonifeanyi@gmail.com',
       username: 'user2',
+      isVerified: true,
       password: await init(),
+      role: 'Manager',
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -33,8 +36,10 @@ module.exports = {
       firstName: 'John',
       lastName: 'Doe',
       email: 'demo3@demo.com',
-      username: 'user2',
+      username: 'user3',
+      isVerified: true,
       password: await init(),
+      role: 'Manager',
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -43,8 +48,10 @@ module.exports = {
       firstName: 'John',
       lastName: 'Doe',
       email: 'demo4@demo.com',
-      username: 'user2',
+      username: 'user4',
       password: await init(),
+      isVerified: true,
+      role: 'Manager',
       createdAt: new Date(),
       updatedAt: new Date()
     }], {}),

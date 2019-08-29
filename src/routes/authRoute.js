@@ -26,3 +26,4 @@ const authRoutes = app => {
 };
 
 export default authRoutes;
+

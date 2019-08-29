@@ -12,5 +12,386 @@
       "name": "GNU General Public License",
       "url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
     }
-  }
+  },
+  "host": "localhost:3000",
+  "basePath": "/api/v1",
+  "schemes": [],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "description": "Creates a new User ",
+        "summary": "User registration",
+        "tags": [
+          "Auth Route"
+        ],
+        "operationId": "Localhost3000ApiV1AuthSignupPost",
+        "deprecated": false,
+        "produces": [
+          "application/json; charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "",
+            "value": "application/json"
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/UserregistrationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Success"
+            },
+            "examples": {
+              "application/json; charset=utf-8": {
+                "data": {
+                  "message": "You had started the registration process earlier. An email has been sent to your email address. Please check your email to complete your registration."
+                }
+              }
+            },
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "type": "string",
+                "default": "*"
+              },
+              "Content-Length": {
+                "type": "string",
+                "default": "173"
+              },
+              "ETag": {
+                "type": "string",
+                "default": "W/\"ad-uO2ImKAmPOrdyu15MtppJ4QciIE\""
+              },
+              "Date": {
+                "type": "string",
+                "default": "Tue, 27 Aug 2019 10:02:46 GMT"
+              },
+              "Connection": {
+                "type": "string",
+                "default": "keep-alive"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "message": "The \"username\" field is required"
+              }
+            }
+          },
+          "default": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "message": "Your registration could not be completed. Please try again"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Verifies that the user is a valid User",
+        "summary": "Login",
+        "tags": [
+          "Auth Route"
+        ],
+        "operationId": "LoginPost",
+        "deprecated": false,
+        "produces": [
+          "application/json; charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "",
+            "value": "application/json"
+          },
+          {
+            "name": "Body",
+            "in": "body",
+            "required": true,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/success1"
+            },
+            "examples": {
+              "application/json; charset=utf-8": {
+                "data": {
+                  "success": true,
+                  "message": "Login successful",
+                  "userDetails": {
+                    "id": "7ca002b0-84ff-4c4b-84fc-0c060aa3755f",
+                    "username": "nonnypy10",
+                    "token": "4LUXqyXyfo9I-LXpIFsOtVTHcogJSeEoGhnjmnImKzx.9BTMxMTO5YjN1EjOiAHelJCLwEzN2ATO2YTNxojI0FWaiwiIwETewlnbu9mbiojIl1WYuJXZzVnIsIiZ1UzNzEWYwYDMjBTLjZGN40iY0MGNtYmZ0gTLwImMwATYjdjI6ICZpJye.9JCVXpkI6ICc5RnIsIiN1IzUIJiOicGbhJye"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "type": "string",
+                "default": "*"
+              },
+              "Content-Length": {
+                "type": "string",
+                "default": "365"
+              },
+              "ETag": {
+                "type": "string",
+                "default": "W/\"16d-lrc94WEbHwyNMtbvpUIuDh3shcc\""
+              },
+              "Date": {
+                "type": "string",
+                "default": "Tue, 27 Aug 2019 11:51:50 GMT"
+              },
+              "Connection": {
+                "type": "string",
+                "default": "keep-alive"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            },
+            "examples": {
+              "application/json": {
+                "success": false,
+                "message": "Email or password does not exist"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "UserregistrationRequest": {
+      "title": "UserregistrationRequest",
+      "example": {
+        "firstName": "Justice",
+        "lastName": "Amadi",
+        "email": "nonsoamadi@aol.com",
+        "password": "amadijustice300",
+        "username": "user 1"
+      },
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "email",
+        "password"
+      ]
+    },
+    "Success": {
+      "title": "Success",
+      "example": {
+        "data": {
+          "message": "You had started the registration process earlier. An email has been sent to your email address. Please check your email to complete your registration."
+        }
+      },
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Data"
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "Data": {
+      "title": "Data",
+      "example": {
+        "message": "You had started the registration process earlier. An email has been sent to your email address. Please check your email to complete your registration."
+      },
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "LoginRequest": {
+      "title": "LoginRequest",
+      "example": {
+        "email": "demo1@demo.com",
+        "password": "password"
+      },
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "Error": {
+      "title": "Error",
+      "example": {
+        "success": false,
+        "message": "Email or password does not exist"
+      },
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "success",
+        "message"
+      ]
+    },
+    "success1": {
+      "title": "success1",
+      "example": {
+        "data": {
+          "success": true,
+          "message": "Login successful",
+          "userDetails": {
+            "id": "7ca002b0-84ff-4c4b-84fc-0c060aa3755f",
+            "username": "nonnypy10",
+            "token": "4LUXqyXyfo9I-LXpIFsOtVTHcogJSeEoGhnjmnImKzx.9BTMxMTO5YjN1EjOiAHelJCLwEzN2ATO2YTNxojI0FWaiwiIwETewlnbu9mbiojIl1WYuJXZzVnIsIiZ1UzNzEWYwYDMjBTLjZGN40iY0MGNtYmZ0gTLwImMwATYjdjI6ICZpJye.9JCVXpkI6ICc5RnIsIiN1IzUIJiOicGbhJye"
+          }
+        }
+      },
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/Data1"
+        }
+      },
+      "required": [
+        "data"
+      ]
+    },
+    "Data1": {
+      "title": "Data1",
+      "example": {
+        "success": true,
+        "message": "Login successful",
+        "userDetails": {
+          "id": "7ca002b0-84ff-4c4b-84fc-0c060aa3755f",
+          "username": "nonnypy10",
+          "token": "4LUXqyXyfo9I-LXpIFsOtVTHcogJSeEoGhnjmnImKzx.9BTMxMTO5YjN1EjOiAHelJCLwEzN2ATO2YTNxojI0FWaiwiIwETewlnbu9mbiojIl1WYuJXZzVnIsIiZ1UzNzEWYwYDMjBTLjZGN40iY0MGNtYmZ0gTLwImMwATYjdjI6ICZpJye.9JCVXpkI6ICc5RnIsIiN1IzUIJiOicGbhJye"
+        }
+      },
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "userDetails": {
+          "$ref": "#/definitions/UserDetails"
+        }
+      },
+      "required": [
+        "success",
+        "message",
+        "userDetails"
+      ]
+    },
+    "UserDetails": {
+      "title": "UserDetails",
+      "example": {
+        "id": "7ca002b0-84ff-4c4b-84fc-0c060aa3755f",
+        "username": "nonnypy10",
+        "token": "4LUXqyXyfo9I-LXpIFsOtVTHcogJSeEoGhnjmnImKzx.9BTMxMTO5YjN1EjOiAHelJCLwEzN2ATO2YTNxojI0FWaiwiIwETewlnbu9mbiojIl1WYuJXZzVnIsIiZ1UzNzEWYwYDMjBTLjZGN40iY0MGNtYmZ0gTLwImMwATYjdjI6ICZpJye.9JCVXpkI6ICc5RnIsIiN1IzUIJiOicGbhJye"
+      },
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "token"
+      ]
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth Route",
+      "description": "Routes for user signup and login"
+    }
+  ]
 }

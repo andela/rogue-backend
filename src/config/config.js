@@ -12,15 +12,15 @@ const databaseEnvDetails = {
 
 const config = {
   development: {
-    ...databaseEnvDetails,
     database: process.env.DB_CONFIG_DEV,
+    ...databaseEnvDetails,
   },
   test: {
     database: process.env.DB_CONFIG_TEST,
     ...databaseEnvDetails
   },
   production: {
-    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_URL: process.env.DATABASE_URL
   }
 };
 

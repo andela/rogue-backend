@@ -72,6 +72,11 @@ class Validate {
     req.body = trimValues(req.body);
     const { email } = req.body;
     if (!email) return allFieldsRequired(res);
+  static validateRoleUpdate(req, res, next) {
+    req.body = trimValues(req.body);
+    const { email, role } = req.body;
+    if (!email) return allFieldsRequired(res);
+    if (!role) return allFieldsRequired(res);
     next();
   }
 }
