@@ -171,6 +171,7 @@ class UserController {
       }
       return HelperMethods.clientError(res, 'User does not exist', 404);
     } catch (error) {
+      console.log('err is ==> ', error);
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
     }

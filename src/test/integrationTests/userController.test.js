@@ -140,6 +140,12 @@ describe('Integration tests for the user controller', () => {
         lastName: 'Janet',
         country: 'Nigeria',
       };
+      const userWithFakeId = {
+        id: 'this is aa fake id',
+        firstName: 'Kelechi',
+        lastName: 'Janet',
+        country: 'Nigeria',
+      };
       it('should update users profile', async () => {
         const result = await chai.request(app).patch('/api/v1/profile')
           .set('x-access-token', token)
@@ -151,7 +157,7 @@ describe('Integration tests for the user controller', () => {
       });
 
       it('should return error when profile is updated with invalid data', async () => {
-        const result = await chai.request(app).patch(`/api/v1/profile/${id}`)
+        const result = await chai.request(app).patch('/api/v1/profile/')
           .set('x-access-token', token)
           .send({
             firstName: 'rt',
@@ -164,7 +170,7 @@ describe('Integration tests for the user controller', () => {
       });
 
       it('should return error when profile is updated with invalid token', async () => {
-        const result = await chai.request(app).patch(`/api/v1/profile/${id}`)
+        const result = await chai.request(app).patch('/api/v1/profile/')
           .set('x-access-token', 'this is an invalid token')
           .send(newData);
         expect(result.body.success).to.equal(false);
@@ -172,16 +178,16 @@ describe('Integration tests for the user controller', () => {
       });
 
       it('should return error when profile is updated by another user', async () => {
-        const anotherUsersId = 'this_id_will not work';
-        const result = await chai.request(app).patch(`/api/v1/profile/${anotherUsersId}`)
+        newData.id = 'wrong id';
+        const result = await chai.request(app).patch('/api/v1/profile/')
           .set('x-access-token', token)
-          .send(newData);
+          .send(userWithFakeId);
         expect(result.body.success).to.equal(false);
         expect(result.body.message).to
-          .equal('you cannot perform this action');
+          .equal('You can only update your profile');
       });
       it('should fetch users current profile settings', async () => {
-        const result = await chai.request(app).get(`/api/v1/profile/${id}`)
+        const result = await chai.request(app).get('/api/v1/profile/')
           .set('x-access-token', token);
         expect(result.body.data.success).to.equal(true);
         expect(result.body.data.userDetails.firstName).to
@@ -192,19 +198,10 @@ describe('Integration tests for the user controller', () => {
       });
 
       it('should return error when profile is fetched with invalid token', async () => {
-        const result = await chai.request(app).get(`/api/v1/profile/${id}`)
+        const result = await chai.request(app).get('/api/v1/profile/')
           .set('x-access-token', 'this is an invalid token');
         expect(result.body.success).to.equal(false);
         expect(result.body.message).equal('User not authorized');
-      });
-
-      it('should return error when profile is fetched by another user', async () => {
-        const anotherUsersId = 'this_id_will not work';
-        const result = await chai.request(app).get(`/api/v1/profile/${anotherUsersId}`)
-          .set('x-access-token', token);
-        expect(result.body.success).to.equal(false);
-        expect(result.body.message).to
-          .equal('you cannot perform this action');
       });
     });
   });
