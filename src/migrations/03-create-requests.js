@@ -26,7 +26,7 @@ module.exports = {
     },
     returnDate: {
       type: Sequelize.DATEONLY,
-      allowNull: false,
+      allowNull: true,
     },
     reason: {
       type: Sequelize.ENUM,
