@@ -3,10 +3,24 @@ import Authorization from '../middlewares';
 import Validate from '../validation';
 
 const userRoutes = app => {
-  app.patch('/api/v1/update_user',
+  app.patch(
+    '/api/v1/update_user',
     Authorization.checkToken,
     Validate.validateRoleUpdate,
-    UserController.updateUserRole);
+    UserController.updateUserRole
+  );
+  app.patch(
+    '/api/v1/profile',
+    Authorization.checkToken,
+    Authorization.confirmUser,
+    Validate.validateUpdateProfile,
+    UserController.updateProfile
+  );
+  app.get(
+    '/api/v1/profile',
+    Authorization.checkToken,
+    UserController.getProfile
+  );
 };
 
 export default userRoutes;

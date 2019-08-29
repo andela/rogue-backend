@@ -1,2 +1,2 @@
-import './integrationTests';
 import './unitTests';
+import './integrationTests';

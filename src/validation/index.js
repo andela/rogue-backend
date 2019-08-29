@@ -21,8 +21,21 @@ const trimValues = objectWithValuesToTrim => {
 const allFieldsRequired = (res, message) => {
   res.status(400).send({
     success: false,
-    message: message || 'Invalid request. All fields are required',
+    message: `Invalid request. '${message}' field is required`,
   });
+};
+
+/**
+ * Defines the failed message returned when required fields are missing.
+ * @param {object} requestBody - HTTP request object
+ * @returns {string} - Property of the request body object that is empty.
+ */
+const checkForEmptyFields = requestBody => {
+  let result;
+  Object.keys(requestBody).forEach(key => {
+    if (!requestBody[key].length) result = key;
+  });
+  return result;
 };
 
 /**
@@ -40,6 +53,8 @@ class Validate {
   */
   static validateUserInput(req, res, next) {
     req.body = trimValues(req.body);
+    const emptyField = checkForEmptyFields(req.body);
+    if (emptyField) return allFieldsRequired(res, emptyField);
     next();
   }
 
@@ -52,9 +67,9 @@ class Validate {
   */
   static validateUserLogin(req, res, next) {
     req.body = trimValues(req.body);
-    const { password, email } = req.body;
-    if (!password) return allFieldsRequired(res);
-    if (!email) return allFieldsRequired(res);
+    const { email, password } = req.body;
+    if (!email) return allFieldsRequired(res, 'email');
+    if (!password) return allFieldsRequired(res, 'password');
     next();
   }
 
@@ -67,9 +82,22 @@ class Validate {
   */
   static validateRoleUpdate(req, res, next) {
     req.body = trimValues(req.body);
-    const { email, role } = req.body;
-    if (!email) return allFieldsRequired(res);
-    if (!role) return allFieldsRequired(res);
+    const emptyField = checkForEmptyFields(req.body);
+    if (emptyField) return allFieldsRequired(res, emptyField);
+    next();
+  }
+
+  /**
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request to the next handler
+  * @returns {object} res - Response object when query is invalid
+  * @memberof Validate
+  */
+  static validateUpdateProfile(req, res, next) {
+    req.body = trimValues(req.body);
+    const emptyField = checkForEmptyFields(req.body);
+    if (emptyField) return allFieldsRequired(res, emptyField);
     next();
   }
 }

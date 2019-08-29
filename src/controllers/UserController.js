@@ -38,10 +38,7 @@ class UserController {
       const { email, password } = req.body;
       const userFound = await User.findOne({ where: { email } });
       if (!userFound) {
-        return HelperMethods.clientError(res, {
-          success: false,
-          message: 'Email or password does not exist',
-        }, 400);
+        return HelperMethods.clientError(res, 'Email or password does not exist', 400);
       }
       if (!userFound.dataValues.isVerified) {
         return HelperMethods.clientError(res, {
@@ -141,6 +138,66 @@ class UserController {
           .serverError(res, 'Your registration could not be completed.'
           + 'Please try again');
       }
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+   *
+   * @description method that updates user's profile
+   * @static
+   * @param {object} req HTTP Request object
+   * @param {object} res HTTP Response object
+   * @returns {object} HTTP Response object
+   * @memberof ProfileController
+   */
+  static async updateProfile(req, res) {
+    try {
+      const userExist = await User.findByPk(req.body.id);
+      if (userExist && userExist.dataValues.id) {
+        if (userExist.dataValues.isVerified === false) {
+          return HelperMethods.clientError(
+            res, 'You cannot perform this action. You are not a verified user.', 400
+          );
+        }
+        await userExist.update(req.body, { returning: true, hooks: false });
+        return HelperMethods
+          .requestSuccessful(res, {
+            success: true,
+            message: 'profile updated successfully',
+          }, 200);
+      }
+      return HelperMethods.clientError(res, 'User does not exist', 404);
+    } catch (error) {
+      console.log('err is ==> ', error);
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+   *
+   * @description method that gets current user's settings
+   * @static
+   * @param {object} req client request
+   * @param {object} res server response
+   * @returns {object} server response object
+   * @memberof ProfileController
+   */
+  static async getProfile(req, res) {
+    try {
+      const user = await User.findByPk(req.decoded.id, {
+        attributes: { exclude: ['password', 'isVerified'] }
+      });
+      if (user) {
+        return HelperMethods.requestSuccessful(res, {
+          success: true,
+          userDetails: user,
+        }, 200);
+      }
+      return HelperMethods.clientError(res, 'User not found', 404);
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
