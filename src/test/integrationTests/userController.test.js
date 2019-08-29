@@ -297,62 +297,63 @@ describe('Integration tests for the user controller', () => {
     });
   });
   describe('Test Reset password controller', () => {
+    let token;
+    before('Get Token', async () => {
+      const loginResponse = await chai.request(app).post('/api/v1/auth/login')
+        .send({
+          email: 'demo2@demo.com',
+          password: 'password',
+        });
+      token = loginResponse.body.data.userDetails.token;
+    });
     it('should send an email to users for password reset', async () => {
       const userDetails = { email: 'mbanelsonifeanyi@gmail.com' };
       const stubSendMethod = sinon.stub(SendEmail, 'resetPassword').returns(true);
       const response = await chai.request(app).post('/api/v1/resetpassword')
-        .send(userDetails)
-        .set({
-          'x-access-token': token
-        });
+        .send(userDetails).set('x-access-token', token);
       expect(response.status).to.deep.equal(200);
       expect(response.body.data).to.have.property('success');
       expect(response.body.data.success).to.equal(true);
       expect(response.body.data).to.have.property('message');
       expect(response.body.data.message)
-        .to.equal('An email has been sent to you check your email address');
+        .to.equal('An email has been sent to your email'
+        + 'address that explains how to reset your password');
       sinon.assert.calledOnce(stubSendMethod);
       stubSendMethod.restore();
     });
-    it('should return client error when user details is missing', async () => {
+    it('should return a 401 for unauthorization', async () => {
       const userDetails = '';
       const response = await chai.request(app).post('/api/v1/resetpassword')
-        .send(userDetails).set({
-          'x-access-token': token
-        });
-      expect(response.status).to.deep.equal(400);
+        .send(userDetails);
+      expect(response.status).to.deep.equal(401);
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
       expect(response.body).to.have.property('message');
       expect(response.body.message)
-        .to.equal('Invalid request. All fields are required');
+        .to.equal('User not authorized');
     });
     it('should return client error when user details is missing', async () => {
       const response = await chai.request(app).post('/api/v1/resetpassword')
-        .send().set({
-          'x-access-token': token
-        });
+        .send().set('x-access-token', token);
       expect(response.status).to.deep.equal(400);
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
       expect(response.body).to.have.property('message');
       expect(response.body.message)
-        .to.equal('Invalid request. All fields are required');
+        .to.equal('Invalid request. \'email\' field is required');
     });
     it('should return error for unknown email', async () => {
       const userDetails = {
         email: 'mbanelsonifeanyijohndoe@wemail.com',
       };
       const response = await chai.request(app).post('/api/v1/resetpassword')
-        .send(userDetails).set({
-          'x-access-token': token
-        });
+        .send(userDetails).set('x-access-token', token);
       expect(response.status).to.deep.equal(400);
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
       expect(response.body).to.have.property('message');
       expect(response.body.message.message)
-        .to.equal('Email does not exist');
+        .to.equal('User Not Found');
     });
   });
 });

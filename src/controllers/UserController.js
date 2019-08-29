@@ -329,7 +329,7 @@ class UserController {
       if (!userFound) {
         return HelperMethods.clientError(res, {
           success: false,
-          message: 'Email does not exist',
+          message: 'User Not Found',
         }, 400);
       }
       if (userFound) {
@@ -337,8 +337,8 @@ class UserController {
         if (emailSent) {
           return HelperMethods.requestSuccessful(res, {
             success: true,
-            message: 'An email has been sent to you '
-              + 'check your email address'
+            message: 'An email has been sent to your email'
+            + 'address that explains how to reset your password'
           }, 200);
         }
       }
