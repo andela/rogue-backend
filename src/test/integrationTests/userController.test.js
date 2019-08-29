@@ -316,11 +316,12 @@ describe('Integration tests for the user controller', () => {
       expect(response.body.data.success).to.equal(true);
       expect(response.body.data).to.have.property('message');
       expect(response.body.data.message)
-        .to.equal('An email has been sent to you check your email address');
+        .to.equal('An email has been sent to your email'
+        + 'address that explains how to reset your password');
       sinon.assert.calledOnce(stubSendMethod);
       stubSendMethod.restore();
     });
-    it('should return client error when user details is missing', async () => {
+    it('should return a 401 for unauthorization', async () => {
       const userDetails = '';
       const response = await chai.request(app).post('/api/v1/reset_password')
         .send(userDetails).set({ 'x-access-token': token });
@@ -345,14 +346,14 @@ describe('Integration tests for the user controller', () => {
       const userDetails = {
         email: 'mbanelsonifeanyijohndoe@wemail.com',
       };
-      const response = await chai.request(app).post('/api/v1/resetpassword')
+      const response = await chai.request(app).post('/api/v1/reset_password')
         .send(userDetails).set('x-access-token', token);
       expect(response.status).to.deep.equal(400);
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
       expect(response.body).to.have.property('message');
       expect(response.body.message.message)
-        .to.equal('Email does not exist');
+        .to.equal('User Not Found');
     });
   });
 });
