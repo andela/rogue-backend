@@ -18,18 +18,6 @@ const authRoutes = app => {
     Authorization.checkToken,
     UserController.verifyEmail,
   );
-  app.patch(
-    '/api/v1/profile/:id',
-    Authorization.checkToken,
-    Authorization.confirmUser,
-    UserController.updateProfile
-  );
-  app.get(
-    '/api/v1/profile/:id',
-    Authorization.checkToken,
-    Authorization.confirmUser,
-    UserController.getProfile
-  );
 };
 
 export default authRoutes;

@@ -38,10 +38,7 @@ class UserController {
       const { email, password } = req.body;
       const userFound = await User.findOne({ where: { email } });
       if (!userFound) {
-        return HelperMethods.clientError(res, {
-          success: false,
-          message: 'Email or password does not exist',
-        }, 400);
+        return HelperMethods.clientError(res, 'Email or password does not exist', 400);
       }
       if (!userFound.dataValues.isVerified) {
         return HelperMethods.clientError(res, {
@@ -149,7 +146,7 @@ class UserController {
 
   /**
    *
-   * @description method that updates user's profile settings
+   * @description method that updates user's profile
    * @static
    * @param {object} req HTTP Request object
    * @param {object} res HTTP Response object
@@ -157,31 +154,26 @@ class UserController {
    * @memberof ProfileController
    */
   static async updateProfile(req, res) {
-    const userId = req.params.id;
-
-    const user = await User.findByPk(userId);
-    if (user) {
-      try {
-        await user.update(req.body);
-        const {
-          firstName, lastName, id, updatedAt
-        } = user;
+    try {
+      const userExist = await User.findByPk(req.body.id);
+      if (userExist && userExist.dataValues.id) {
+        if (userExist.dataValues.isVerified === false) {
+          return HelperMethods.clientError(
+            res, 'You cannot perform this action. You are not a verified user.', 400
+          );
+        }
+        await userExist.update(req.body, { returning: true, hooks: false });
         return HelperMethods
           .requestSuccessful(res, {
             success: true,
             message: 'profile updated successfully',
-            userDetails: {
-              id,
-              firstName,
-              lastName,
-              updatedAt
-            },
           }, 200);
-      } catch (error) {
-        return HelperMethods.clientError(res, error.message, 400);
       }
+      return HelperMethods.clientError(res, 'User does not exist', 404);
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
     }
-    return HelperMethods.serverError(res, 'User does not exist');
   }
 
   /**
@@ -194,18 +186,21 @@ class UserController {
    * @memberof ProfileController
    */
   static async getProfile(req, res) {
-    const userId = req.params.id;
-    const user = await User.findByPk(userId, {
-      attributes: { exclude: ['password'] }
-    });
-    if (user) {
-      return HelperMethods
-        .requestSuccessful(res, {
+    try {
+      const user = await User.findByPk(req.decoded.id, {
+        attributes: { exclude: ['password', 'isVerified'] }
+      });
+      if (user) {
+        return HelperMethods.requestSuccessful(res, {
           success: true,
           userDetails: user,
         }, 200);
+      }
+      return HelperMethods.clientError(res, 'User not found', 404);
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
     }
-    return HelperMethods.serverError(res, 'User does not exist');
   }
 
   /**
