@@ -21,6 +21,7 @@ const userRoutes = app => {
     Authorization.checkToken,
     UserController.getProfile
   );
+
   app.patch(
     '/api/v1/remember_details',
     Authorization.checkToken,
@@ -28,10 +29,12 @@ const userRoutes = app => {
     UserController.rememberUserDetails
   );
 
-  app.post('/api/v1/reset_password',
+  app.post(
+    '/api/v1/reset_password',
     Authorization.checkToken,
     Validate.validateUserEmail,
-    UserController.resetPassword);
+    UserController.resetPassword
+  );
 };
 
 export default userRoutes;

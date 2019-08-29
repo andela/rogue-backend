@@ -217,7 +217,7 @@ class Validate {
   static validateUserEmail(req, res, next) {
     req.body = trimValues(req.body);
     const { email } = req.body;
-    if (!email) return allFieldsRequired(res);
+    if (!email) return allFieldsRequired(res, 'email');
     next();
   }
 }
