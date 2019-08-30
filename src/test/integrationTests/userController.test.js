@@ -127,12 +127,12 @@ describe('Integration tests for the user controller', () => {
     });
   });
   before('Get user token', async () => {
-    const response = await chai.request(app).post('/api/v1/auth/login')
+    const loginResponse = await chai.request(app).post('/api/v1/auth/login')
       .send({
         email: 'demo2@demo.com',
         password: 'password',
       });
-    const { token, id } = response.body.data.userDetails;
+    const { token, id } = loginResponse.body.data.userDetails;
     describe('Test profile update endpoints', () => {
       const newData = {
         id,
@@ -202,6 +202,69 @@ describe('Integration tests for the user controller', () => {
           .set('x-access-token', 'this is an invalid token');
         expect(result.body.success).to.equal(false);
         expect(result.body.message).equal('User not authorized');
+      });
+    });
+    describe('Test for updating remember user details', () => {
+      it('should update rememberDetails to true', async () => {
+        const response = await chai
+          .request(app)
+          .patch('/api/v1/remember_details')
+          .set({ 'x-access-token': token })
+          .send({ rememberDetails: 'true' });
+        expect(response.status).to.deep.equal(200);
+        expect(response.body.data).to.have.property('message');
+        expect(response.body.data.message).to.equal('Update successful');
+        expect(response.body.data).to.have.property('success');
+        expect(response.body.data.success).to.equal(true);
+        expect(response.body.data.rememberDetails).to.equal(true);
+      });
+      it('should update rememberDetails to false', async () => {
+        const response = await chai
+          .request(app)
+          .patch('/api/v1/remember_details')
+          .set({ 'x-access-token': token })
+          .send({ rememberDetails: 'false' });
+        expect(response.status).to.deep.equal(200);
+        expect(response.body.data).to.have.property('message');
+        expect(response.body.data.message).to.equal('Update successful');
+        expect(response.body.data).to.have.property('success');
+        expect(response.body.data.success).to.equal(true);
+        expect(response.body.data.rememberDetails).to.equal(false);
+      });
+      it('should return client error 401 when token is missing', async () => {
+        const response = await chai
+          .request(app)
+          .patch('/api/v1/remember_details')
+          .send({ rememberDetails: true });
+        expect(response.status).to.deep.equal(401);
+        expect(response.body).to.have.property('success');
+        expect(response.body.success).to.equal(false);
+        expect(response.body).to.have.property('message');
+      });
+      it('should return client error when rememberDetails is missing', async () => {
+        const response = await chai
+          .request(app)
+          .patch('/api/v1/remember_details')
+          .set({ 'x-access-token': token });
+        expect(response.status).to.deep.equal(400);
+        expect(response.body).to.have.property('success');
+        expect(response.body.success).to.equal(false);
+        expect(response.body).to.have.property('message');
+        expect(response.body.message).to
+          .equal('"rememberDetails" field is required and must be a boolean');
+      });
+      it('should return client error when rememberDetails is invalid', async () => {
+        const response = await chai
+          .request(app)
+          .patch('/api/v1/remember_details')
+          .set({ 'x-access-token': token })
+          .send({ rememberDetails: 'some string' });
+        expect(response.status).to.deep.equal(400);
+        expect(response.body).to.have.property('success');
+        expect(response.body.success).to.equal(false);
+        expect(response.body).to.have.property('message');
+        expect(response.body.message).to
+          .equal('"rememberDetails" field is required and must be a boolean');
       });
     });
   });
