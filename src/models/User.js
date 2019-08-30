@@ -202,7 +202,10 @@ export default (sequelize, DataTypes) => {
   });
 
   User.associate = models => {
-    User.hasMany(models.Request);
+    User.hasMany(models.Request,{
+      foreignKey: 'userId',
+      as: 'users_request',
+    });
   };
 
   // eslint-disable-next-line func-names

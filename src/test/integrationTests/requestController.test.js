@@ -16,6 +16,7 @@ describe('Integration tests for the request controller', () => {
     reason: 'EXPEDITION',
   };
   let token;
+  let requestId;
   before('login with an existing user details from the seeded data', async () => {
     const response = await chai.request(app).post('/api/v1/auth/login')
       .send({
@@ -23,6 +24,17 @@ describe('Integration tests for the request controller', () => {
         password: 'password',
       });
     token = response.body.data.userDetails.token;
+    const bookTrip = await chai.request(app).post('/api/v1/request/book_trip')
+      .set('x-access-token', token)
+      .send({
+        origin: 'Lagos',
+        destination: 'Kaduna',
+        flightDate: '2019-06-21',
+        returnDate: '2019-08-21',
+        accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c'
+      });
+      console.log(bookTrip.body.data.tripCreated.id)
+    requestId = bookTrip.body.data.tripCreated.id;
   });
   describe('Authentication tests', () => {
     it('should return an error if the authentication token is missing', async () => {
@@ -93,5 +105,53 @@ describe('Integration tests for the request controller', () => {
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
     });
+
+    it('should allow a registered user to update a trip request', async () => {
+      const response = await chai.request(app).patch('/api/v1/request/')
+        .set('x-access-token', token).send({
+          requestId,
+          origin: 'eko',
+          destination: 'miami',
+          flightDate: '2019-02-01',
+          returnDate: '2019-06-04',
+          reason: 'VACATION'
+        });
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Trip udpdated successfully');
+      expect(response.body.data).to.have.property('updatedData');
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+
+    it('should not allow an update on incorrect date parameters', async () => {
+      const response = await chai.request(app).patch('/api/v1/request/')
+        .set('x-access-token', token).send({
+          requestId,
+          origin: 'eko',
+          destination: 'miami',
+          flightDate: '2019-02-01',
+          returnDate: '2017-06-04',
+          reason: 'VACATION'
+        });
+        
+      expect(response.status).to.equal(400);
+      expect(response.body.message).to.equal('Invalid Date Parameters');
+    });
+
+    it('should not allow an update on invalid request ID', async () => {
+      const response = await chai.request(app).patch('/api/v1/request/')
+        .set('x-access-token', token).send({
+          requestId: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+          origin: 'eko',
+          destination: 'miami',
+          flightDate: '2019-02-01',
+          returnDate: '2017-06-04',
+          reason: 'VACATION'
+        });
+      expect(response.status).to.equal(404);
+      expect(response.body.message).to.equal('Request not found');
+    });
   });
+
 });

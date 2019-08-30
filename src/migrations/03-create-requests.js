@@ -47,6 +47,11 @@ module.exports = {
     updatedAt: {
       allowNull: false,
       type: Sequelize.DATE
+    },
+    status: {
+     type: Sequelize.ENUM,
+      values: ['Pending', 'Approved', 'Rejected'],
+      defaultValue: 'Pending'
     }
   }),
 

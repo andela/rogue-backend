@@ -46,6 +46,11 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.ENUM,
       values: ['BUSINESS', 'VACATION', 'EXPEDITION'],
       defaultValue: 'BUSINESS'
+    },
+    status: {
+      type: DataTypes.ENUM,
+      values: ['pending', 'approved', 'rejected'],
+      defaultValue: 'pending'
     }
   });
 

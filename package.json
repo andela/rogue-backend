@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "test": "NODE_ENV=test yarn undo:migration && NODE_ENV=test yarn migrate && NODE_ENV=test yarn undo:seed && NODE_ENV=test yarn seed && NODE_ENV=test nyc --reporter=html --reporter=text mocha --exit --require @babel/register --require @babel/polyfill src/test/index.js",
+    "test": "set NODE_ENV=test&&yarn undo:migration &&yarn migrate && yarn undo:seed && yarn seed && nyc --reporter=html --reporter=text mocha --exit --require @babel/register --require @babel/polyfill src/test/index.js",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "dev-start": "set NODE_ENV=development && nodemon --exec babel-node src/index.js",
     "build": "babel src --out-dir build",
@@ -21,7 +21,6 @@
     "@sendgrid/mail": "^6.4.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
-    "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
@@ -44,7 +43,6 @@
     "request": "^2.87.0",
     "sequelize": "^5.14.0",
     "sequelize-cli": "^5.5.0",
-    "sinon": "^7.4.1",
     "swagger-ui-express": "^4.0.7",
     "underscore": "^1.9.1"
   },
@@ -52,7 +50,6 @@
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
-    "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
     "babel-eslint": "^10.0.2",

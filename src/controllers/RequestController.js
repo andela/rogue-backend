@@ -66,6 +66,45 @@ class RequestController {
       return HelperMethods.serverError(res);
     }
   }
+
+  static async editARequest(req, res) {
+    try {
+      const { id } = req.decoded;
+      const {
+        requestId, origin, destination, flightDate, returnDate, reason,
+      } = req.body;
+
+      const requestExist = await Request.findOne({
+        where: {
+          id: requestId,
+          userId: id,
+        }
+      });
+      if (requestExist) {
+        if (requestExist.dataValues.status === 'pending') {
+          if (requestExist.dataValues.returnDate) {
+            const convertFlightDate = new Date(flightDate).toISOString();
+            const convertReturnDate = new Date(returnDate).toISOString();
+            if (convertFlightDate > convertReturnDate) return HelperMethods.clientError(res, 'Invalid Date Parameters', 400);
+          }
+
+          const updatedRequest = await requestExist.update({
+            origin, destination, flightDate, returnDate, reason
+          });
+          return HelperMethods.requestSuccessful(res, {
+            success: true,
+            message: 'Trip udpdated successfully',
+            updatedData: updatedRequest.dataValues,
+          }, 200);
+        }
+        return HelperMethods.clientError(res, 'Forbidden', 403);
+      }
+      return HelperMethods.clientError(res, 'Request not found', 404);
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
 }
 
 export default RequestController;
