@@ -15,6 +15,18 @@ export default (sequelize, DataTypes) => {
         }
       }
     },
+    destination: {
+      type: DataTypes.STRING,
+    },
+    multiDestination: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+    flightDate: {
+      type: DataTypes.DATEONLY
+    },
+    multiflightDate: {
+      type: DataTypes.ARRAY(DataTypes.DATEONLY),
+    },
 
     returnDate: {
       type: DataTypes.DATEONLY
@@ -28,16 +40,12 @@ export default (sequelize, DataTypes) => {
       values: ['BUSINESS', 'VACATION', 'EXPEDITION'],
       defaultValue: 'BUSINESS'
     },
-    return_trip: {
+    returnTrip: {
       type: DataTypes.BOOLEAN,
     },
   });
 
   Request.associate = models => {
-    Request.hasMany(models.Destination, {
-      foreignKey: 'requestId',
-      as: 'request_id',
-    });
     Request.belongsTo(models.User, {
       foreignKey: 'userId',
       onDelete: 'CASCADE',

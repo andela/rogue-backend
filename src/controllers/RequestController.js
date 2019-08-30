@@ -1,7 +1,7 @@
 import models from '../models';
 import { HelperMethods } from '../utils';
 
-const { Request, Destination } = models;
+const { Request } = models;
 
 /**
  * Class representing the Request controller
@@ -21,14 +21,9 @@ class RequestController {
     try {
       const { id } = req.decoded;
       const { body } = req;
-      const {
-        // eslint-disable-next-line camelcase
-        origin, returnDate, return_trip, destination, flightDate
-      } = body;
       const { dataValues } = await Request.create({
-        origin, returnDate, return_trip, userId: id
+        ...body, userId: id
       });
-      await Destination.create({ destination, flightDate, requestId: dataValues.id });
       if (dataValues.id) {
         HelperMethods.requestSuccessful(res, {
           success: true,
@@ -75,7 +70,7 @@ class RequestController {
   }
 
   /**
-  * Book a Trip
+  * Book a Multicity Trip
   * Route: POST: /request/multicity
   * @param {object} req - HTTP Request object
   * @param {object} res - HTTP Response object
@@ -86,17 +81,12 @@ class RequestController {
     try {
       const { id } = req.decoded;
       const { body } = req;
-      const {
-        // eslint-disable-next-line camelcase
-        origin, returnDate, return_trip, destination, flightDate
-      } = body;
+      const { destination, flightDate } = body;
       const { dataValues } = await Request.create({
-        origin, returnDate, return_trip, userId: id
-      });
-      await Destination.create({
+        ...body,
+        userId: id,
         multiDestination: destination,
         multiflightDate: flightDate,
-        requestId: dataValues.id
       });
       if (dataValues.id) {
         HelperMethods.requestSuccessful(res, {

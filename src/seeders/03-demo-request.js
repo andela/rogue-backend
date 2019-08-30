@@ -6,7 +6,7 @@ module.exports = {
       returnDate: '2019-03-21',
       accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
       userId: '3821b930-ce48-4ac8-9ddf-ee3bf7980d08',
-      return_trip: true,
+      returnTrip: true,
       reason: 'VACATION',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -18,7 +18,7 @@ module.exports = {
       accommodationId: '9c41e609-7a30-4211-9d10-146a9c54ee74',
       userId: '96dc6b6d-7a77-4322-8756-e22f181d952c',
       reason: 'BUSINESS',
-      return_trip: true,
+      returnTrip: true,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -29,7 +29,7 @@ module.exports = {
       accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
       userId: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
       reason: 'EXPEDITION',
-      return_trip: true,
+      returnTrip: true,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -40,7 +40,7 @@ module.exports = {
       accommodationId: '35106536-deb5-4111-bd90-9ddfac5d348b',
       userId: '4712fc7e-ca41-457f-872e-4a64b79efbba',
       reason: 'BUSINESS',
-      return_trip: true,
+      returnTrip: true,
       createdAt: new Date(),
       updatedAt: new Date()
     },

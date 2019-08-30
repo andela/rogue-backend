@@ -1,3 +1,5 @@
+import { HelperMethods } from '../utils';
+
 /**
  * Trims input values from user
  * @param {object} objectWithValuesToTrim - request body to trim
@@ -130,13 +132,13 @@ class Validate {
   * @memberof Validate
   */
   static validateMulticity(req, res, next) {
-    const { origin, destination, flightDate } = req.body;
-    if (!origin) return allFieldsRequired(res);
+    const { destination, flightDate } = req.body;
     if (!destination || typeof (destination) !== 'object') {
-      return allFieldsRequired(res, 'destination as to be more than one');
+      return HelperMethods.clientError(res, 'destination as to be more than one');
     }
     if (!flightDate || typeof (destination) !== 'object') {
-      return allFieldsRequired(res, 'please input flightDate for all destinations');
+      return HelperMethods.clientError(res,
+        'please input flightDate for all destinations');
     }
     next();
   }

@@ -16,6 +16,18 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    destination: {
+      type: Sequelize.STRING
+    },
+    flightDate: {
+      type: Sequelize.STRING
+    },
+    multiDestination: {
+      type: Sequelize.ARRAY(Sequelize.STRING),
+    },
+    multiflightDate: {
+      type: Sequelize.ARRAY(Sequelize.DATEONLY),
+    },
     returnDate: {
       type: Sequelize.DATEONLY,
     },
@@ -31,9 +43,9 @@ module.exports = {
         key: 'id'
       }
     },
-    return_trip: {
+    returnTrip: {
       type: Sequelize.BOOLEAN,
-      allowNull: true,
+      defaultValue: false,
     },
     createdAt: {
       allowNull: false,
