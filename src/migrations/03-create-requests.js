@@ -40,6 +40,10 @@ module.exports = {
         key: 'id'
       }
     },
+    isApproved: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE

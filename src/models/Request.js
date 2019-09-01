@@ -46,7 +46,11 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.ENUM,
       values: ['BUSINESS', 'VACATION', 'EXPEDITION'],
       defaultValue: 'BUSINESS'
-    }
+    },
+    isApproved: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   });
 
   Request.associate = models => {

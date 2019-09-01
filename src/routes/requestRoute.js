@@ -12,6 +12,14 @@ const requestRoutes = app => {
     Authorization.checkToken,
     Validate.validateUserInput,
     RequestController.bookAReturnTrip);
+
+  app.get('/api/v1/requests', Authorization.checkToken,
+    Authorization.confirmRole,
+    RequestController.getPendingRequests);
+
+  app.patch('/api/v1/request', Authorization.checkToken,
+    Authorization.confirmRole,
+    RequestController.approveRequest);
 };
 
 export default requestRoutes;

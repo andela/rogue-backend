@@ -1,7 +1,7 @@
 import models from '../models';
 import { HelperMethods } from '../utils';
 
-const { Request } = models;
+const { Request, User } = models;
 
 /**
  * Class representing the Request controller
@@ -63,6 +63,91 @@ class RequestController {
         400);
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Get pending requests
+  * Route: GET: /request
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async getPendingRequests(req, res) {
+    try {
+      const pendingRequests = await Request.findAll({
+        where: { isApproved: false },
+        include: [{
+          model: User,
+          where: {
+            lineManager: req.body.id
+          },
+          attributes: {
+            exclude: [
+              'password',
+              'isVerified',
+              'profileImage',
+              'hasProfile',
+              'rememberDetails',
+              'createdAt',
+              'updatedAt',
+              'preferredCurrency',
+              'preferredLanguage',
+              'birthdate',
+              'id'
+            ]
+          }
+        }],
+      });
+      if (pendingRequests[0].id) {
+        return HelperMethods.requestSuccessful(res,
+          { success: true, pendingRequests, }, 200);
+      }
+      return HelperMethods.clientError(res, 'No pending requests', 404);
+    } catch (error) {
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Approve pending requests
+  * Route: PATCH: /request
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async approveRequest(req, res) {
+    try {
+      const pendingRequest = await Request.findOne({
+        where: {
+          id: req.body.id,
+          isApproved: false,
+        },
+        include: [{
+          model: User,
+          where: {
+            lineManager: req.body.managerId
+          },
+        }],
+      });
+      if (pendingRequest) {
+        const requestApproved = await pendingRequest.update({
+          isApproved: true || pendingRequest.isApproved,
+        }, { hooks: false });
+        if (requestApproved.dataValues.id) {
+          return HelperMethods
+            .requestSuccessful(res, {
+              success: true,
+              message: 'Request approved successfully',
+            }, 200);
+        }
+      }
+      return HelperMethods.clientError(res,
+        'No pending request found or request has been previously approved', 404);
+    } catch (error) {
       return HelperMethods.serverError(res);
     }
   }
