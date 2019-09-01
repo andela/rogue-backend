@@ -51,10 +51,25 @@ module.exports = {
       username: 'user4',
       password: await init(),
       isVerified: true,
-      role: 'Manager',
+      role: 'Requester',
+      lineManager: '3821b930-ce48-4ac8-9ddf-ee3bf7980d08',
       createdAt: new Date(),
       updatedAt: new Date()
-    }], {}),
+    },
+    {
+      id: 'fb4f94a2-ccb6-11e9-a32f-2a2ae2dbcce4',
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'demo5@demo.com',
+      username: 'user5',
+      password: await init(),
+      isVerified: true,
+      role: 'Requester',
+      lineManager: '3821b930-ce48-4ac8-9ddf-ee3bf7980d08',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+  ], {}),
 
   down: queryInterface => queryInterface.bulkDelete('Users', null, {})
 };

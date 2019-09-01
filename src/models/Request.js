@@ -35,6 +35,11 @@ export default (sequelize, DataTypes) => {
         }
       }
     },
+    status: {
+      type: DataTypes.ENUM,
+      values: ['open', 'approved', 'rejected'],
+      defaultValue: 'open'
+    },
     returnDate: {
       type: DataTypes.DATEONLY,
       allowNull: true

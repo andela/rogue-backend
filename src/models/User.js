@@ -185,7 +185,7 @@ export default (sequelize, DataTypes) => {
   {
     classMethods: {
       associate: models => {
-        User.hasMany(models.Requests, {
+        User.hasMany(models.Request, {
           foreignKey: 'userId',
           as: 'users_request',
         });
@@ -200,10 +200,6 @@ export default (sequelize, DataTypes) => {
   User.beforeUpdate(async user => {
     user.password = await CryptData.encryptData(user.password);
   });
-
-  User.associate = models => {
-    User.hasMany(models.Request);
-  };
 
   // eslint-disable-next-line func-names
   User.prototype.verifyPassword = async function (clearPassword) {
