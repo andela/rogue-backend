@@ -1,7 +1,7 @@
 import models from '../models';
 import { HelperMethods } from '../utils';
 
-const { Request } = models;
+const { Request, User } = models;
 
 /**
  * Class representing the Request controller
@@ -81,7 +81,7 @@ class RequestController {
         }
       });
       if (requestExist) {
-        if (requestExist.dataValues.status === 'pending') {
+        if (requestExist.dataValues.status === 'open') {
           if (requestExist.dataValues.returnDate) {
             const convertFlightDate = new Date(body.flightDate).toISOString();
             const convertReturnDate = new Date(body.returnDate).toISOString();
@@ -102,6 +102,84 @@ class RequestController {
       return HelperMethods.clientError(res, 'Request not found', 404);
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+    }
+  }
+
+  /**
+  * Get pending requests
+  * Route: GET: /request
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async getPendingRequests(req, res) {
+    try {
+      const pendingRequests = await Request.findAll({
+        where: { status: 'open' },
+        include: [{
+          model: User,
+          where: {
+            lineManager: req.decoded.id
+          },
+          attributes: {
+            exclude: [
+              'password',
+              'isVerified',
+              'profileImage',
+              'hasProfile',
+              'rememberDetails',
+              'createdAt',
+              'updatedAt',
+              'preferredCurrency',
+              'preferredLanguage',
+              'birthdate',
+              'id'
+            ]
+          }
+        }],
+      });
+      if (pendingRequests.length) {
+        return HelperMethods.requestSuccessful(res,
+          { success: true, pendingRequests, }, 200);
+      }
+      return HelperMethods.clientError(res, 'There are no pending requests', 404);
+    } catch (error) {
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Approve pending requests
+  * Route: PATCH: /request
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async approveRequest(req, res) {
+    try {
+      const pendingRequest = await Request.findOne({
+        where: {
+          id: req.body.id,
+          status: 'open',
+        },
+      });
+      if (pendingRequest) {
+        const requestApproved = await pendingRequest.update({
+          status: 'approved' || pendingRequest.status,
+        }, { hooks: false });
+        if (requestApproved.dataValues.id) {
+          return HelperMethods
+            .requestSuccessful(res, {
+              success: true,
+              message: 'Request approved successfully',
+            }, 200);
+        }
+      }
+      return HelperMethods.clientError(res,
+        'No pending request found or request has been previously approved', 404);
+    } catch (error) {
       return HelperMethods.serverError(res);
     }
   }

@@ -47,6 +47,24 @@ class Authorization {
     }
     next();
   }
+
+  /**
+   *
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request
+   * to the next handler
+   * @returns {callback} next - The callback that passes the request
+   * to the next handler
+   * @returns {object} res - Response object containing an error due
+   * to unauthorized user
+   */
+  static async confirmRole(req, res, next) {
+    if (req.decoded.role !== 'Manager') {
+      return HelperMethods.clientError(res, 'Only managers can perform this action', 401);
+    }
+    next();
+  }
 }
 
 export default Authorization;

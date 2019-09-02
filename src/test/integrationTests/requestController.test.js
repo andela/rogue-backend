@@ -17,6 +17,7 @@ describe('Integration tests for the request controller', () => {
   };
   let token;
   let requestId;
+
   before('login with an existing user details from the seeded data', async () => {
     const response = await chai.request(app).post('/api/v1/auth/login')
       .send({
@@ -86,6 +87,7 @@ describe('Integration tests for the request controller', () => {
   describe('Validation tests for the book a trip features', () => {
     it('should not book a one way trip when a required detail is missing', async () => {
       delete tripDetails.flightDate;
+
       const response = await chai.request(app).post('/api/v1/request/book_trip')
         .set('x-access-token', token).send(tripDetails);
       expect(response.status).to.equal(400);
@@ -119,15 +121,15 @@ describe('Integration tests for the request controller', () => {
       expect(response.body.data).to.have.property('message');
       expect(response.body.data.message).to.equal('Trip udpdated successfully');
       expect(response.body.data).to.have.property('updatedData');
-      expect(response.body.data.updateData.origin).to.equal('eko');
+      expect(response.body.data.updatedData.origin).to.equal('eko');
       expect(response.body.data.updatedData.destination).to.equal('miami');
-      expect(response.body.data.updateData.reason).to.equal('VACATION');
+      expect(response.body.data.updatedData.reason).to.equal('VACATION');
       expect(response.body.data).to.have.property('success');
       expect(response.body.data.success).to.equal(true);
     });
 
     it('should not allow an update on incorrect date parameters', async () => {
-      const response = await chai.request(app).patch('/api/v1/request/')
+      const response = await chai.request(app).patch('/api/v1/request/edit')
         .set('x-access-token', token).send({
           requestId,
           origin: 'eko',
@@ -142,7 +144,7 @@ describe('Integration tests for the request controller', () => {
     });
 
     it('should not allow an update on invalid request ID', async () => {
-      const response = await chai.request(app).patch('/api/v1/request/')
+      const response = await chai.request(app).patch('/api/v1/request/edit')
         .set('x-access-token', token).send({
           requestId: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
           origin: 'eko',
@@ -156,4 +158,115 @@ describe('Integration tests for the request controller', () => {
     });
   });
 
+  let managerToken;
+  let nonLineManagerToken;
+
+  before('Login to get a managers token', async () => {
+    const response = await chai.request(app).post('/api/v1/auth/login')
+      .send({
+        email: 'demo2@demo.com',
+        password: 'password',
+      });
+    managerToken = response.body.data.userDetails.token;
+
+    // non line Manager is a Manager but is not the Line manager to the Requester
+    const nonLineManager = await chai.request(app).post('/api/v1/auth/login')
+      .send({
+        email: 'demo3@demo.com',
+        password: 'password',
+      });
+    nonLineManagerToken = nonLineManager.body.data.userDetails.token;
+  });
+
+  describe('Endpoint for availing pending requests', () => {
+    it('should let Managers view all pending requests created by '
+    + ' their direct reports', async () => {
+      const requestResponse = await chai.request(app)
+        .get('/api/v1/requests')
+        .set('x-access-token', managerToken);
+      expect(requestResponse.body.data.success).to.equal(true);
+      expect(requestResponse.body.data.pendingRequests).to.be.an('array');
+    });
+
+    it('should return error when non-Managers attempt '
+    + 'to view pending requests', async () => {
+      const requestResponse = await chai.request(app)
+        .get('/api/v1/requests')
+        .set('x-access-token', token);
+      expect(requestResponse.body.success).to.equal(false);
+      expect(requestResponse.body.message)
+        .to.equal('Only managers can perform this action');
+    });
+
+    it('should return error when route is accessed without a token', async () => {
+      const requestResponse = await chai.request(app)
+        .get('/api/v1/requests')
+        .set('x-access-token', 'invalid token');
+      expect(requestResponse.body.success).to.equal(false);
+      expect(requestResponse.body.message)
+        .to.equal('User not authorized');
+    });
+
+    it('should return error when a Manager who is not the line Manager'
+    + 'attempts to get pending requests', async () => {
+      const requestResponse = await chai.request(app)
+        .get('/api/v1/requests')
+        .set('x-access-token', nonLineManagerToken);
+      expect(requestResponse.body.success).to.equal(false);
+      expect(requestResponse.body.message)
+        .to.equal('There are no pending requests');
+    });
+  });
+
+  describe('Endpoint for approving pending requests', () => {
+    it('should let a Manager approve a pending request created by'
+    + ' his direct report', async () => {
+      const requestResponse = await chai.request(app)
+        .patch('/api/v1/request/approve')
+        .set('x-access-token', managerToken)
+        .send({
+          id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        });
+      expect(requestResponse.body.data.success).to.equal(true);
+      expect(requestResponse.body.data.message).to.equal('Request approved successfully');
+    });
+
+    it('should return error when non-Managers attempt '
+    + 'to approve pending requests', async () => {
+      const requestResponse = await chai.request(app)
+        .patch('/api/v1/request/approve')
+        .set('x-access-token', token)
+        .send({
+          id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        });
+      expect(requestResponse.body.success).to.equal(false);
+      expect(requestResponse.body.message)
+        .to.equal('Only managers can perform this action');
+    });
+
+    it('should return error when route is accessed without a token', async () => {
+      const requestResponse = await chai.request(app)
+        .patch('/api/v1/request/approve')
+        .set('x-access-token', 'invalid token')
+        .send({
+          id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        });
+      expect(requestResponse.body.success).to.equal(false);
+      expect(requestResponse.body.message)
+        .to.equal('User not authorized');
+    });
+
+    it('should return error when a Manager who is not the line Manager'
+    + 'attempts to approve pending requests', async () => {
+      const requestResponse = await chai.request(app)
+        .patch('/api/v1/request/approve')
+        .set('x-access-token', nonLineManagerToken)
+        .send({
+          id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        });
+      expect(requestResponse.body.success).to.equal(false);
+      expect(requestResponse.body.message)
+        .to.equal('No pending request found or request has been previously approved');
+    });
+  });
 });

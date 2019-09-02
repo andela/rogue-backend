@@ -9,7 +9,7 @@ module.exports = {
       type: Sequelize.UUID,
       references: {
         model: 'Users',
-        key: 'id'
+        key: 'id',
       }
     },
     origin: {
@@ -39,6 +39,11 @@ module.exports = {
         model: 'Accommodations',
         key: 'id'
       }
+    },
+    status: {
+      type: Sequelize.ENUM,
+      values: ['open', 'approved', 'rejected'],
+      defaultValue: 'open'
     },
     createdAt: {
       allowNull: false,

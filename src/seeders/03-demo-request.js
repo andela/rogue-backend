@@ -9,7 +9,7 @@ module.exports = {
       accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
       userId: '3821b930-ce48-4ac8-9ddf-ee3bf7980d08',
       reason: 'VACATION',
-      status: 'pending',
+      status: 'open',
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -35,7 +35,7 @@ module.exports = {
       accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
       userId: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
       reason: 'EXPEDITION',
-      status: 'rejected',
+      status: 'open',
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -48,7 +48,7 @@ module.exports = {
       accommodationId: '35106536-deb5-4111-bd90-9ddfac5d348b',
       userId: '4712fc7e-ca41-457f-872e-4a64b79efbba',
       reason: 'BUSINESS',
-      status: 'pending',
+      status: 'open',
       createdAt: new Date(),
       updatedAt: new Date()
     },
