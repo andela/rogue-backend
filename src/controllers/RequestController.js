@@ -67,29 +67,29 @@ class RequestController {
     }
   }
 
-  static async editARequest(req, res) {
+  static async editRequest(req, res) {
     try {
       const { id } = req.decoded;
       const {
-        requestId, origin, destination, flightDate, returnDate, reason,
-      } = req.body;
+        body
+      } = req;
 
       const requestExist = await Request.findOne({
         where: {
-          id: requestId,
+          id: body.requestId,
           userId: id,
         }
       });
       if (requestExist) {
         if (requestExist.dataValues.status === 'pending') {
           if (requestExist.dataValues.returnDate) {
-            const convertFlightDate = new Date(flightDate).toISOString();
-            const convertReturnDate = new Date(returnDate).toISOString();
-            if (convertFlightDate > convertReturnDate) return HelperMethods.clientError(res, 'Invalid Date Parameters', 400);
+            const convertFlightDate = new Date(body.flightDate).toISOString();
+            const convertReturnDate = new Date(body.returnDate).toISOString();
+            if (convertFlightDate > convertReturnDate) return HelperMethods.clientError(res, 'The flight date cannot be after the return date', 400);
           }
 
           const updatedRequest = await requestExist.update({
-            origin, destination, flightDate, returnDate, reason
+            ...body,
           });
           return HelperMethods.requestSuccessful(res, {
             success: true,

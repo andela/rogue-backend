@@ -33,7 +33,6 @@ describe('Integration tests for the request controller', () => {
         returnDate: '2019-08-21',
         accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c'
       });
-      console.log(bookTrip.body.data.tripCreated.id)
     requestId = bookTrip.body.data.tripCreated.id;
   });
   describe('Authentication tests', () => {
@@ -107,7 +106,7 @@ describe('Integration tests for the request controller', () => {
     });
 
     it('should allow a registered user to update a trip request', async () => {
-      const response = await chai.request(app).patch('/api/v1/request/')
+      const response = await chai.request(app).patch('/api/v1/request/edit')
         .set('x-access-token', token).send({
           requestId,
           origin: 'eko',
@@ -120,6 +119,9 @@ describe('Integration tests for the request controller', () => {
       expect(response.body.data).to.have.property('message');
       expect(response.body.data.message).to.equal('Trip udpdated successfully');
       expect(response.body.data).to.have.property('updatedData');
+      expect(response.body.data.updateData.origin).to.equal('eko');
+      expect(response.body.data.updatedData.destination).to.equal('miami');
+      expect(response.body.data.updateData.reason).to.equal('VACATION');
       expect(response.body.data).to.have.property('success');
       expect(response.body.data.success).to.equal(true);
     });
@@ -136,7 +138,7 @@ describe('Integration tests for the request controller', () => {
         });
         
       expect(response.status).to.equal(400);
-      expect(response.body.message).to.equal('Invalid Date Parameters');
+      expect(response.body.message).to.equal('The flight date cannot be after the return date');
     });
 
     it('should not allow an update on invalid request ID', async () => {

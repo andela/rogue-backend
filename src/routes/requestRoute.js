@@ -12,9 +12,9 @@ const requestRoutes = app => {
     Authorization.checkToken,
     Validate.validateUserInput,
     RequestController.bookAReturnTrip);
-  app.patch('/api/v1/request',
+  app.patch('/api/v1/request/edit',
     Authorization.checkToken,
-    RequestController.editARequest,
+    RequestController.editRequest,
   );
 };
 
