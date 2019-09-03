@@ -35,6 +35,13 @@ const requestRoutes = app => {
     Authorization.checkToken,
     RequestController.editRequest
   );
+
+  app.patch(
+    '/api/v1/request/reject',
+    Authorization.checkToken,
+    Authorization.confirmRole,
+    RequestController.rejectRequest
+  );
 };
 
 export default requestRoutes;

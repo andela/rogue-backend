@@ -21,7 +21,7 @@ class RequestController {
     try {
       const { id } = req.decoded;
       const { body } = req;
-      const { dataValues } = await Request.create({ ...body, userId: id });
+      const { dataValues } = await Request.create({ ...body, userId: id, });
       if (dataValues.id) {
         HelperMethods.requestSuccessful(res, {
           success: true,
@@ -67,6 +67,14 @@ class RequestController {
     }
   }
 
+  /**
+  * Edit a request
+  * Route: PATCH: /request/edit
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
   static async editRequest(req, res) {
     try {
       const { id } = req.decoded;
@@ -80,17 +88,22 @@ class RequestController {
           userId: id,
         }
       });
+
       if (requestExist) {
         if (requestExist.dataValues.status === 'open') {
           if (requestExist.dataValues.returnDate) {
-            const convertFlightDate = new Date(body.flightDate).toISOString();
-            const convertReturnDate = new Date(body.returnDate).toISOString();
-            if (convertFlightDate > convertReturnDate) return HelperMethods.clientError(res, 'The flight date cannot be after the return date', 400);
+            const convertFlightDate = body.flightDate
+              ? new Date(body.flightDate).toISOString() : requestExist.flightDate;
+            const convertReturnDate = body.returnDate
+              ? new Date(body.returnDate).toISOString() : requestExist.returnDate;
+            if (convertFlightDate > convertReturnDate) {
+              return HelperMethods.clientError(
+                res, 'The flight date cannot be after the return date', 400
+              );
+            }
           }
 
-          const updatedRequest = await requestExist.update({
-            ...body,
-          });
+          const updatedRequest = await requestExist.update({ ...body, });
           return HelperMethods.requestSuccessful(res, {
             success: true,
             message: 'Trip udpdated successfully',
@@ -99,7 +112,9 @@ class RequestController {
         }
         return HelperMethods.clientError(res, 'Forbidden', 403);
       }
-      return HelperMethods.clientError(res, 'Request not found', 404);
+      return HelperMethods.clientError(
+        res, 'The request you are trying to edit does not exist', 404
+      );
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
     }
@@ -180,6 +195,36 @@ class RequestController {
       return HelperMethods.clientError(res,
         'No pending request found or request has been previously approved', 404);
     } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Reject a Request
+  * Route: PATCH: /request/reject
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async rejectRequest(req, res) {
+    try {
+      const requestExist = await Request.findByPk(req.body.id);
+      if (requestExist.dataValues.status === 'open' && requestExist.dataValues.id) {
+        await requestExist.update({ status: 'rejected' });
+        return HelperMethods
+          .requestSuccessful(res, {
+            success: true,
+            message: 'You have successfully rejected this request',
+          }, 200);
+      }
+      return HelperMethods.clientError(
+        res, 'This request has already been rejected',
+        400
+      );
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
     }
   }

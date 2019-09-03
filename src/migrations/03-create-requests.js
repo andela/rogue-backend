@@ -53,11 +53,6 @@ module.exports = {
       allowNull: false,
       type: Sequelize.DATE
     },
-    status: {
-      type: Sequelize.ENUM,
-      values: ['open', 'approved', 'rejected'],
-      defaultValue: 'open'
-    }
   }),
 
   down: queryInterface => queryInterface.dropTable('Requests')
