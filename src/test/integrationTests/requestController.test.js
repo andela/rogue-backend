@@ -17,6 +17,7 @@ describe('Integration tests for the request controller', () => {
     status: 'open'
   };
   let token;
+  let requestId;
 
   before('login with an existing user details from the seeded data', async () => {
     const response = await chai.request(app).post('/api/v1/auth/login')
@@ -25,6 +26,16 @@ describe('Integration tests for the request controller', () => {
         password: 'password',
       });
     token = response.body.data.userDetails.token;
+    const bookTrip = await chai.request(app).post('/api/v1/request/book_trip')
+      .set('x-access-token', token)
+      .send({
+        origin: 'Lagos',
+        destination: 'Kaduna',
+        flightDate: '2019-06-21',
+        returnDate: '2019-08-21',
+        accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c'
+      });
+    requestId = bookTrip.body.data.tripCreated.id;
   });
   describe('Authentication tests', () => {
     it('should return an error if the authentication token is missing', async () => {
@@ -96,6 +107,57 @@ describe('Integration tests for the request controller', () => {
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
     });
+
+    it('should allow a registered user to update a trip request', async () => {
+      const response = await chai.request(app).patch('/api/v1/request/edit')
+        .set('x-access-token', token).send({
+          requestId,
+          origin: 'eko',
+          destination: 'miami',
+          flightDate: '2019-02-01',
+          returnDate: '2019-06-04',
+          reason: 'VACATION'
+        });
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Trip udpdated successfully');
+      expect(response.body.data).to.have.property('updatedData');
+      expect(response.body.data.updatedData.origin).to.equal('eko');
+      expect(response.body.data.updatedData.destination).to.equal('miami');
+      expect(response.body.data.updatedData.reason).to.equal('VACATION');
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+
+    it('should not allow an update on incorrect date parameters', async () => {
+      const response = await chai.request(app).patch('/api/v1/request/edit')
+        .set('x-access-token', token).send({
+          requestId,
+          origin: 'eko',
+          destination: 'miami',
+          flightDate: '2019-02-01',
+          returnDate: '2017-06-04',
+          reason: 'VACATION'
+        });
+      expect(response.status).to.equal(400);
+      expect(response.body.message).to
+        .equal('The flight date cannot be after the return date');
+    });
+
+    it('should not allow an update on invalid request ID', async () => {
+      const response = await chai.request(app).patch('/api/v1/request/edit')
+        .set('x-access-token', token).send({
+          requestId: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+          origin: 'eko',
+          destination: 'miami',
+          flightDate: '2019-02-01',
+          returnDate: '2017-06-04',
+          reason: 'VACATION'
+        });
+      expect(response.status).to.equal(404);
+      expect(response.body.message).to
+        .equal('The request you are trying to edit does not exist');
+    });
   });
 
   let managerToken;
@@ -162,7 +224,7 @@ describe('Integration tests for the request controller', () => {
     it('should let a Manager approve a pending request created by'
     + ' his direct report', async () => {
       const requestResponse = await chai.request(app)
-        .patch('/api/v1/request')
+        .patch('/api/v1/request/approve')
         .set('x-access-token', managerToken)
         .send({
           id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
@@ -174,7 +236,7 @@ describe('Integration tests for the request controller', () => {
     it('should return error when non-Managers attempt '
     + 'to approve pending requests', async () => {
       const requestResponse = await chai.request(app)
-        .patch('/api/v1/request')
+        .patch('/api/v1/request/approve')
         .set('x-access-token', nonLineManagerToken)
         .send({
           id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
@@ -186,7 +248,7 @@ describe('Integration tests for the request controller', () => {
 
     it('should return error when route is accessed without a token', async () => {
       const requestResponse = await chai.request(app)
-        .patch('/api/v1/request')
+        .patch('/api/v1/request/approve')
         .set('x-access-token', 'invalid token')
         .send({
           id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
@@ -199,8 +261,8 @@ describe('Integration tests for the request controller', () => {
     it('should return error when a Manager who is not the line Manager'
     + 'attempts to approve pending requests', async () => {
       const requestResponse = await chai.request(app)
-        .patch('/api/v1/request')
-        .set('x-access-token', managerToken)
+        .patch('/api/v1/request/approve')
+        .set('x-access-token', token)
         .send({
           id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
         });

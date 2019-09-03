@@ -25,10 +25,15 @@ const requestRoutes = app => {
   );
 
   app.patch(
-    '/api/v1/request',
+    '/api/v1/request/approve',
     Authorization.checkToken,
     Authorization.confirmRole,
     RequestController.approveRequest
+  );
+  app.patch(
+    '/api/v1/request/edit',
+    Authorization.checkToken,
+    RequestController.editRequest
   );
 
   app.patch(

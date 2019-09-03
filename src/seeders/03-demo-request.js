@@ -22,7 +22,7 @@ module.exports = {
       accommodationId: '9c41e609-7a30-4211-9d10-146a9c54ee74',
       userId: '96dc6b6d-7a77-4322-8756-e22f181d952c',
       reason: 'BUSINESS',
-      status: 'open',
+      status: 'approved',
       createdAt: new Date(),
       updatedAt: new Date()
     },
