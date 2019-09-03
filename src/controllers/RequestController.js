@@ -21,9 +21,7 @@ class RequestController {
     try {
       const { id } = req.decoded;
       const { body } = req;
-      const { dataValues } = await Request.create({
-        ...body, userId: id
-      });
+      const { dataValues } = await Request.create({ ...body, userId: id, });
       if (dataValues.id) {
         HelperMethods.requestSuccessful(res, {
           success: true,
@@ -66,6 +64,59 @@ class RequestController {
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Edit a request
+  * Route: PATCH: /request/edit
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async editRequest(req, res) {
+    try {
+      const { id } = req.decoded;
+      const {
+        body
+      } = req;
+
+      const requestExist = await Request.findOne({
+        where: {
+          id: body.requestId,
+          userId: id,
+        }
+      });
+
+      if (requestExist) {
+        if (requestExist.dataValues.status === 'open') {
+          if (requestExist.dataValues.returnDate) {
+            const convertFlightDate = body.flightDate
+              ? new Date(body.flightDate).toISOString() : requestExist.flightDate;
+            const convertReturnDate = body.returnDate
+              ? new Date(body.returnDate).toISOString() : requestExist.returnDate;
+            if (convertFlightDate > convertReturnDate) {
+              return HelperMethods.clientError(
+                res, 'The flight date cannot be after the return date', 400
+              );
+            }
+          }
+
+          const updatedRequest = await requestExist.update({ ...body, });
+          return HelperMethods.requestSuccessful(res, {
+            success: true,
+            message: 'Trip udpdated successfully',
+            updatedData: updatedRequest.dataValues,
+          }, 200);
+        }
+        return HelperMethods.clientError(res, 'Forbidden', 403);
+      }
+      return HelperMethods.clientError(
+        res, 'The request you are trying to edit does not exist', 404
+      );
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
     }
   }
 
