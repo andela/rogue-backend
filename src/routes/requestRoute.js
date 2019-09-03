@@ -42,6 +42,13 @@ const requestRoutes = app => {
     Authorization.confirmRole,
     RequestController.rejectRequest
   );
+
+  app.post(
+    '/api/v1/request/multicity',
+    Authorization.checkToken,
+    Validate.validateMulticity,
+    RequestController.bookMulticity
+  );
 };
 
 export default requestRoutes;

@@ -123,6 +123,8 @@ class RequestController {
   /**
   * Get pending requests
   * Route: GET: /request
+  * Book a Trip
+  * Route: POST: /request/multicity
   * @param {object} req - HTTP Request object
   * @param {object} res - HTTP Response object
   * @return {res} res - HTTP Response object
@@ -223,6 +225,40 @@ class RequestController {
         res, 'This request has already been rejected',
         400
       );
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Book a Multicity Trip
+  * Route: POST: /request/multicity
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+ */
+  static async bookMulticity(req, res) {
+    try {
+      const { id } = req.decoded;
+      const { body } = req;
+      const { destination, flightDate, origin } = body;
+      const { dataValues } = await Request.create({
+        origin,
+        userId: id,
+        returnTrip: true,
+        multiDestination: [...destination],
+        multiflightDate: [...flightDate],
+      });
+      if (dataValues.id) {
+        return HelperMethods.requestSuccessful(res, {
+          success: true,
+          message: 'Trip booked successfully',
+          tripBooked: dataValues,
+        }, 201);
+      }
+      return HelperMethods.serverError(res);
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);

@@ -17,33 +17,26 @@ export default (sequelize, DataTypes) => {
     },
     destination: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          args: true,
-          msg: 'Destination is required.'
-        }
-      }
     },
     flightDate: {
       type: DataTypes.DATEONLY,
-      allowNull: false,
-      validate: {
-        notNull: {
-          args: true,
-          msg: 'FlightDate is required.'
-        }
-      }
+    },
+    multiDestination: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+    multiflightDate: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
     },
     status: {
       type: DataTypes.ENUM,
       values: ['open', 'approved', 'rejected'],
       defaultValue: 'open'
     },
+
     returnDate: {
-      type: DataTypes.DATEONLY,
-      allowNull: true
+      type: DataTypes.DATEONLY
     },
+
     accommodationId: {
       type: DataTypes.INTEGER
     },
@@ -51,7 +44,10 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.ENUM,
       values: ['BUSINESS', 'VACATION', 'EXPEDITION'],
       defaultValue: 'BUSINESS'
-    }
+    },
+    returnTrip: {
+      type: DataTypes.BOOLEAN,
+    },
   });
 
   Request.associate = models => {
