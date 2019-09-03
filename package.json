@@ -21,7 +21,6 @@
     "@sendgrid/mail": "^6.4.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
-    "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
@@ -44,7 +43,6 @@
     "request": "^2.87.0",
     "sequelize": "^5.14.0",
     "sequelize-cli": "^5.5.0",
-    "sinon": "^7.4.1",
     "swagger-ui-express": "^4.0.7",
     "underscore": "^1.9.1"
   },
@@ -52,7 +50,6 @@
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
-    "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.5.5",
     "@babel/register": "^7.5.5",
     "babel-eslint": "^10.0.2",

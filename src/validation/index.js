@@ -132,13 +132,16 @@ class Validate {
   * @memberof Validate
   */
   static validateMulticity(req, res, next) {
+    const emptyField = checkForEmptyFields(req.body);
+    if (emptyField) return allFieldsRequired(res, emptyField);
+    if (!req.body.origin) return allFieldsRequired(res, 'origin');
     const { destination, flightDate } = req.body;
-    if (!destination || typeof (destination) !== 'object') {
-      return HelperMethods.clientError(res, 'destination as to be more than one');
+    if (!destination || !Array.isArray(destination) || !(destination.length > 1)) {
+      return HelperMethods.clientError(res, 'Destination as to be more than one');
     }
-    if (!flightDate || typeof (destination) !== 'object') {
+    if (!flightDate || !Array.isArray(flightDate) || !(flightDate.length > 1)) {
       return HelperMethods.clientError(res,
-        'please input flightDate for all destinations');
+        'Please, input flightDate for all destinations');
     }
     next();
   }

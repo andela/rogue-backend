@@ -9,7 +9,7 @@ module.exports = {
       type: Sequelize.UUID,
       references: {
         model: 'Users',
-        key: 'id'
+        key: 'id',
       }
     },
     origin: {
@@ -26,7 +26,7 @@ module.exports = {
       type: Sequelize.ARRAY(Sequelize.STRING),
     },
     multiflightDate: {
-      type: Sequelize.ARRAY(Sequelize.DATEONLY),
+      type: Sequelize.ARRAY(Sequelize.STRING),
     },
     returnDate: {
       type: Sequelize.DATEONLY,
@@ -47,6 +47,11 @@ module.exports = {
       type: Sequelize.BOOLEAN,
       defaultValue: false,
     },
+    status: {
+      type: Sequelize.ENUM,
+      values: ['open', 'approved', 'rejected'],
+      defaultValue: 'open'
+    },
     createdAt: {
       allowNull: false,
       type: Sequelize.DATE
@@ -54,7 +59,7 @@ module.exports = {
     updatedAt: {
       allowNull: false,
       type: Sequelize.DATE
-    }
+    },
   }),
 
   down: queryInterface => queryInterface.dropTable('Requests')

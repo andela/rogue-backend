@@ -41,6 +41,10 @@ describe('Integration tests for the user controller', () => {
     });
   });
   describe('Test to pre-register a user', () => {
+    let stubCreateTokenAndSendEmail;
+    afterEach(() => {
+      if (stubCreateTokenAndSendEmail.restore) stubCreateTokenAndSendEmail.restore();
+    });
     it('should create a user and send email for verification', async () => {
       const userDetails = {
         username: 'JthnDmkloes',
@@ -49,7 +53,7 @@ describe('Integration tests for the user controller', () => {
         firstName: 'John',
         lastName: 'Doe',
       };
-      const stubCreateTokenAndSendEmail = sinon.stub(
+      stubCreateTokenAndSendEmail = sinon.stub(
         UserController, 'createTokenAndSendEmail'
       ).returns(true);
       const response = await chai.request(app).post('/api/v1/auth/signup')
@@ -74,7 +78,7 @@ describe('Integration tests for the user controller', () => {
         firstName: 'Johns',
         lastName: 'Does',
       };
-      const stubCreateTokenAndSendEmail = sinon.stub(
+      stubCreateTokenAndSendEmail = sinon.stub(
         UserController, 'createTokenAndSendEmail'
       ).returns(false);
       const response = await chai.request(app).post('/api/v1/auth/signup')
@@ -87,7 +91,6 @@ describe('Integration tests for the user controller', () => {
       );
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.be.equal(false);
-      stubCreateTokenAndSendEmail.restore();
     });
     it('should return an error when any user details is not given', async () => {
       const userDetails = {

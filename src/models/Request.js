@@ -18,14 +18,19 @@ export default (sequelize, DataTypes) => {
     destination: {
       type: DataTypes.STRING,
     },
+    flightDate: {
+      type: DataTypes.DATEONLY,
+    },
     multiDestination: {
       type: DataTypes.ARRAY(DataTypes.STRING),
     },
-    flightDate: {
-      type: DataTypes.DATEONLY
-    },
     multiflightDate: {
-      type: DataTypes.ARRAY(DataTypes.DATEONLY),
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+    status: {
+      type: DataTypes.ENUM,
+      values: ['open', 'approved', 'rejected'],
+      defaultValue: 'open'
     },
 
     returnDate: {
