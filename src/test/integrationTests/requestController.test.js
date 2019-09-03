@@ -14,13 +14,14 @@ describe('Integration tests for the request controller', () => {
     accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
     userId: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
     reason: 'EXPEDITION',
+    status: 'open'
   };
   let token;
 
   before('login with an existing user details from the seeded data', async () => {
     const response = await chai.request(app).post('/api/v1/auth/login')
       .send({
-        email: 'demo1@demo.com',
+        email: 'demo3@demo.com',
         password: 'password',
       });
     token = response.body.data.userDetails.token;
@@ -111,7 +112,7 @@ describe('Integration tests for the request controller', () => {
     // non line Manager is a Manager but is not the Line manager to the Requester
     const nonLineManager = await chai.request(app).post('/api/v1/auth/login')
       .send({
-        email: 'demo3@demo.com',
+        email: 'demo4@demo.com',
         password: 'password',
       });
     nonLineManagerToken = nonLineManager.body.data.userDetails.token;
@@ -131,7 +132,7 @@ describe('Integration tests for the request controller', () => {
     + 'to view pending requests', async () => {
       const requestResponse = await chai.request(app)
         .get('/api/v1/requests')
-        .set('x-access-token', token);
+        .set('x-access-token', nonLineManagerToken);
       expect(requestResponse.body.success).to.equal(false);
       expect(requestResponse.body.message)
         .to.equal('Only managers can perform this action');
@@ -150,7 +151,7 @@ describe('Integration tests for the request controller', () => {
     + 'attempts to get pending requests', async () => {
       const requestResponse = await chai.request(app)
         .get('/api/v1/requests')
-        .set('x-access-token', nonLineManagerToken);
+        .set('x-access-token', token);
       expect(requestResponse.body.success).to.equal(false);
       expect(requestResponse.body.message)
         .to.equal('There are no pending requests');
@@ -174,7 +175,7 @@ describe('Integration tests for the request controller', () => {
     + 'to approve pending requests', async () => {
       const requestResponse = await chai.request(app)
         .patch('/api/v1/request')
-        .set('x-access-token', token)
+        .set('x-access-token', nonLineManagerToken)
         .send({
           id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
         });
@@ -199,13 +200,54 @@ describe('Integration tests for the request controller', () => {
     + 'attempts to approve pending requests', async () => {
       const requestResponse = await chai.request(app)
         .patch('/api/v1/request')
-        .set('x-access-token', nonLineManagerToken)
+        .set('x-access-token', managerToken)
         .send({
           id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
         });
       expect(requestResponse.body.success).to.equal(false);
       expect(requestResponse.body.message)
         .to.equal('No pending request found or request has been previously approved');
+    });
+  });
+  describe('Test for a manager to reject trip request', () => {
+    it('should reject a trip', async () => {
+      const rejectedTrip = {
+        id: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
+      };
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/request/reject')
+        .set('x-access-token', token)
+        .send(rejectedTrip);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to
+        .equal('You have successfully rejected this request');
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should not reject an already rejected request', async () => {
+      const rejectedTrip = {
+        id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        origin: 'Mushin',
+        destination: 'Bariga',
+        flightDate: '2019-06-21',
+        returnDate: '2019-03-21',
+        accommodationId: '35106536-deb5-4111-bd90-9ddfac5d348b',
+        UserId: '4712fc7e-ca41-457f-872e-4a64b79efbba',
+        reason: 'BUSINESS',
+        status: 'REJECTED',
+      };
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/request/reject')
+        .set('x-access-token', token)
+        .send(rejectedTrip);
+      expect(response.status).to.equal(400);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message).to.equal('This request has already been rejected');
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
     });
   });
 });

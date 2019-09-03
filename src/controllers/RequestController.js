@@ -142,6 +142,36 @@ class RequestController {
       return HelperMethods.clientError(res,
         'No pending request found or request has been previously approved', 404);
     } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Reject a Request
+  * Route: PATCH: /request/reject
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async rejectRequest(req, res) {
+    try {
+      const requestExist = await Request.findByPk(req.body.id);
+      if (requestExist.dataValues.status === 'open' && requestExist.dataValues.id) {
+        await requestExist.update({ status: 'rejected' });
+        return HelperMethods
+          .requestSuccessful(res, {
+            success: true,
+            message: 'You have successfully rejected this request',
+          }, 200);
+      }
+      return HelperMethods.clientError(
+        res, 'This request has already been rejected',
+        400
+      );
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
     }
   }

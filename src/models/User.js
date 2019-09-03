@@ -181,16 +181,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false
     }
-  },
-  {
-    classMethods: {
-      associate: models => {
-        User.hasMany(models.Request, {
-          foreignKey: 'userId',
-          as: 'users_request',
-        });
-      }
-    }
   });
 
   User.beforeCreate(async user => {

@@ -28,4 +28,12 @@ describe('unit test for the Request Controller', () => {
     expect(response).to.have.property('success');
     expect(response.success).to.equal(false);
   });
+  it('should only allow managers reject a request', async () => {
+    stubbedMethod = sinon.stub(Request, 'update').throws({ dataValues: 'some thing' });
+    const response = await RequestController.rejectRequest(req, res);
+    expect(response).to.have.property('message');
+    expect(response.message).to.equal('Internal server error');
+    expect(response).to.have.property('success');
+    expect(response.success).to.equal(false);
+  });
 });
