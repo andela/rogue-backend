@@ -326,6 +326,42 @@ class RequestController {
       return HelperMethods.serverError(res);
     }
   }
+
+  /**
+  * Confirm an approved request
+  * Route: PATCH: /request/reject
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async confirmRequestApproval(req, res) {
+    try {
+      const approvedRequest = await Request.findOne({
+        where: {
+          id: req.body.id,
+          status: 'approved',
+        },
+      });
+      if (approvedRequest) {
+        const requestConfirmed = await approvedRequest.update(
+          { status: 'confirmed' }, { hooks: false }
+        );
+        if (requestConfirmed.dataValues.id) {
+          return HelperMethods
+            .requestSuccessful(res, {
+              success: true,
+              message: 'Request approval confirmed successfully',
+            }, 200);
+        }
+      }
+      return HelperMethods.clientError(res,
+        'No approved request found', 404);
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
 }
 
 export default RequestController;

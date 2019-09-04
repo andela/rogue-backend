@@ -837,4 +837,69 @@ describe('Integration tests for the request controller', () => {
         .equal('Invalid search query.');
     });
   });
+
+  describe('Test For A Manager to Confirm an Approved Travel Request', () => {
+    it('should send an error message when a user who isn\'t'
+    + ' the line manager attempts to confirm an approved request ', async () => {
+      const response = await chai.request(app)
+        .patch('/api/v1/request/confirm')
+        .set('x-access-token', nonLineManagerToken)
+        .send({
+          id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        });
+      expect(response.body.success).to.equal(false);
+      expect(response.body.message).to
+        .equal('Only managers can perform this action');
+    });
+
+    it('should send an error message when a user'
+    + ' tries to access this route without a token', async () => {
+      const response = await chai.request(app)
+        .patch('/api/v1/request/confirm')
+        .set('x-access-token', 'ghbhbjbjbj')
+        .send({
+          id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        });
+      expect(response.body.success).to.equal(false);
+      expect(response.body.message).to
+        .equal('User not authorized');
+    });
+
+    it('should send an error message when a user'
+      + ' tries to access this route with an invalid token', async () => {
+      const response = await chai.request(app)
+        .patch('/api/v1/request/confirm')
+        .set('x-access-token', 'heyiminvalid')
+        .send({
+          id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        });
+      expect(response.body.success).to.equal(false);
+      expect(response.body.message).to
+        .equal('User not authorized');
+    });
+
+    it('should confirm an approved request', async () => {
+      const response = await chai.request(app)
+        .patch('/api/v1/request/confirm')
+        .set('x-access-token', managerToken)
+        .send({
+          id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        });
+      expect(response.body.data.success).to.equal(true);
+      expect(response.body.data.message).to
+        .equal('Request approval confirmed successfully');
+    });
+
+    it('should return an error if there is no approved request', async () => {
+      const response = await chai.request(app)
+        .patch('/api/v1/request/confirm')
+        .set('x-access-token', managerToken)
+        .send({
+          id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+        });
+      expect(response.body.success).to.equal(false);
+      expect(response.body.message).to
+        .equal('No approved request found');
+    });
+  });
 });
