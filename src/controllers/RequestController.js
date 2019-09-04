@@ -145,11 +145,28 @@ class RequestController {
           }
 
           const updatedRequest = await requestExist.update({ ...body, });
-          return HelperMethods.requestSuccessful(res, {
-            success: true,
-            message: 'Trip updated successfully',
-            updatedData: updatedRequest.dataValues,
-          }, 200);
+          if (updatedRequest) {
+            const user = await User.findByPk(id);
+            if (user) {
+              const manager = await User.findByPk(user.lineManager);
+              if (manager && manager.isSubscribed) {
+                const isNotified = await Notification.editTripRequest(req, user);
+                if (isNotified) {
+                  await Message.create({
+                    message: `${user.username} edited a travel request`,
+                    userId: id,
+                    lineManager: user.dataValues.lineManager,
+                    type: 'edition'
+                  });
+                }
+              }
+            }
+            return HelperMethods.requestSuccessful(res, {
+              success: true,
+              message: 'Trip updated successfully',
+              updatedData: updatedRequest.dataValues,
+            }, 200);
+          }
         }
         return HelperMethods.clientError(res, 'Forbidden', 403);
       }
