@@ -9,7 +9,8 @@ const trimValues = objectWithValuesToTrim => {
   const trimmedValues = objectWithValuesToTrim;
   Object.keys(trimmedValues).forEach(key => {
     trimmedValues[key] = trimmedValues[key].length
-      ? trimmedValues[key].trim() : trimmedValues[key];
+      ? trimmedValues[key].trim()
+      : trimmedValues[key];
   });
   return trimmedValues;
 };
@@ -23,7 +24,7 @@ const trimValues = objectWithValuesToTrim => {
 const allFieldsRequired = (res, message) => {
   res.status(400).send({
     success: false,
-    message: `Invalid request. '${message}' field is required`,
+    message: `Invalid request. '${message}' field is required`
   });
 };
 
@@ -44,15 +45,15 @@ const checkForEmptyFields = requestBody => {
  * class representing an handler's validation
  * @class Validate
  * @description Validation for user inputs in all requests
-*/
+ */
 class Validate {
   /**
-  * @param {object} req - Request object
-  * @param {object} res - Response object
-  * @param {callback} next - The callback that passes the request to the next handler
-  * @returns {object} res - Response object when query is invalid
-  * @memberof Validate
-  */
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request to the next handler
+   * @returns {object} res - Response object when query is invalid
+   * @memberof Validate
+   */
   static validateUserInput(req, res, next) {
     req.body = trimValues(req.body);
     const emptyField = checkForEmptyFields(req.body);
@@ -61,12 +62,12 @@ class Validate {
   }
 
   /**
-  * @param {object} req - Request object
-  * @param {object} res - Response object
-  * @param {callback} next - The callback that passes the request to the next handler
-  * @returns {object} res - Response object when query is invalid
-  * @memberof Validate
-  */
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request to the next handler
+   * @returns {object} res - Response object when query is invalid
+   * @memberof Validate
+   */
   static validateUserLogin(req, res, next) {
     req.body = trimValues(req.body);
     const { email, password } = req.body;
@@ -76,12 +77,12 @@ class Validate {
   }
 
   /**
-  * @param {object} req - Request object
-  * @param {object} res - Response object
-  * @param {callback} next - The callback that passes the request to the next handler
-  * @returns {object} res - Response object when query is invalid
-  * @memberof Validate
-  */
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request to the next handler
+   * @returns {object} res - Response object when query is invalid
+   * @memberof Validate
+   */
   static validateRoleUpdate(req, res, next) {
     req.body = trimValues(req.body);
     const emptyField = checkForEmptyFields(req.body);
@@ -90,12 +91,12 @@ class Validate {
   }
 
   /**
-  * @param {object} req - Request object
-  * @param {object} res - Response object
-  * @param {callback} next - The callback that passes the request to the next handler
-  * @returns {object} res - Response object when query is invalid
-  * @memberof Validate
-  */
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request to the next handler
+   * @returns {object} res - Response object when query is invalid
+   * @memberof Validate
+   */
   static validateUpdateProfile(req, res, next) {
     req.body = trimValues(req.body);
     const emptyField = checkForEmptyFields(req.body);
@@ -115,34 +116,79 @@ class Validate {
     const emptyField = checkForEmptyFields(req.body);
     if (emptyField) return allFieldsRequired(res, emptyField);
     const { rememberDetails } = req.body;
-    if ((rememberDetails !== 'true') && (rememberDetails !== 'false')) {
+    if (rememberDetails !== 'true' && rememberDetails !== 'false') {
       return res.status(400).send({
         success: false,
-        message: '"rememberDetails" field is required and must be a boolean',
+        message: '"rememberDetails" field is required and must be a boolean'
       });
     }
     next();
   }
 
   /**
-  * @param {object} req - Request object
-  * @param {object} res - Response object
-  * @param {callback} next - The callback that passes the request to the next handler
-  * @returns {object} res - Response object when query is invalid
-  * @memberof Validate
-  */
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request to the next handler
+   * @returns {object} res - Response object when query is invalid
+   * @memberof Validate
+   */
   static validateMulticity(req, res, next) {
     const emptyField = checkForEmptyFields(req.body);
     if (emptyField) return allFieldsRequired(res, emptyField);
     if (!req.body.origin) return allFieldsRequired(res, 'origin');
     const { destination, flightDate } = req.body;
     if (!destination || !Array.isArray(destination) || !(destination.length > 1)) {
-      return HelperMethods.clientError(res, 'Destination as to be more than one');
+      return HelperMethods.clientError(res, 'Destination has to be more than one');
     }
     if (!flightDate || !Array.isArray(flightDate) || !(flightDate.length > 1)) {
-      return HelperMethods.clientError(res,
-        'Please, input flightDate for all destinations');
+      return HelperMethods.clientError(
+        res,
+        'Please, input flightDate for all destinations'
+      );
     }
+    next();
+  }
+
+  /**
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request to the next handler
+   * @returns {object} res - Response object when query is invalid
+   * @memberof Validate
+   */
+  static validateSearchRequests(req, res, next) {
+    const {
+      id,
+      origin,
+      destination,
+      flightDate,
+      returnDate,
+      reason,
+      userId,
+      status
+    } = req.query;
+
+    const query = {
+      id,
+      origin,
+      destination,
+      flightDate,
+      returnDate,
+      reason,
+      userId,
+      status
+    };
+
+    const validQuery = {};
+    Object.entries(query).forEach(([key, value]) => {
+      if (value) validQuery[key] = value;
+    });
+
+    if (Object.keys(validQuery).length === 0) {
+      return HelperMethods.clientError(res, 'Invalid search query.', 400);
+    }
+
+    req.query = validQuery;
     next();
   }
 }
