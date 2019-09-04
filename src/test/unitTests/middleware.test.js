@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import chai from 'chai';
-import Authorization from '../../middlewares';
+import { Authorization } from '../../middlewares';
 import { Authentication } from '../../utils';
 
 const { expect } = chai;

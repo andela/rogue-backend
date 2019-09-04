@@ -1,4 +1,3 @@
-/* eslint-disable no-dupe-keys */
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../index';
@@ -361,7 +360,7 @@ describe('Integration tests for the request controller', () => {
       expect(response.body).to.have.property('message');
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
-      expect(response.body.message).to.equal('Destination as to be more than one');
+      expect(response.body.message).to.equal('Destination has to be more than one');
     });
     it('should not book a trip without an origin', async () => {
       const response = await chai.request(app).post('/api/v1/request/multicity')
@@ -474,13 +473,12 @@ describe('Integration tests for the request controller', () => {
       expect(response.body).to.have.property('message');
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
-      expect(response.body.message).to.equal('Destination as to be more than one');
+      expect(response.body.message).to.equal('Destination has to be more than one');
     });
     it('should allow a registered user to book a multi-city trip', async () => {
       const response = await chai.request(app).post('/api/v1/request/multicity')
         .set('x-access-token', token).send({
           origin: 'Onipan',
-          flightDate: '2019-06-25',
           destination: ['mile12', 'okoko'],
           flightDate: ['2019-06-27', '2019-07-02'],
           accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
@@ -514,7 +512,6 @@ describe('Integration tests for the request controller', () => {
       const response = await chai.request(app).post('/api/v1/request/multicity')
         .set('x-access-token', '').send({
           origin: 'Onipan',
-          flightDate: '2019-06-25',
           destination: ['mile12', 'okoko'],
           flightDate: '2019-06-27',
           accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
@@ -531,7 +528,6 @@ describe('Integration tests for the request controller', () => {
       const response = await chai.request(app).post('/api/v1/request/multicity')
         .set('x-access-token', 'jksjjjjsjsj').send({
           origin: 'Onipan',
-          flightDate: '2019-06-25',
           destination: ['mile12', 'okoko'],
           flightDate: '2019-06-27',
           accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
@@ -543,6 +539,302 @@ describe('Integration tests for the request controller', () => {
       expect(response.body).to.have.property('message');
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
+    });
+  });
+  describe('Search functionality tests', () => {
+    it('should search request by id', async () => {
+      const query = {
+        id: '8bda0fe3-a55a-4fd9-914d-9d93b53491b6'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(0);
+      expect(response.body.data.searchResults).to.satisfy(
+        requests => requests.every(request => request.id === query.id)
+      );
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request by reason', async () => {
+      const query = {
+        reason: 'BUSINESS'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults).to.satisfy(
+        requests => requests.every(request => request.reason === query.reason)
+      );
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request by origin', async () => {
+      const query = {
+        origin: 'Yaba'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(0);
+      expect(response.body.data.searchResults).to.satisfy(
+        requests => requests.every(request => request.origin === query.origin)
+      );
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request by destination', async () => {
+      const query = {
+        destination: 'Surulere'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(2);
+      expect(response.body.data.searchResults).to.satisfy(
+        requests => requests.every(request => request.destination === query.destination
+          || request.multiDestination.includes(query.destination))
+      );
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request by multi-destination', async () => {
+      const query = {
+        destination: ['Onipan', 'Surulere']
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(1);
+      response.body.data.searchResults.forEach(searchResult => {
+        expect(searchResult.multiDestination).to.include.members(query.destination);
+      });
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request by flightDate', async () => {
+      const query = {
+        flightDate: '2019-06-21'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(5);
+      expect(response.body.data.searchResults).to.satisfy(
+        requests => requests.every(request => request.flightDate === query.flightDate
+          || request.multiflightDate.includes(query.flightDate))
+      );
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request by multi-flightDate', async () => {
+      const query = {
+        flightDate: ['2019-06-21', '2019-06-22']
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(1);
+      response.body.data.searchResults.forEach(searchResult => {
+        expect(searchResult.multiflightDate).to.include.members(query.flightDate);
+      });
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request by returnDate', async () => {
+      const query = {
+        returnDate: '2019-03-21'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(0);
+      expect(response.body.data.searchResults).to.satisfy(
+        requests => requests.every(request => request.returnDate === query.returnDate)
+      );
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request by owner', async () => {
+      const query = {
+        userId: '96dc6b6d-7a77-4322-8756-e22f181d952c'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(0);
+      expect(response.body.data.searchResults).to.satisfy(
+        requests => requests.every(request => request.userId === query.userId)
+      );
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request by status', async () => {
+      const query = {
+        status: 'open'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(0);
+      expect(response.body.data.searchResults).to.satisfy(
+        requests => requests.every(request => request.status === query.status)
+      );
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should search request with multiple search', async () => {
+      const query = {
+        origin: 'Ikeja',
+        destination: 'Surulere',
+        reason: 'BUSINESS',
+        returnDate: '2019-03-21',
+        status: 'approved'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Search successful');
+      expect(response.body.data).to.have.property('searchResults');
+      expect(response.body.data.searchResults)
+        .to.be.an('array')
+        .that.has.length.greaterThan(0);
+      expect(response.body.data.searchResults).to.satisfy(
+        requests => requests.every(request => request.origin === query.origin
+          && request.destination === query.destination
+          && request.reason === query.reason
+          && request.returnDate === query.returnDate
+          && request.status === query.status)
+      );
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+    });
+    it('should return client error 401 when token is missing', async () => {
+      const query = {
+        origin: 'Ikeja',
+        destination: 'Surulere',
+        reason: 'BUSINESS',
+        returnDate: '2019-03-21'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .query(query);
+      expect(response.status).to.deep.equal(401);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+    });
+    it('should return client error 400 when query has no valid property', async () => {
+      const query = {
+        invalid: 'invalid'
+      };
+
+      const response = await chai
+        .request(app)
+        .get('/api/v1/request/search')
+        .set('x-access-token', token)
+        .query(query);
+      expect(response.status).to.deep.equal(400);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message).to
+        .equal('Invalid search query.');
     });
   });
 });

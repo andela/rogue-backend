@@ -1,5 +1,5 @@
 import { RequestController } from '../controllers';
-import Authorization from '../middlewares';
+import { Authorization, SearchRequestsMiddleware } from '../middlewares';
 import Validate from '../validation';
 
 const requestRoutes = app => {
@@ -48,6 +48,14 @@ const requestRoutes = app => {
     Authorization.checkToken,
     Validate.validateMulticity,
     RequestController.bookMulticity
+  );
+
+  app.get(
+    '/api/v1/request/search',
+    Authorization.checkToken,
+    Validate.validateSearchRequests,
+    SearchRequestsMiddleware.setMultiDestinationAndFlightDate,
+    RequestController.searchRequests
   );
 };
 

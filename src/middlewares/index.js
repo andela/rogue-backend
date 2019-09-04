@@ -1,3 +1,4 @@
 import Authorization from './authorization';
+import SearchRequestsMiddleware from './searchRequestsMiddleware';
 
-export default Authorization;
+export { Authorization, SearchRequestsMiddleware };

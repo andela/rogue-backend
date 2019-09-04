@@ -1,7 +1,8 @@
 import models from '../models';
 import { HelperMethods } from '../utils';
 
-const { Request, User } = models;
+const { Request, User, Sequelize } = models;
+const { Op } = Sequelize;
 
 /**
  * Class representing the Request controller
@@ -261,6 +262,67 @@ class RequestController {
       return HelperMethods.serverError(res);
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Search Requests
+  * Route: GET: /request/search
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async searchRequests(req, res) {
+    try {
+      const {
+        destination,
+        flightDate,
+        multiDestination,
+        multiflightDate,
+        ...withoutDestinationAndFlightDate
+      } = req.query;
+
+      let search = { ...withoutDestinationAndFlightDate };
+      const queryDestination = {
+        [Op.or]: [
+          { destination },
+          { multiDestination: { [Op.contains]: [destination] } }
+        ]
+      };
+
+      const queryFlightDate = {
+        [Op.or]: [
+          { flightDate },
+          { multiflightDate: { [Op.contains]: [flightDate] } }
+        ]
+      };
+
+      const queryMultiDestination = {
+        multiDestination: { [Op.contains]: multiDestination }
+      };
+
+      const queryMultiFlightDate = {
+        multiflightDate: { [Op.contains]: multiflightDate }
+      };
+
+      if (destination) search = { ...search, ...queryDestination };
+      if (flightDate) search = { ...search, ...queryFlightDate };
+      if (multiDestination) search = { ...search, ...queryMultiDestination };
+      if (multiflightDate) search = { ...search, ...queryMultiFlightDate };
+
+      const requests = await Request.findAll({ where: search });
+      HelperMethods.requestSuccessful(
+        res,
+        {
+          success: true,
+          message: 'Search successful',
+          searchResults: requests.map(request => request.get())
+        },
+        200
+      );
+    } catch (error) {
       return HelperMethods.serverError(res);
     }
   }

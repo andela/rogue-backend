@@ -201,6 +201,13 @@ export default (sequelize, DataTypes) => {
     user.password = await CryptData.encryptData(user.password);
   });
 
+  User.associate = models => {
+    User.hasMany(models.Request, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
+  };
+
   // eslint-disable-next-line func-names
   User.prototype.verifyPassword = async function (clearPassword) {
     const isPasswordCorrect = await CryptData
