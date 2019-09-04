@@ -5,6 +5,7 @@ import swaggerUI from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import passport from 'passport';
+import socketIo from 'socket.io';
 import doc from '../doc.json';
 import { HelperMethods } from './utils';
 import routes from './routes';
@@ -52,8 +53,9 @@ app.all('*', (req, res) => res.send({
   message: 'route not found'
 }));
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.info(`Server is up and listening on port ${port}`);
 });
-
+export const io = socketIo(server);
+io.on('connection', () => { console.info('connected'); });
 export default app;

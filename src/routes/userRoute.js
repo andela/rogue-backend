@@ -35,6 +35,11 @@ const userRoutes = app => {
     Validate.validateUserEmail,
     UserController.resetPassword
   );
+
+  app.get(
+    '/api/v1/managerNotification/:id',
+    UserController.notify
+  );
 };
 
 export default userRoutes;

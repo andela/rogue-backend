@@ -1,7 +1,9 @@
 import models from '../models';
-import { HelperMethods } from '../utils';
+import { HelperMethods, Sockets } from '../utils';
 
-const { Request, User, Sequelize } = models;
+const {
+  Request, User, Sequelize, Notification
+} = models;
 const { Op } = Sequelize;
 
 /**
@@ -78,7 +80,7 @@ class RequestController {
   */
   static async editRequest(req, res) {
     try {
-      const { id } = req.decoded;
+      const { id, username } = req.decoded;
       const {
         body
       } = req;
@@ -105,6 +107,16 @@ class RequestController {
           }
 
           const updatedRequest = await requestExist.update({ ...body, });
+          await Notification.create({
+            message: `${username} edited travel request`,
+            isRead: false
+          });
+          const user = await User.findOne({
+            where: {
+              id,
+            }
+          });
+          Sockets.emiter(`${user.lineManager}`, `${username} edited travel request`);
           return HelperMethods.requestSuccessful(res, {
             success: true,
             message: 'Trip udpdated successfully',
