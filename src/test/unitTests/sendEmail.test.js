@@ -1,13 +1,9 @@
 import chai from 'chai';
 import sinon from 'sinon'; // eslint-disable-line import/no-extraneous-dependencies
 import sendGrid from '@sendgrid/mail';
-import {
-  SendEmail
-} from '../../utils';
+import { SendEmail } from '../../utils';
 
-const {
-  expect
-} = chai;
+const { expect } = chai;
 describe('Utility to send emails', () => {
   it('should send verification email after registration', async () => {
     const stubEmailSender = sinon.stub(SendEmail, 'emailSender').returns(true);

@@ -2,14 +2,10 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import app from '../../index';
-import {
-  UserController
-} from '../../controllers';
+import { UserController } from '../../controllers';
 
 chai.use(chaiHttp);
-const {
-  expect
-} = chai;
+const { expect } = chai;
 
 describe('Integration tests for the user controller', () => {
   describe('Test general error handling and welcome message', () => {

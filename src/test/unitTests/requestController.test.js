@@ -1,22 +1,12 @@
 import sinon from 'sinon';
 import chai from 'chai';
-import {
-  RequestController
-} from '../../controllers';
+import { RequestController } from '../../controllers';
 import models from '../../models';
 
-const {
-  expect
-} = chai;
-const {
-  Request
-} = models;
+const { expect } = chai;
+const { Request } = models;
 
-const req = {
-  decoded: {
-    id: 'some id',
-  }
-};
+const req = { decoded: { id: 'some id' } };
 
 const res = {
   status() {

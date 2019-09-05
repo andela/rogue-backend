@@ -191,6 +191,21 @@ class Validate {
     req.query = validQuery;
     next();
   }
+
+  /**
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request to the next handler
+   * @returns {object} res - Response object when query is invalid
+   * @memberof Validate
+   */
+  static validateConfirmRequest(req, res, next) {
+    req.body = trimValues(req.body);
+    const emptyField = checkForEmptyFields(req.body);
+    if (emptyField) return allFieldsRequired(res, emptyField);
+    if (!req.body.id) return allFieldsRequired(res, 'id');
+    next();
+  }
 }
 
 export default Validate;

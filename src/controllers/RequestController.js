@@ -326,6 +326,45 @@ class RequestController {
       return HelperMethods.serverError(res);
     }
   }
+
+  /**
+  * Confirm an approved request
+  * Route: PATCH: /request/reject
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof RequestController
+  */
+  static async confirmRequestApproval(req, res) {
+    try {
+      const approvedRequest = await Request.findOne({
+        where: { id: req.body.id },
+      });
+      if (approvedRequest) {
+        if (approvedRequest.status === 'confirmed') {
+          return HelperMethods.clientError(res,
+            'This request has already been confirmed', 404);
+        }
+        const requestConfirmed = await approvedRequest.update(
+          { status: 'confirmed' }, { hooks: false }
+        );
+        if (requestConfirmed.dataValues.id) {
+          return HelperMethods
+            .requestSuccessful(res, {
+              success: true,
+              message: 'Request confirmed successfully',
+            }, 200);
+        }
+        return HelperMethods.clientError(res,
+          'Could not confirm the request. Please try again', 400);
+      }
+      return HelperMethods.clientError(res,
+        'The request you are trying to confirm cannot be found', 404);
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
 }
 
 export default RequestController;
