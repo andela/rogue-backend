@@ -21,11 +21,19 @@ const userRoutes = app => {
     Authorization.checkToken,
     UserController.getProfile
   );
+
   app.patch(
     '/api/v1/remember_details',
     Authorization.checkToken,
     Validate.validateRememberDetailsUpdate,
     UserController.rememberUserDetails
+  );
+
+  app.post(
+    '/api/v1/reset_password',
+    Authorization.checkToken,
+    Validate.validateUserEmail,
+    UserController.resetPassword
   );
 };
 

@@ -309,6 +309,43 @@ class UserController {
           message: 'Role updated successfully',
         }, 200);
     } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+  * Sends Emails To Users For Password Reset.
+  * Route: POST: /api/v1/reset_password
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @param {object} next - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof UserController
+ */
+  static async resetPassword(req, res) {
+    try {
+      const { email } = req.body;
+      const userFound = await User.findOne({ where: { email } });
+      if (!userFound) {
+        return HelperMethods.clientError(res, 'Invalid user details.', 400);
+      }
+      if (!userFound.isVerified) {
+        return HelperMethods.clientError(res,
+          'You are not a verified user. Please verify your email address', 400);
+      }
+      const emailSent = await SendEmail.resetPassword(email);
+      if (emailSent) {
+        return HelperMethods.requestSuccessful(res, {
+          success: true,
+          message: 'An email has been sent to your email '
+          + 'address that explains how to reset your password'
+        }, 200);
+      }
+      return HelperMethods.serverError(res,
+        'Could not send reset instructions to your email. Please, try again');
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
     }
   }
@@ -323,18 +360,10 @@ class UserController {
    */
   static async rememberUserDetails(req, res) {
     try {
-      const {
-        id
-      } = req.decoded;
-      const {
-        rememberDetails
-      } = req.body;
-      const [, [update]] = await User.update({
-        rememberDetails
-      }, {
-        where: {
-          id
-        },
+      const { id } = req.decoded;
+      const { rememberDetails } = req.body;
+      const [, [update]] = await User.update({ rememberDetails }, {
+        where: { id },
         returning: true
       });
 
@@ -360,4 +389,5 @@ class UserController {
     }
   }
 }
+
 export default UserController;

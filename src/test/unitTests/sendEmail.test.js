@@ -24,6 +24,19 @@ describe('Utility to send emails', () => {
     sinon.assert.calledOnce(stubSendMethod);
     stubSendMethod.restore();
   });
+  it('should send email when passed the email details*****', async () => {
+    const details = {
+      email: 'jideajayi11@gmail.com',
+      subject: 'Test Email Sending',
+      emailBody: '<p>This email is being received</p>'
+      + '<p>to test the utility that sends mail.'
+    };
+    const stubSendMethod = sinon.stub(sendGrid, 'send').returns(true);
+    const response = await SendEmail.resetPassword(details);
+    expect(response).to.equal(true);
+    sinon.assert.calledOnce(stubSendMethod);
+    stubSendMethod.restore();
+  });
 
   it('should send a mail to the user on completing registration', async () => {
     const stubSendMethod = sinon.stub(SendEmail, 'emailSender').returns(true);

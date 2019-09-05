@@ -18,7 +18,6 @@ describe('Integration tests for the request controller', () => {
   };
   let token;
   let requestId;
-
   before('login with an existing user details from the seeded data', async () => {
     const response = await chai.request(app).post('/api/v1/auth/login')
       .send({
@@ -37,6 +36,26 @@ describe('Integration tests for the request controller', () => {
       });
     requestId = bookTrip.body.data.tripCreated.id;
   });
+  let managerToken;
+  let nonLineManagerToken;
+
+  before('Login to get a managers token', async () => {
+    const response = await chai.request(app).post('/api/v1/auth/login')
+      .send({
+        email: 'demo2@demo.com',
+        password: 'password',
+      });
+    managerToken = response.body.data.userDetails.token;
+
+    // non line Manager is a Manager but is not the Line manager to the Requester
+    const nonLineManager = await chai.request(app).post('/api/v1/auth/login')
+      .send({
+        email: 'demo4@demo.com',
+        password: 'password',
+      });
+    nonLineManagerToken = nonLineManager.body.data.userDetails.token;
+  });
+
   describe('Authentication tests', () => {
     it('should return an error if the authentication token is missing', async () => {
       const response = await chai
@@ -160,27 +179,6 @@ describe('Integration tests for the request controller', () => {
         .equal('The request you are trying to edit does not exist');
     });
   });
-
-  let managerToken;
-  let nonLineManagerToken;
-
-  before('Login to get a managers token', async () => {
-    const response = await chai.request(app).post('/api/v1/auth/login')
-      .send({
-        email: 'demo2@demo.com',
-        password: 'password',
-      });
-    managerToken = response.body.data.userDetails.token;
-
-    // non line Manager is a Manager but is not the Line manager to the Requester
-    const nonLineManager = await chai.request(app).post('/api/v1/auth/login')
-      .send({
-        email: 'demo4@demo.com',
-        password: 'password',
-      });
-    nonLineManagerToken = nonLineManager.body.data.userDetails.token;
-  });
-
   describe('Endpoint for availing pending requests', () => {
     it('should let Managers view all pending requests created by '
     + ' their direct reports', async () => {
