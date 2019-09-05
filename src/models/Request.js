@@ -29,7 +29,7 @@ export default (sequelize, DataTypes) => {
     },
     status: {
       type: DataTypes.ENUM,
-      values: ['open', 'approved', 'rejected'],
+      values: ['open', 'approved', 'confirmed', 'rejected'],
       defaultValue: 'open'
     },
 

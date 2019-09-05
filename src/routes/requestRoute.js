@@ -57,6 +57,14 @@ const requestRoutes = app => {
     SearchRequestsMiddleware.setMultiDestinationAndFlightDate,
     RequestController.searchRequests
   );
+
+  app.patch(
+    '/api/v1/request/confirm',
+    Authorization.checkToken,
+    Authorization.confirmRole,
+    Validate.validateConfirmRequest,
+    RequestController.confirmRequestApproval
+  );
 };
 
 export default requestRoutes;

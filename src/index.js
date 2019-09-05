@@ -6,9 +6,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import passport from 'passport';
 import doc from '../doc.json';
-import {
-  HelperMethods
-} from './utils';
+import { HelperMethods } from './utils';
 import routes from './routes';
 import setUpPassport from './config/passport';
 

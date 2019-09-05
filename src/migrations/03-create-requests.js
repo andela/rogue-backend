@@ -49,7 +49,7 @@ module.exports = {
     },
     status: {
       type: Sequelize.ENUM,
-      values: ['open', 'approved', 'rejected'],
+      values: ['open', 'approved', 'confirmed', 'rejected'],
       defaultValue: 'open'
     },
     createdAt: {

@@ -1,6 +1,4 @@
-import {
-  CryptData
-} from '../utils';
+import { CryptData } from '../utils';
 
 export default (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
