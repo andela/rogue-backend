@@ -2,10 +2,14 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import sinon from 'sinon';
 import app from '../../index';
-import { UserController } from '../../controllers';
+import {
+  UserController
+} from '../../controllers';
 
 chai.use(chaiHttp);
-const { expect } = chai;
+const {
+  expect
+} = chai;
 
 describe('Integration tests for the user controller', () => {
   describe('Test general error handling and welcome message', () => {
@@ -87,7 +91,7 @@ describe('Integration tests for the user controller', () => {
       expect(response.body).to.have.property('message');
       expect(response.body.message).to.equal(
         'Your registration could not be completed.'
-        + 'Please try again'
+          + 'Please try again'
       );
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.be.equal(false);
@@ -110,7 +114,10 @@ describe('Integration tests for the user controller', () => {
   describe('Test login a user', () => {
     it('should log a user in when valid details are given', async () => {
       const response = await chai.request(app).post('/api/v1/auth/login')
-        .send({ email: 'demo1@demo.com', password: 'password' });
+        .send({
+          email: 'demo1@demo.com',
+          password: 'password'
+        });
       expect(response.status).to.deep.equal(200);
       expect(response.body.data).to.have.property('message');
       expect(response.body.data.message).to.equal('Login successful');
@@ -120,7 +127,9 @@ describe('Integration tests for the user controller', () => {
     });
     it('should return client error when user details is missing', async () => {
       const response = await chai.request(app).post('/api/v1/auth/login')
-        .send({ email: 'demo1@demo.com' });
+        .send({
+          email: 'demo1@demo.com'
+        });
       expect(response.status).to.deep.equal(400);
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
@@ -135,7 +144,10 @@ describe('Integration tests for the user controller', () => {
         email: 'demo2@demo.com',
         password: 'password',
       });
-    const { token, id } = loginResponse.body.data.userDetails;
+    const {
+      token,
+      id
+    } = loginResponse.body.data.userDetails;
     describe('Test profile update endpoints', () => {
       const newData = {
         id,
@@ -212,8 +224,12 @@ describe('Integration tests for the user controller', () => {
         const response = await chai
           .request(app)
           .patch('/api/v1/remember_details')
-          .set({ 'x-access-token': token })
-          .send({ rememberDetails: 'true' });
+          .set({
+            'x-access-token': token
+          })
+          .send({
+            rememberDetails: 'true'
+          });
         expect(response.status).to.deep.equal(200);
         expect(response.body.data).to.have.property('message');
         expect(response.body.data.message).to.equal('Update successful');
@@ -225,8 +241,12 @@ describe('Integration tests for the user controller', () => {
         const response = await chai
           .request(app)
           .patch('/api/v1/remember_details')
-          .set({ 'x-access-token': token })
-          .send({ rememberDetails: 'false' });
+          .set({
+            'x-access-token': token
+          })
+          .send({
+            rememberDetails: 'false'
+          });
         expect(response.status).to.deep.equal(200);
         expect(response.body.data).to.have.property('message');
         expect(response.body.data.message).to.equal('Update successful');
@@ -238,7 +258,9 @@ describe('Integration tests for the user controller', () => {
         const response = await chai
           .request(app)
           .patch('/api/v1/remember_details')
-          .send({ rememberDetails: true });
+          .send({
+            rememberDetails: true
+          });
         expect(response.status).to.deep.equal(401);
         expect(response.body).to.have.property('success');
         expect(response.body.success).to.equal(false);
@@ -248,7 +270,9 @@ describe('Integration tests for the user controller', () => {
         const response = await chai
           .request(app)
           .patch('/api/v1/remember_details')
-          .set({ 'x-access-token': token });
+          .set({
+            'x-access-token': token
+          });
         expect(response.status).to.deep.equal(400);
         expect(response.body).to.have.property('success');
         expect(response.body.success).to.equal(false);
@@ -260,8 +284,12 @@ describe('Integration tests for the user controller', () => {
         const response = await chai
           .request(app)
           .patch('/api/v1/remember_details')
-          .set({ 'x-access-token': token })
-          .send({ rememberDetails: 'some string' });
+          .set({
+            'x-access-token': token
+          })
+          .send({
+            rememberDetails: 'some string'
+          });
         expect(response.status).to.deep.equal(400);
         expect(response.body).to.have.property('success');
         expect(response.body.success).to.equal(false);
