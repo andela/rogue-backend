@@ -4,7 +4,11 @@ import requestRoute from './requestRoute';
 import userRoute from './userRoute';
 import socialAuthRoute from './socialAuthRoute';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import notificationRoute from './notificationRoute';
+=======
+
+>>>>>>> feature(userNotification): user(requester) should get notified of his edited request.
 =======
 
 >>>>>>> feature(userNotification): user(requester) should get notified of his edited request.

@@ -66,7 +66,7 @@ module.exports = {
     },
     isSubscribed: {
       type: Sequelize.BOOLEAN,
-      defaultValue: true
+      defaultValue: false
     },
     username: {
       type: Sequelize.STRING,
