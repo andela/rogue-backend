@@ -34,12 +34,11 @@ export default (sequelize, DataTypes) => {
         }
       }
     },
-  });
+  }, { tableName: 'Accommodations' });
 
   Accommodation.associate = models => {
     Accommodation.hasMany(models.Request, {
       foreignKey: 'accommodationId',
-      as: 'accommodation',
     });
 
     Accommodation.belongsToMany(models.User, {
@@ -50,3 +49,4 @@ export default (sequelize, DataTypes) => {
 
   return Accommodation;
 };
+
