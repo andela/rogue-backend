@@ -70,18 +70,6 @@ const showDesktopNotification = (message, body, icon, sound, timeout) => {
     icon,
     sound
   });
-  instance.onclick = function () {
-    // Something to do
-  };
-  instance.onerror = function () {
-    // Something to do
-  };
-  instance.onshow = function () {
-    // Something to do
-  };
-  instance.onclose = function () {
-    // Something to do
-  };
   if (sound) {
     instance.sound;
   }
