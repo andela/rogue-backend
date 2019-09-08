@@ -315,11 +315,11 @@ class RequestController {
         multiflightDate: [...flightDate],
       });
       if (dataValues.id) {
-        HelperMethods.requestSuccessful(res, {
-          success: true,
-          message: 'Trip booked successfully',
-          tripBooked: dataValues,
-        }, 201);
+        Notification.sendNewRequestNotifications(res, {
+          id,
+          requestId: dataValues.id,
+          type: 'multi-city trip',
+        });
         const user = await User.findByPk(id);
         if (user.dataValues) {
           const manager = await User.findByPk(user.lineManager);
@@ -347,6 +347,11 @@ class RequestController {
             }
           } else return HelperMethods.serverError(res);
         } else return HelperMethods.serverError(res);
+        return HelperMethods.requestSuccessful(res, {
+          success: true,
+          message: 'Trip booked successfully',
+          tripBooked: dataValues,
+        }, 201);
       }
       return HelperMethods.serverError(res);
     } catch (error) {
