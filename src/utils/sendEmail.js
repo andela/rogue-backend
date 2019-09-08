@@ -181,5 +181,28 @@ class SendEmail {
       return false;
     }
   }
+
+  /**
+     *
+     * @param {object} user Object containing user's information
+     * @param {object} manager Object containing manager's information
+     * @param {object} dataValues Contains information about new trip request
+     * @param {string} type return trip || single trip || multi-city trip
+     * @returns {object} Object containing data for sending mail
+     */
+  static async newTripData(user, manager, dataValues, type) {
+    const { firstName, email, } = manager.dataValues;
+    return {
+      managerEmail: email,
+      managerName: firstName,
+      requester: `${user.firstName} ${user.lastName}`,
+      requestId: dataValues.id,
+      origin: dataValues.origin,
+      destination: dataValues.destination,
+      flightDate: dataValues.flightDate,
+      reason: dataValues.reason,
+      type,
+    };
+  }
 }
 export default SendEmail;
