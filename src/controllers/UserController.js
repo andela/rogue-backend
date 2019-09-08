@@ -327,7 +327,7 @@ class UserController {
         return HelperMethods.requestSuccessful(res, {
           success: true,
           message: 'An email has been sent to your email '
-          + 'address that explains how to reset your password'
+            + 'address that explains how to reset your password'
         }, 200);
       }
       return HelperMethods.serverError(res,
