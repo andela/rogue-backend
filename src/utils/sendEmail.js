@@ -58,7 +58,10 @@ class SendEmail {
   }
 
   /**
-   * @param {object} emailParams - Object containing some parameters for the email
+   * @param {string} emailParams - email address to send the message to
+   * @param {string} firstName - User's first name
+   * @param {string} requestId - The Id of the request
+   * @param {string} requestType - multicity || single Trip || Return Trip
    * @returns {boolean} specifies if the email was sent successfully
    */
   static sendRequestNotification(emailParams) {

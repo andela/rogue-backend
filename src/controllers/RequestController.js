@@ -1,6 +1,6 @@
-/* eslint-disable import/no-cycle */
 import models from '../models';
 import { HelperMethods, Notification } from '../utils';
+import NotificationController from './NotificationController';
 
 const { Request, User, Sequelize } = models;
 const { Op } = Sequelize;
@@ -25,7 +25,7 @@ class RequestController {
       const { body } = req;
       const { dataValues } = await Request.create({ ...body, userId: id, });
       if (dataValues.id) {
-        Notification.sendNewRequestNotifications(res, {
+        NotificationController.sendNewRequestNotifications(req, res, {
           id,
           type: 'single trip',
           dataValues,
@@ -59,7 +59,7 @@ class RequestController {
       }
       const { dataValues } = await Request.create({ ...req.body, userId: id });
       if (dataValues.id) {
-        Notification.sendNewRequestNotifications(res, {
+        NotificationController.sendNewRequestNotifications(res, {
           id,
           type: 'return trip',
           dataValues,
@@ -264,7 +264,7 @@ class RequestController {
         multiflightDate: [...flightDate],
       });
       if (dataValues.id) {
-        Notification.sendNewRequestNotifications(res, {
+        NotificationController.sendNewRequestNotifications(res, {
           id,
           type: 'multi-city trip',
           dataValues,

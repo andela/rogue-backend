@@ -37,6 +37,22 @@ app.use(passport.session());
 
 // api doc
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(doc));
+
+const server = app.listen(port, () => {
+  console.info(`Server is up and listening on port ${port}`);
+});
+
+const io = socketIO(server);
+
+io.on('connection', socket => {
+  console.info(`${socket.id} has connected`);
+});
+
+app.use((req, res, next) => {
+  req.io = io;
+  req.isSent = 'check if it is sent';
+  next();
+});
 app.set('x-powered-by', false);
 
 routes(app);
@@ -53,13 +69,4 @@ app.get('/', (req, res) => res.status(200).send({
 app.all('*', (req, res) => res.send({
   message: 'route not found'
 }));
-
-const server = app.listen(port, () => {
-  console.info(`Server is up and listening on port ${port}`);
-});
-
-export const io = socketIO(server);
-io.on('connection', socket => {
-  console.info(`${socket.id} has connected`);
-});
 export default app;
