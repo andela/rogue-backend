@@ -27,8 +27,8 @@ class RequestController {
       if (dataValues.id) {
         Notification.sendNewRequestNotifications(res, {
           id,
-          requestId: dataValues.id,
           type: 'single trip',
+          dataValues,
         });
         HelperMethods.requestSuccessful(res, {
           success: true,
@@ -61,8 +61,8 @@ class RequestController {
       if (dataValues.id) {
         Notification.sendNewRequestNotifications(res, {
           id,
-          requestId: dataValues.id,
           type: 'return trip',
+          dataValues,
         });
         return HelperMethods.requestSuccessful(res, {
           success: true,
@@ -266,8 +266,8 @@ class RequestController {
       if (dataValues.id) {
         Notification.sendNewRequestNotifications(res, {
           id,
-          requestId: dataValues.id,
           type: 'multi-city trip',
+          dataValues,
         });
         return HelperMethods.requestSuccessful(res, {
           success: true,
