@@ -7,15 +7,29 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import passport from 'passport';
 import socketIo from 'socket.io';
+<<<<<<< HEAD
+=======
+import http from 'http';
+import path from 'path';
+>>>>>>> feature(userNotification): user(requester) should get notified of his edited request.
 import doc from '../doc.json';
 import { HelperMethods } from './utils';
 import routes from './routes';
 import setUpPassport from './config/passport';
 
+const publicPath = path.join(__dirname, '../public');
+
 dotenv.config();
 
 const port = process.env.PORT || 3000;
 const app = express();
+const server = http.Server(app);
+
+export const io = socketIo(server);
+
+io.on('connection', () => {
+  console.info('user connected');
+});
 
 // Don't log to the console when running integration tests
 if (app.get('env') !== 'test') {
@@ -58,5 +72,16 @@ app.all('*', (req, res) => res.status(404).json({
 }));
 
 app.use(HelperMethods.checkExpressErrors);
+<<<<<<< HEAD
+=======
+
+app.all('*', (req, res) => res.send({
+  message: 'route not found'
+}));
+
+server.listen(port, () => {
+  console.info(`Server is up and listening on port ${port}`);
+});
+>>>>>>> feature(userNotification): user(requester) should get notified of his edited request.
 
 export default app;

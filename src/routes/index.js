@@ -3,7 +3,11 @@ import authRoute from './authRoute';
 import requestRoute from './requestRoute';
 import userRoute from './userRoute';
 import socialAuthRoute from './socialAuthRoute';
+<<<<<<< HEAD
 import notificationRoute from './notificationRoute';
+=======
+
+>>>>>>> feature(userNotification): user(requester) should get notified of his edited request.
 /**
  * Handles request
  * @param {object} app - An instance of the express module

@@ -1,6 +1,11 @@
 /* eslint-disable import/no-cycle */
 import models from '../models';
+<<<<<<< HEAD
 import { HelperMethods, SendEmail, Notification } from '../utils';
+=======
+import { HelperMethods } from '../utils';
+import Notification from '../utils/notificationEngine';
+>>>>>>> feature(userNotification): user(requester) should get notified of his edited request.
 
 const {
   Request, User, Message, Sequelize: { Op }
@@ -145,6 +150,7 @@ class RequestController {
           }
 
           const updatedRequest = await requestExist.update({ ...body, });
+          await Notification.notifyUser(`You have successfully edited the request with this ${id} number`);
           return HelperMethods.requestSuccessful(res, {
             success: true,
             message: 'Trip updated successfully',
@@ -203,6 +209,7 @@ class RequestController {
       }
       return HelperMethods.clientError(res, 'There are no pending requests', 404);
     } catch (error) {
+      console.log(error);
       return HelperMethods.serverError(res);
     }
   }
@@ -383,6 +390,7 @@ class RequestController {
         200
       );
     } catch (error) {
+      console.log(error);
       return HelperMethods.serverError(res);
     }
   }
