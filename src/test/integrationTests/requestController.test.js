@@ -21,7 +21,7 @@ describe('Integration tests for the request controller', () => {
   before('login with an existing user details from the seeded data', async () => {
     const response = await chai.request(app).post('/api/v1/auth/login')
       .send({
-        email: 'demo3@demo.com',
+        email: 'demo4@demo.com',
         password: 'password',
       });
     token = response.body.data.userDetails.token;
@@ -148,7 +148,7 @@ describe('Integration tests for the request controller', () => {
         });
       expect(response.status).to.equal(200);
       expect(response.body.data).to.have.property('message');
-      expect(response.body.data.message).to.equal('Trip udpdated successfully');
+      expect(response.body.data.message).to.equal('Trip updated successfully');
       expect(response.body.data).to.have.property('updatedData');
       expect(response.body.data.updatedData.origin).to.equal('eko');
       expect(response.body.data.updatedData.destination).to.equal('miami');
@@ -175,7 +175,7 @@ describe('Integration tests for the request controller', () => {
     it('should not allow an update on invalid request ID', async () => {
       const response = await chai.request(app).patch('/api/v1/request/edit')
         .set('x-access-token', token).send({
-          requestId: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
+          requestId: '3821b930-ce48-4ac8-9ddf-ee3bf7980d08',
           origin: 'eko',
           destination: 'miami',
           flightDate: '2019-02-01',
@@ -223,7 +223,7 @@ describe('Integration tests for the request controller', () => {
         .set('x-access-token', token);
       expect(requestResponse.body.success).to.equal(false);
       expect(requestResponse.body.message)
-        .to.equal('There are no pending requests');
+        .to.equal('Only managers can perform this action');
     });
   });
 
@@ -275,18 +275,18 @@ describe('Integration tests for the request controller', () => {
         });
       expect(requestResponse.body.success).to.equal(false);
       expect(requestResponse.body.message)
-        .to.equal('No pending request found or request has been previously approved');
+        .to.equal('Only managers can perform this action');
     });
   });
   describe('Test for a manager to reject trip request', () => {
     it('should reject a trip', async () => {
       const rejectedTrip = {
-        id: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
+        id: '1b26c8d1-768d-4bcb-8407-f6d85b1f1dee',
       };
       const response = await chai
         .request(app)
         .patch('/api/v1/request/reject')
-        .set('x-access-token', token)
+        .set('x-access-token', managerToken)
         .send(rejectedTrip);
       expect(response.status).to.equal(200);
       expect(response.body.data).to.have.property('message');
@@ -310,7 +310,7 @@ describe('Integration tests for the request controller', () => {
       const response = await chai
         .request(app)
         .patch('/api/v1/request/reject')
-        .set('x-access-token', token)
+        .set('x-access-token', managerToken)
         .send(rejectedTrip);
       expect(response.status).to.equal(400);
       expect(response.body).to.have.property('message');

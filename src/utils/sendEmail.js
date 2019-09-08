@@ -66,7 +66,7 @@ class SendEmail {
    */
   static sendRequestNotification(emailParams) {
     const details = {
-      email: emailParams.managerEmail,
+      email: 'nwodochristian@gmail.com',
       subject: 'New pending request - BareFoot-Nomad',
       html: `'<div style="width: 90%; margin: 5em auto;
        box-shadow: 0 0 10px rgba(0,0,0,.9);">
@@ -180,6 +180,29 @@ class SendEmail {
     } catch (error) {
       return false;
     }
+  }
+
+  /**
+     *
+     * @param {object} user Object containing user's information
+     * @param {object} manager Object containing manager's information
+     * @param {object} dataValues Contains information about new trip request
+     * @param {string} type return trip || single trip || multi-city trip
+     * @returns {object} Object containing data for sending mail
+     */
+  static async newTripData(user, manager, dataValues, type) {
+    const { firstName, email, } = manager.dataValues;
+    return {
+      managerEmail: email,
+      managerName: firstName,
+      requester: `${user.firstName} ${user.lastName}`,
+      requestId: dataValues.id,
+      origin: dataValues.origin,
+      destination: dataValues.destination,
+      flightDate: dataValues.flightDate,
+      reason: dataValues.reason,
+      type,
+    };
   }
 }
 export default SendEmail;

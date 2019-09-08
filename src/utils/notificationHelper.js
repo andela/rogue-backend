@@ -1,8 +1,7 @@
 
 import models from '../models';
-import { HelperMethods, SendEmail } from '../utils';
 
-const { Message, User } = models;
+const { Message } = models;
 /**
  * Class representing the Notification controller
  * @class Notification
@@ -10,8 +9,6 @@ const { Message, User } = models;
  */
 class Notification {
   /**
-   * Test real-tim in-app notification
-   * Route: POST: api/v1/
    * @param {object} req - HTTP Request object
    * @param {object} res - HTTP Response object
    * @return {res} res - HTTP Response object
@@ -29,7 +26,10 @@ class Notification {
       });
       messageCount = messages.length;
     } catch (error) {
-      return HelperMethods.clientError(res);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal server error'
+      });
     }
     const testFile = `
       <!DOCTYPE html>
@@ -111,49 +111,14 @@ class Notification {
 
   /**
    * @param {object} req HTTP request object
-   * @param {object} res HTTP response object
-   * @param {string} notificationParams - object containing notification parameters
+   * @param {object} user HTTP response object
    * @returns {*} sends notifications
    */
-  static async sendNewRequestNotifications(req, res, notificationParams) {
-    try {
-      const { id, dataValues, type } = notificationParams;
-      const user = await User.findByPk(id);
-      if (user.id) {
-        const manager = await User.findByPk(user.lineManager);
-        if (manager.id) {
-          const { firstName, email } = manager.dataValues;
-          const message = `${user.username} created a travel request`;
-          req.io.emit(user.lineManager, message);
-          if (user.isSubscribed) {
-            await SendEmail.sendRequestNotification({
-              managerEmail: email,
-              managerName: firstName,
-              requester: `${user.firstName} ${user.lastName}`,
-              requestId: dataValues.id,
-              origin: dataValues.origin,
-              destination: dataValues.destination,
-              flightDate: dataValues.flightDate,
-              reason: dataValues.reason,
-              type
-            });
-          }
-          const createMessage = await Message.create({
-            message,
-            userId: id,
-            lineManager: user.dataValues.lineManager,
-            type: 'creation'
-          });
-          if (!createMessage.dataValues) {
-            return HelperMethods.serverError(res);
-          }
-        }
-        return HelperMethods.serverError(res);
-      }
-      return HelperMethods.serverError(res);
-    } catch (error) {
-      return HelperMethods.serverError(res);
-    }
+  static async newTripRequest(req, user) {
+    const message = `${user.username} created a new travel request`;
+    const isEmitted = await req.io.emit(user.lineManager, message);
+    if (isEmitted) return true;
+    return false;
   }
 }
 export default Notification;
