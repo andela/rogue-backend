@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -5,6 +6,7 @@ import swaggerUI from 'swagger-ui-express';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import passport from 'passport';
+import socketIO from 'socket.io';
 import doc from '../doc.json';
 import { HelperMethods } from './utils';
 import routes from './routes';
@@ -52,8 +54,12 @@ app.all('*', (req, res) => res.send({
   message: 'route not found'
 }));
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.info(`Server is up and listening on port ${port}`);
 });
 
+export const io = socketIO(server);
+io.on('connection', socket => {
+  console.info(`${socket.id} has connected`);
+});
 export default app;

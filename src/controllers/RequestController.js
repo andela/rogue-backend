@@ -1,5 +1,6 @@
+/* eslint-disable import/no-cycle */
 import models from '../models';
-import { HelperMethods } from '../utils';
+import { HelperMethods, Notification } from '../utils';
 
 const { Request, User, Sequelize } = models;
 const { Op } = Sequelize;
@@ -24,6 +25,11 @@ class RequestController {
       const { body } = req;
       const { dataValues } = await Request.create({ ...body, userId: id, });
       if (dataValues.id) {
+        Notification.sendNewRequestNotifications(res, {
+          id,
+          requestId: dataValues.id,
+          type: 'single trip',
+        });
         HelperMethods.requestSuccessful(res, {
           success: true,
           message: 'Trip booked successfully',
@@ -53,6 +59,11 @@ class RequestController {
       }
       const { dataValues } = await Request.create({ ...req.body, userId: id });
       if (dataValues.id) {
+        Notification.sendNewRequestNotifications(res, {
+          id,
+          requestId: dataValues.id,
+          type: 'return trip',
+        });
         return HelperMethods.requestSuccessful(res, {
           success: true,
           message: 'Trip booked successfully',
@@ -253,6 +264,11 @@ class RequestController {
         multiflightDate: [...flightDate],
       });
       if (dataValues.id) {
+        Notification.sendNewRequestNotifications(res, {
+          id,
+          requestId: dataValues.id,
+          type: 'single trip',
+        });
         return HelperMethods.requestSuccessful(res, {
           success: true,
           message: 'Trip booked successfully',

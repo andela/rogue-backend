@@ -1,7 +1,9 @@
+/* eslint-disable import/no-cycle */
 import authRoute from './authRoute';
 import requestRoute from './requestRoute';
 import userRoute from './userRoute';
 import socialAuthRoute from './socialAuthRoute';
+import notificationRoute from './notificationRoute';
 /**
  * Handles request
  * @param {object} app - An instance of the express module
@@ -19,6 +21,7 @@ const routes = app => {
   requestRoute(app);
   userRoute(app);
   socialAuthRoute(app);
+  notificationRoute(app);
 };
 
 export default routes;
