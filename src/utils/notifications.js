@@ -11,24 +11,31 @@ const { User, Message } = models;
 class Notification {
   /**
    * @param {object} res HTTP response object
-   * @param {string} notificationParams - object containing notification parameters
+   * @param {string} id - The Id of the requester
+   * @param {object} dataValues - Object containing the request information
+   * @param {string} type - The type of the request: single trip || return trip || multi-city trip
    * @returns {*} sends notifications
    */
-  static async sendNewRequestNotifications(res, notificationParams) {
+  static async sendNewRequestNotifications(res, { id, dataValues, type }) {
     try {
-      const { id, requestId, type } = notificationParams;
       const user = await User.findByPk(id);
+      const manager = await User.findByPk(user.lineManager);
+      const { firstName, email, isSubscribed } = manager.dataValues;
       const message = `${user.username} created a travel request`;
       io.emit(user.lineManager, message);
-      const manager = await User.findByPk(user.lineManager);
-      const { firstName, email } = manager.dataValues;
-      if (user.isSubscribed) {
-        await SendEmail.sendRequestNotification(
-          email,
-          firstName,
-          requestId,
+
+      if (isSubscribed) {
+        await SendEmail.sendRequestNotification({
+          managerEmail: email,
+          managerName: firstName,
+          requester: user.firstName,
+          requestId: dataValues.id,
+          origin: dataValues.origin,
+          destination: dataValues.destination,
+          flightDate: dataValues.flightDate,
+          reason: dataValues.reason,
           type
-        );
+        });
       }
 
       await Message.create({

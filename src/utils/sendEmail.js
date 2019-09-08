@@ -58,15 +58,12 @@ class SendEmail {
   }
 
   /**
-   * @param {string} email - email address to send the message to
-   * @param {string} firstName - User's first name
-   * @param {string} requestId - The Id of the request
-   * @param {string} requestType - multicity || single Trip || Return Trip
+   * @param {object} emailParams - Object containing some parameters for the email
    * @returns {boolean} specifies if the email was sent successfully
    */
-  static sendRequestNotification(email, firstName, requestId, requestType) {
+  static sendRequestNotification(emailParams) {
     const details = {
-      email,
+      email: emailParams.managerEmail,
       subject: 'New pending request - BareFoot-Nomad',
       html: `'<div style="width: 90%; margin: 5em auto;
        box-shadow: 0 0 10px rgba(0,0,0,.9);">
@@ -76,23 +73,31 @@ class SendEmail {
                 <h2 style="text-align: center; color: white;
                  padding-top: 10px;">Barefoot Nomad</h2>
             </div>
-            <h4 style="text-align: center">Hi! ${firstName}</h4>
+            <h1 style="text-align: center">Hi! ${emailParams.managerName}</h1>
           </div>
           <div style=" padding: 0px 20px 20px 20px">
             <div>
-              <p>A user requested for a ${requestType}. Your action is needed</p>
-              <p>Click on the button below to approve or reject the request.</p>
+              <p>There is a new request from user: <strong>${emailParams.requester}</strong> that needs your action</p>
+              <p>Below are the details of the request:</p></br>
+              <ul>
+                <li>Origin: ${emailParams.origin}</li>
+                <li>Destination: ${emailParams.destination}</li>
+                <li>Reason: ${emailParams.reason}</li>
+                <li>Type: ${emailParams.type}</li>
+                <li>Flight Date: ${emailParams.flightDate}</li>
+                <li>Requester: ${emailParams.requester}</li>
+              </ul>
               <button style="color: white; background-color: #1AC124;
                border: none; border-radius: 10px; text-align: center;
                 padding: 10px;">
-                <a  href="${baseUrl}/request/approve/${requestId}"
+                <a  href="${baseUrl}/request/approve/${emailParams.requestId}"
                  style="text-decoration: none;
                  color: white;">Approve Request</a></button>
                  
                  <button style="color: white; background-color: #DE4727;
                border: none; border-radius: 10px; text-align: center;
                 padding: 10px;">
-                <a  href="${baseUrl}/request/reject/${requestId}"
+                <a  href="${baseUrl}/request/reject/${emailParams.requestId}"
                  style="text-decoration: none;
                  color: white;">Reject Request</a></button>
             </div>

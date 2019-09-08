@@ -56,6 +56,14 @@ describe('Integration tests for the request controller', () => {
     nonLineManagerToken = nonLineManager.body.data.userDetails.token;
   });
 
+  describe('Test notification controller', () => {
+    it('should serve a html file', async () => {
+      const response = await chai.request(app)
+        .get('/api/v1/managerNotification/3821b930-ce48-4ac8-9ddf-ee3bf7980d08');
+      expect(response.headers['content-type']).to.equal('text/html; charset=utf-8');
+    });
+  });
+
   describe('Authentication tests', () => {
     it('should return an error if the authentication token is missing', async () => {
       const response = await chai
