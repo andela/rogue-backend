@@ -28,8 +28,8 @@ class RequestController {
       if (dataValues.id) {
         Notification.sendNewRequestNotifications(res, {
           id,
-          requestId: dataValues.id,
           type: 'single trip',
+          dataValues,
         });
         HelperMethods.requestSuccessful(res, {
           success: true,
@@ -317,8 +317,8 @@ class RequestController {
       if (dataValues.id) {
         Notification.sendNewRequestNotifications(res, {
           id,
-          requestId: dataValues.id,
           type: 'multi-city trip',
+          dataValues,
         });
         const user = await User.findByPk(id);
         if (user.dataValues) {
