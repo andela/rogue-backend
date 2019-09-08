@@ -1,4 +1,6 @@
+/* eslint-disable import/no-cycle */
 import models from '../models';
+import { HelperMethods } from '../utils';
 /**
  * Class representing the Notification controller
  * @class Notification
@@ -26,10 +28,7 @@ class Notification {
       });
       messageCount = messages.length;
     } catch (error) {
-      return res.status(404).send({
-        success: false,
-        message: 'internal server error'
-      });
+      return HelperMethods.clientError(res);
     }
     const notify = `
     <!DOCTYPE html>
