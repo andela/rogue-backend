@@ -55,7 +55,7 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'userId',
       onDelete: 'CASCADE',
     });
-    Request.belongsTo(models.Accommodation, {
+    Request.belongsTo(models.Room, {
       foreignKey: 'accommodationId',
       onDelete: 'CASCADE',
     });

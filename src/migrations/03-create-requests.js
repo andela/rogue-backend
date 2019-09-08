@@ -39,7 +39,7 @@ module.exports = {
     accommodationId: {
       type: Sequelize.UUID,
       references: {
-        model: 'Accommodations',
+        model: 'Rooms',
         key: 'id'
       }
     },

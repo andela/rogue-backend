@@ -1,5 +1,6 @@
 import authRoute from './authRoute';
 import requestRoute from './requestRoute';
+import accommodationRoute from './accommodationRoute';
 import userRoute from './userRoute';
 import socialAuthRoute from './socialAuthRoute';
 /**
@@ -19,6 +20,7 @@ const routes = app => {
   requestRoute(app);
   userRoute(app);
   socialAuthRoute(app);
+  accommodationRoute(app);
 };
 
 export default routes;

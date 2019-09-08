@@ -1,5 +1,5 @@
 module.exports = {
-  up: queryInterface => queryInterface.bulkInsert('Accommodations', [
+  up: queryInterface => queryInterface.bulkInsert('Rooms', [
     {
       id: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
       name: 'Southern Sun Ikoyi Hotel',
@@ -32,5 +32,5 @@ module.exports = {
     }
   ], {}),
 
-  down: queryInterface => queryInterface.bulkDelete('Accommodations', null, {})
+  down: queryInterface => queryInterface.bulkDelete('Rooms', null, {})
 };

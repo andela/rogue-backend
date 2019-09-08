@@ -335,7 +335,7 @@ class RequestController {
   * @return {res} res - HTTP Response object
   * @memberof RequestController
   */
-  static async confirmRequestApproval(req, res) {
+  static async confirmRequestApproval(req, res, next) {
     try {
       const approvedRequest = await Request.findOne({
         where: { id: req.body.id },
@@ -361,8 +361,9 @@ class RequestController {
       return HelperMethods.clientError(res,
         'The request you are trying to confirm cannot be found', 404);
     } catch (error) {
-      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
-      return HelperMethods.serverError(res);
+      // if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      // return HelperMethods.serverError(res);
+      return next(error)
     }
   }
 }

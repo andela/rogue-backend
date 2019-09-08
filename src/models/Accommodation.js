@@ -1,5 +1,5 @@
 export default (sequelize, DataTypes) => {
-  const Accommodation = sequelize.define('Accommodation', {
+  const Room = sequelize.define('Room', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -36,12 +36,12 @@ export default (sequelize, DataTypes) => {
     },
   });
 
-  Accommodation.associate = models => {
-    Accommodation.hasMany(models.Request, {
+  Room.associate = models => {
+    Room.hasMany(models.Request, {
       foreignKey: 'accommodationId',
       as: 'accommodation',
     });
   };
 
-  return Accommodation;
+  return Room;
 };
