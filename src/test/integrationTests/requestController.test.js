@@ -333,7 +333,7 @@ describe('Integration tests for the request controller', () => {
         });
       expect(response.status).to.equal(201);
       expect(response.body.data).to.have.property('message');
-      expect(response.body.data.message).to.equal('Trip booked successfully');
+      expect(response.body.data.message).to.equal('Multi-city trip booked successfully');
       expect(response.body.data).to.have.property('success');
       expect(response.body.data.success).to.equal(true);
     });
@@ -433,23 +433,6 @@ describe('Integration tests for the request controller', () => {
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
     });
-    it('should allow a registered user to book a multi-city trip', async () => {
-      const response = await chai.request(app).post('/api/v1/request/multicity')
-        .set('x-access-token', token).send({
-          origin: 'Onipan',
-          destination: ['mile12', 'okoko'],
-          flightDate: ['2019-06-27', '2019-06-25'],
-          accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
-          userId: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
-          returnTrip: 'true',
-          reason: 'EXPEDITION'
-        });
-      expect(response.status).to.equal(201);
-      expect(response.body.data).to.have.property('message');
-      expect(response.body.data.message).to.equal('Trip booked successfully');
-      expect(response.body.data).to.have.property('success');
-      expect(response.body.data.success).to.equal(true);
-    });
     it('should not book a trip when a required detail is missing', async () => {
       const response = await chai.request(app).post('/api/v1/request/multicity')
         .set('x-access-token', token).send({
@@ -481,22 +464,6 @@ describe('Integration tests for the request controller', () => {
       expect(response.body.success).to.equal(false);
       expect(response.body.message).to.equal('Destination has to be more than one');
     });
-    it('should allow a registered user to book a multi-city trip', async () => {
-      const response = await chai.request(app).post('/api/v1/request/multicity')
-        .set('x-access-token', token).send({
-          origin: 'Onipan',
-          destination: ['mile12', 'okoko'],
-          flightDate: ['2019-06-27', '2019-07-02'],
-          accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
-          userId: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
-          returnTrip: 'true',
-          reason: 'EXPEDITION'
-        });
-      expect(response.status).to.equal(201);
-      expect(response.body.data).to.have.property('message');
-      expect(response.body.data).to.have.property('success');
-      expect(response.body.data.success).to.equal(true);
-    });
     it('should not book a trip when the "origin" filed  is missing', async () => {
       const response = await chai.request(app).post('/api/v1/request/multicity')
         .set('x-access-token', token).send({
@@ -513,38 +480,6 @@ describe('Integration tests for the request controller', () => {
       expect(response.body.success).to.equal(false);
       expect(response.body.message).to
         .equal('Invalid request. \'origin\' field is required');
-    });
-    it('should allow a registered user to book a multi-city trip', async () => {
-      const response = await chai.request(app).post('/api/v1/request/multicity')
-        .set('x-access-token', '').send({
-          origin: 'Onipan',
-          destination: ['mile12', 'okoko'],
-          flightDate: '2019-06-27',
-          accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
-          userId: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
-          returnTrip: true,
-          reason: 'EXPEDITION'
-        });
-      expect(response.status).to.equal(401);
-      expect(response.body).to.have.property('message');
-      expect(response.body).to.have.property('success');
-      expect(response.body.success).to.equal(false);
-    });
-    it('should allow a registered user to book a multi-city trip', async () => {
-      const response = await chai.request(app).post('/api/v1/request/multicity')
-        .set('x-access-token', 'jksjjjjsjsj').send({
-          origin: 'Onipan',
-          destination: ['mile12', 'okoko'],
-          flightDate: '2019-06-27',
-          accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c',
-          userId: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
-          returnTrip: true,
-          reason: 'EXPEDITION'
-        });
-      expect(response.status).to.equal(401);
-      expect(response.body).to.have.property('message');
-      expect(response.body).to.have.property('success');
-      expect(response.body.success).to.equal(false);
     });
   });
   describe('Search functionality tests', () => {
