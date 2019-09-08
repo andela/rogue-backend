@@ -1,4 +1,4 @@
-/* eslint-disable import/no-cycle */
+import http from 'http';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -31,10 +31,8 @@ app.use(cors());
 if (process.env.NODE_ENV !== 'test') {
   setUpPassport();
 }
-
 app.use(passport.initialize());
 app.use(passport.session());
-
 // api doc
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(doc));
 app.set('x-powered-by', false);
@@ -47,19 +45,22 @@ app.all('*', (req, res) => res.status(404).json({
 }));
 
 app.use(HelperMethods.checkExpressErrors);
-app.get('/', (req, res) => res.status(200).send({
-  message: 'Welcome to Barefoot Nomad'
-}));
-app.all('*', (req, res) => res.send({
-  message: 'route not found'
-}));
 
-const server = app.listen(port, () => {
-  console.info(`Server is up and listening on port ${port}`);
-});
+const server = http.createServer(app);
+const io = socketIO(server);
 
-export const io = socketIO(server);
 io.on('connection', socket => {
   console.info(`${socket.id} has connected`);
 });
+
+app.use((req, res, next) => {
+  req.io = io;
+  req.isSent = 'check if it is sent';
+  next();
+});
+
+server.listen(port, () => {
+  console.info(`Server is up and listening on port ${port}`);
+});
+
 export default app;

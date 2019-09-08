@@ -2,5 +2,8 @@
 import UserController from './UserController';
 import NotificationController from './NotificationController';
 import RequestController from './RequestController';
+import SocialController from './socialController';
 
-export { UserController, RequestController, NotificationController };
+export {
+  UserController, RequestController, NotificationController, SocialController
+};

@@ -1,6 +1,6 @@
-/* eslint-disable import/no-cycle */
 import models from '../models';
-import { HelperMethods, Notification } from '../utils';
+import { HelperMethods } from '../utils';
+import NotificationController from '../utils/notificationHelper';
 
 const { Request, User, Sequelize } = models;
 const { Op } = Sequelize;
@@ -25,17 +25,19 @@ class RequestController {
       const { body } = req;
       const { dataValues } = await Request.create({ ...body, userId: id, });
       if (dataValues.id) {
-        Notification.sendNewRequestNotifications(res, {
+        NotificationController.newTripRequest(req, res, {
           id,
           type: 'single trip',
           dataValues,
         });
         HelperMethods.requestSuccessful(res, {
           success: true,
-          message: 'Trip booked successfully',
+          message: 'One-way trip booked successfully',
           tripCreated: dataValues,
         }, 201);
       }
+      return HelperMethods.serverError(res,
+        'Could not create one-way trip. Please try again');
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
@@ -59,7 +61,7 @@ class RequestController {
       }
       const { dataValues } = await Request.create({ ...req.body, userId: id });
       if (dataValues.id) {
-        Notification.sendNewRequestNotifications(res, {
+        NotificationController.newTripRequest(res, {
           id,
           type: 'return trip',
           dataValues,
@@ -118,7 +120,7 @@ class RequestController {
           const updatedRequest = await requestExist.update({ ...body, });
           return HelperMethods.requestSuccessful(res, {
             success: true,
-            message: 'Trip udpdated successfully',
+            message: 'Trip updated successfully',
             updatedData: updatedRequest.dataValues,
           }, 200);
         }
@@ -264,7 +266,7 @@ class RequestController {
         multiflightDate: [...flightDate],
       });
       if (dataValues.id) {
-        Notification.sendNewRequestNotifications(res, {
+        NotificationController.newTripRequest(res, {
           id,
           type: 'multi-city trip',
           dataValues,

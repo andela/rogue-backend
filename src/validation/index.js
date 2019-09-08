@@ -1,5 +1,3 @@
-import { HelperMethods } from '../utils';
-
 /**
  * Trims input values from user
  * @param {object} objectWithValuesToTrim - request body to trim
@@ -138,13 +136,16 @@ class Validate {
     if (!req.body.origin) return allFieldsRequired(res, 'origin');
     const { destination, flightDate } = req.body;
     if (!destination || !Array.isArray(destination) || !(destination.length > 1)) {
-      return HelperMethods.clientError(res, 'Destination has to be more than one');
+      return res.status(400).json({
+        success: false,
+        message: 'Destination has to be more than one'
+      });
     }
     if (!flightDate || !Array.isArray(flightDate) || !(flightDate.length > 1)) {
-      return HelperMethods.clientError(
-        res,
-        'Please, input flightDate for all destinations'
-      );
+      return res.status(400).json({
+        success: false,
+        message: 'Please, input flightDate for all destinations'
+      });
     }
     next();
   }
@@ -199,7 +200,10 @@ class Validate {
     });
 
     if (Object.keys(validQuery).length === 0) {
-      return HelperMethods.clientError(res, 'Invalid search query.', 400);
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid search query.',
+      });
     }
 
     req.query = validQuery;
