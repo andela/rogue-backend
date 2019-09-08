@@ -58,15 +58,13 @@ class SendEmail {
   }
 
   /**
-   * @param {string} emailParams - email address to send the message to
-   * @param {string} firstName - User's first name
-   * @param {string} requestId - The Id of the request
-   * @param {string} requestType - multicity || single Trip || Return Trip
+   * @param {string} notificationDetails - email address to send the message to
    * @returns {boolean} specifies if the email was sent successfully
    */
-  static sendRequestNotification(emailParams) {
+  static sendRequestNotification(notificationDetails) {
+    const emailParams = SendEmail.newTripData(notificationDetails);
     const details = {
-      email: 'nwodochristian@gmail.com',
+      email: emailParams.managerEmail,
       subject: 'New pending request - BareFoot-Nomad',
       html: `'<div style="width: 90%; margin: 5em auto;
        box-shadow: 0 0 10px rgba(0,0,0,.9);">

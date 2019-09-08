@@ -1,9 +1,9 @@
-import { Notification } from '../utils';
+import { NotificationController } from '../controllers';
 
 const notificationRoute = app => {
   app.get(
     '/api/v1/managerNotification/:id',
-    Notification.notify
+    NotificationController.notify
   );
 };
 export default notificationRoute;

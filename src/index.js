@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -37,6 +38,7 @@ app.use(passport.session());
 const server = app.listen(port, () => {
   console.info(`Server is up and listening on port ${port}`);
 });
+
 const io = socketIo(server);
 io.on('connection', socket => { console.info(`${socket.id} connected`); });
 
@@ -56,11 +58,5 @@ app.all('*', (req, res) => res.status(404).json({
 }));
 
 app.use(HelperMethods.checkExpressErrors);
-app.get('/', (req, res) => res.status(200).send({
-  message: 'Welcome to Barefoot Nomad'
-}));
-app.all('*', (req, res) => res.send({
-  message: 'route not found'
-}));
 
 export default app;

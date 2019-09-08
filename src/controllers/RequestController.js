@@ -1,12 +1,10 @@
+/* eslint-disable import/no-cycle */
 import models from '../models';
-import {
-  HelperMethods, SendEmail, Notification, EmailData
-} from '../utils';
+import { HelperMethods, SendEmail, Notification } from '../utils';
 
 const {
-  Request, User, Message, Sequelize
+  Request, User, Message, Sequelize: { Op }
 } = models;
-const { Op } = Sequelize;
 
 /**
  * Class representing the Request controller
@@ -28,6 +26,11 @@ class RequestController {
       const { body } = req;
       const { dataValues } = await Request.create({ ...body, userId: id, });
       if (dataValues.id) {
+        Notification.sendNewRequestNotifications(res, {
+          id,
+          requestId: dataValues.id,
+          type: 'single trip',
+        });
         HelperMethods.requestSuccessful(res, {
           success: true,
           message: 'Trip booked successfully',
@@ -60,7 +63,6 @@ class RequestController {
             }
           } else return HelperMethods.serverError(res);
         } else return HelperMethods.serverError(res);
-        
       }
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
