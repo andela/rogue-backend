@@ -267,7 +267,7 @@ class RequestController {
         Notification.sendNewRequestNotifications(res, {
           id,
           requestId: dataValues.id,
-          type: 'single trip',
+          type: 'multi-city trip',
         });
         return HelperMethods.requestSuccessful(res, {
           success: true,
