@@ -1,7 +1,11 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import app from '../..';
+=======
+import app from '../../index';
+>>>>>>> adds a controller for users to book an accommodation facility
 =======
 import app from '../../index';
 >>>>>>> adds a controller for users to book an accommodation facility
@@ -9,6 +13,7 @@ import app from '../../index';
 chai.use(chaiHttp);
 const { expect } = chai;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 describe('Integration tests for the accommodation controller', () => {
   let userToken;
@@ -132,6 +137,8 @@ describe('Integration tests for the accommodation controller', () => {
         })
         .send(send);
 =======
+=======
+>>>>>>> adds a controller for users to book an accommodation facility
 describe('Integration Tests For Accommodation Controller', () => {
   describe('Test book accommodation controller', () => {
     const accommodationDetails = {
@@ -163,6 +170,7 @@ describe('Integration Tests For Accommodation Controller', () => {
     it('should return client error when some details are missing', async () => {
       const response = await chai.request(app).post('/api/v1/accommodation')
         .send().set({ 'x-access-token': token });
+<<<<<<< HEAD
 >>>>>>> adds a controller for users to book an accommodation facility
       expect(response.status).to.deep.equal(400);
       expect(response.body).to.have.property('success');
@@ -186,10 +194,13 @@ describe('Integration Tests For Accommodation Controller', () => {
           'x-access-token': userToken
         })
         .send(send);
+=======
+>>>>>>> adds a controller for users to book an accommodation facility
       expect(response.status).to.deep.equal(400);
       expect(response.body).to.have.property('success');
       expect(response.body.success).to.equal(false);
       expect(response.body).to.have.property('message');
+<<<<<<< HEAD
       expect(response.body.message).to.equal('"accommodationId" field is invalid');
     });
     it('should return client error when "accommodationId" does not exist', async () => {
@@ -211,6 +222,8 @@ describe('Integration Tests For Accommodation Controller', () => {
       expect(response.body).to.have.property('message');
       expect(response.body.message).to.equal('Accommodation does not exist');
 =======
+=======
+>>>>>>> adds a controller for users to book an accommodation facility
       expect(response.body.message)
         .to.equal('The "name" field is required');
     });
@@ -223,6 +236,9 @@ describe('Integration Tests For Accommodation Controller', () => {
       expect(response.body).to.have.property('message');
       expect(response.body.message)
         .to.equal('User not authorized');
+<<<<<<< HEAD
+>>>>>>> adds a controller for users to book an accommodation facility
+=======
 >>>>>>> adds a controller for users to book an accommodation facility
     });
   });
