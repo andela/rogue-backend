@@ -34,12 +34,15 @@ export default (sequelize, DataTypes) => {
         }
       }
     },
-  });
+  }, { tableName: 'Accommodations' });
 
   Accommodation.associate = models => {
+    Accommodation.belongsTo(models.User, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE',
+    });
     Accommodation.hasMany(models.Request, {
       foreignKey: 'accommodationId',
-      as: 'accommodation',
     });
   };
 

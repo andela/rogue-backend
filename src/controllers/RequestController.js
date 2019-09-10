@@ -22,7 +22,7 @@ class RequestController {
     try {
       const { id } = req.decoded;
       const { body } = req;
-      const { dataValues } = await Request.create({ ...body, userId: id, });
+      const { dataValues } = await Request.create({ ...body, userId: id });
       if (dataValues.id) {
         HelperMethods.requestSuccessful(res, {
           success: true,

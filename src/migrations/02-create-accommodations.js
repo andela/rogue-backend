@@ -5,6 +5,13 @@ module.exports = {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4
     },
+    userId: {
+      type: Sequelize.UUID,
+      references: {
+        model: 'Users',
+        key: 'id',
+      }
+    },
     name: {
       type: Sequelize.STRING,
       allowNull: false,
