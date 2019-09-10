@@ -1,10 +1,22 @@
 import models from '../models';
 import { HelperMethods } from '../utils';
 
+<<<<<<< HEAD
 const { Sequelize, Like, Accommodation } = models;
+=======
+const {
+  Sequelize,
+  Like,
+  Accommodation
+} = models;
+>>>>>>> adds a controller for users to book an accommodation facility
 
 /**
  * Class representing the accommodation controller
+const { Accommodation } = models;
+
+/**
+ * Class representing the Accomodation controller
  * @class AccommodationController
  * @description accommodation controller
  */
@@ -46,13 +58,40 @@ class AccommodationController {
       }
     } catch (error) {
       if (error instanceof Sequelize.ForeignKeyConstraintError) {
-        return HelperMethods.clientError(res, 'Accommodation does not exist', 404);
+        return HelperMethods
+          .clientError(res, 'Accommodation does not exist', 404);
       }
 
       if (error instanceof Sequelize.DatabaseError) {
-        return HelperMethods.clientError(res, '"accommodationId" field is invalid', 400);
+        return HelperMethods
+          .clientError(res, '"accommodationId" field is invalid', 400);
       }
+    }
+  }
 
+  /** Book An  Accommodation.
+  * Route: POST: /accommodation
+  * @param {object} req - HTTP Request object
+  * @param {object} res - HTTP Response object
+  * @return {res} res - HTTP Response object
+  * @memberof AccommodationController
+ */
+  static async bookAnAccommodation(req, res) {
+    try {
+      const { body } = req;
+      const { id } = req.decoded;
+      const { dataValues } = await Accommodation.create({ ...body, userId: id });
+      if (dataValues.id) {
+        HelperMethods.requestSuccessful(res, {
+          success: true,
+          message: 'Accommodation booked successfully',
+          accommodationCreated: dataValues,
+        }, 201);
+      }
+      return HelperMethods.serverError(res,
+        'Could not create an accommodation. Please try again');
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
     }
   }
@@ -111,5 +150,4 @@ class AccommodationController {
     }
   }
 }
-
 export default AccommodationController;

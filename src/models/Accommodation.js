@@ -38,13 +38,20 @@ export default (sequelize, DataTypes) => {
   }, { tableName: 'Accommodations' });
 
   Accommodation.associate = models => {
+    Accommodation.belongsTo(models.User, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE',
+    });
     Accommodation.hasMany(models.Request, {
       foreignKey: 'accommodationId',
+<<<<<<< HEAD
     });
 
     Accommodation.belongsToMany(models.User, {
       through: 'like',
       as: 'User'
+=======
+>>>>>>> adds a controller for users to book an accommodation facility
     });
   };
 
