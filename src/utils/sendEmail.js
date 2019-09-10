@@ -189,7 +189,7 @@ class SendEmail {
      * @param {string} type return trip || single trip || multi-city trip
      * @returns {object} Object containing data for sending mail
      */
-  static async newTripData({
+  static newTripData({
     user, manager, dataValues, type
   }) {
     return {
