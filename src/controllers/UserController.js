@@ -1,13 +1,7 @@
 import models from '../models';
-import {
-  Authentication,
-  SendEmail,
-  HelperMethods
-} from '../utils';
+import { Authentication, SendEmail, HelperMethods } from '../utils';
 
-const {
-  User
-} = models;
+const { User } = models;
 
 /**
  * Class representing the user controller
@@ -99,17 +93,11 @@ class UserController {
    */
   static async signUp(req, res) {
     const {
-      email,
-      firstName,
-      lastName,
-      password,
-      username,
+      email, firstName, lastName, password, username,
     } = req.body;
     try {
       const userExist = await User.findOne({
-        where: {
-          email
-        }
+        where: { email }
       });
       if (userExist && userExist.dataValues.id) {
         if (userExist.dataValues.isVerified === false) {

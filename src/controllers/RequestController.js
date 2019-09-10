@@ -1,7 +1,11 @@
 import models from '../models';
-import { HelperMethods } from '../utils';
+import {
+  HelperMethods, SendEmail, Notification, EmailData
+} from '../utils';
 
-const { Request, User, Sequelize } = models;
+const {
+  Request, User, Message, Sequelize
+} = models;
 const { Op } = Sequelize;
 
 /**
@@ -29,6 +33,34 @@ class RequestController {
           message: 'Trip booked successfully',
           tripCreated: dataValues,
         }, 201);
+        const user = await User.findByPk(id);
+        if (user.dataValues) {
+          const manager = await User.findByPk(user.lineManager);
+          if (manager.dataValues.id) {
+            if (manager.isSubscribed) {
+              const emailData = await SendEmail.newTripData(
+                user, manager, dataValues, 'one-way trip'
+              );
+              const isEmailSent = await SendEmail.sendRequestNotification(emailData);
+              if (isEmailSent) {
+                const createMessage = await Message.create({
+                  message: `${user.username} created a new travel request`,
+                  userId: id,
+                  lineManager: user.dataValues.lineManager,
+                  type: 'creation'
+                });
+                if (!createMessage.dataValues) {
+                  return HelperMethods.serverError(res);
+                }
+              } else return HelperMethods.serverError(res);
+              const isNotified = await Notification.newTripRequest(req, user);
+              if (!isNotified) {
+                return HelperMethods.serverError(res);
+              }
+            }
+          } else return HelperMethods.serverError(res);
+        } else return HelperMethods.serverError(res);
+        
       }
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
@@ -53,11 +85,38 @@ class RequestController {
       }
       const { dataValues } = await Request.create({ ...req.body, userId: id });
       if (dataValues.id) {
-        return HelperMethods.requestSuccessful(res, {
+        HelperMethods.requestSuccessful(res, {
           success: true,
           message: 'Trip booked successfully',
           tripCreated: dataValues,
         }, 201);
+        const user = await User.findByPk(id);
+        if (user.dataValues) {
+          const manager = await User.findByPk(user.lineManager);
+          if (manager.dataValues.id) {
+            if (manager.isSubscribed) {
+              const emailData = await SendEmail.newTripData(
+                user, manager, dataValues, 'return trip'
+              );
+              const isEmailSent = await SendEmail.sendRequestNotification(emailData);
+              if (!isEmailSent) {
+                const createMessage = await Message.create({
+                  message: `${user.username} created a new travel request`,
+                  userId: id,
+                  lineManager: user.dataValues.lineManager,
+                  type: 'creation'
+                });
+                if (!createMessage.dataValues) {
+                  return HelperMethods.serverError(res);
+                }
+              } else return HelperMethods.serverError(res);
+              const isNotified = await Notification.newTripRequest(req, user);
+              if (!isNotified) {
+                return HelperMethods.serverError(res);
+              }
+            }
+          } else return HelperMethods.serverError(res);
+        } else return HelperMethods.serverError(res);
       }
       return HelperMethods.clientError(res,
         'Could not book your return trip. please try again.',
@@ -107,7 +166,7 @@ class RequestController {
           const updatedRequest = await requestExist.update({ ...body, });
           return HelperMethods.requestSuccessful(res, {
             success: true,
-            message: 'Trip udpdated successfully',
+            message: 'Trip updated successfully',
             updatedData: updatedRequest.dataValues,
           }, 200);
         }
@@ -214,7 +273,8 @@ class RequestController {
   static async rejectRequest(req, res) {
     try {
       const requestExist = await Request.findByPk(req.body.id);
-      if (requestExist.dataValues.status === 'open' && requestExist.dataValues.id) {
+      if ((requestExist.dataValues.status === 'open'
+      || requestExist.dataValues.status === 'approved') && requestExist.dataValues.id) {
         await requestExist.update({ status: 'rejected' });
         return HelperMethods
           .requestSuccessful(res, {
@@ -253,11 +313,38 @@ class RequestController {
         multiflightDate: [...flightDate],
       });
       if (dataValues.id) {
-        return HelperMethods.requestSuccessful(res, {
+        HelperMethods.requestSuccessful(res, {
           success: true,
           message: 'Trip booked successfully',
           tripBooked: dataValues,
         }, 201);
+        const user = await User.findByPk(id);
+        if (user.dataValues) {
+          const manager = await User.findByPk(user.lineManager);
+          if (manager.dataValues.id) {
+            if (manager.isSubscribed) {
+              const emailData = await SendEmail.newTripData(
+                user, manager, dataValues, 'one-way trip'
+              );
+              const isEmailSent = await SendEmail.sendRequestNotification(emailData);
+              if (isEmailSent) {
+                const createMessage = await Message.create({
+                  message: `${user.username} created a new travel request`,
+                  userId: id,
+                  lineManager: user.dataValues.lineManager,
+                  type: 'creation'
+                });
+                if (!createMessage.dataValues) {
+                  return HelperMethods.serverError(res);
+                }
+              } else return HelperMethods.serverError(res);
+              const isNotified = await Notification.newTripRequest(req, user);
+              if (!isNotified) {
+                return HelperMethods.serverError(res);
+              }
+            }
+          } else return HelperMethods.serverError(res);
+        } else return HelperMethods.serverError(res);
       }
       return HelperMethods.serverError(res);
     } catch (error) {
