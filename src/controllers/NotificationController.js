@@ -9,14 +9,14 @@ import { HelperMethods } from '../utils';
  */
 class Notification {
   /**
-   * Test real-tim in-app notification
+   * Test real-time in-app notification
    * Route: POST: api/v1/
    * @param {object} req - HTTP Request object
    * @param {object} res - HTTP Response object
    * @return {res} res - HTTP Response object
    * @memberof Notification
    */
-  static async notify(req, res) {
+  static async notifyManager(req, res) {
     const { id } = req.params;
     const { Message } = models;
     let messageCount;
@@ -71,11 +71,19 @@ class Notification {
     res.send(notify);
   }
 
+  /**
+   * Test real-time in-app notification
+   * Route: POST: api/v1/
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof Notification
+  */
   static async notifyUser(req, res) {
     const { id } = req.params;
     const { Message } = models;
     let messageCount;
-    let allmessageBody
+    let messageBody;
     try {
       const messages = await Message.findAll({
         where: {
@@ -83,8 +91,8 @@ class Notification {
           isRead: false,
         }
       });
-      messageCount = messages.length;
-      allmessageBody = messages;
+      messageBody = messages.map(msg => msg.dataValues);
+      messageCount = messageBody.length;
     } catch (error) {
       return HelperMethods.clientError(res);
     }
@@ -99,72 +107,30 @@ class Notification {
         </head>
         <body>
           <h1>Barefoot Nomad</h1>
-          <h2 id="message"></h2>
+          <h2 id="messageCount"></h2>
+          <div id="message-container">
+          </div>
           <a href="" id='all-messages'>Link</a>
           <script>
             const socket = io();
             let countMessage = ${messageCount};
-            const messageDisplay = messageCount => {
-              const message = document.getElementById('message');
+            const messageCount = messageCount => {
+              const message = document.getElementById('messageCount');
               message.textContent = 'Messages:' + messageCount;
             };
-            const showAllMessages = messages => {
-              const allMessages = document.getElementById('all-messages');
-              allMessages.setAttribute('href', '/api/v1/');
-            }
-            messageDisplay(${messageCount});
-            showAllMessages(${allmessageBody});
-            const showDesktopNotification = (message, body, icon, sound, timeout) => {
-              if (!timeout) {
-                timeout = 4000;
-              }
-              const Notification = window.Notification || window.mozNotification 
-              || window.webkitNotification;
-              Notification.requestPermission(permission => {});
-
-              const requestNotificationPermissions = () => {
-                if (Notification.permission !== 'denied') {
-                  Notification.requestPermission(permission => {});
-                }
-              }
-              requestNotificationPermissions();
-              const instance = new Notification(message, {
-                body,
-                icon,
-                sound
-              });
-              if (sound) {
-                instance.sound;
-              }
-              setTimeout(instance.close.bind(instance), timeout);
-              return false;
+            const messageDisplay = (message) => {
+              const div = document.getElementById('message-container');
+              let paragraph = document.createElement('p');
+              paragraph.appendChild(document.createTextNode(message));
+              div.appendChild(paragraph);
             };
-            const sendNodeNotification = (title, message, icon) => {
-              socket.emit('new_notification', {
-                message,
-                title,
-                icon
-              });
-            };
-
-            const setNotification = data => {
-              showDesktopNotification('Barefoot Nomad', data, '/index.png');
-              sendNodeNotification(
-                'Barefoot Nomad',
-                'Browser Notification..!',
-                '/index.png'
-              );
-            };
-
+            messageCount(${messageCount});
+            
             socket.on('${id}', data => {
+              messageDisplay(data)
               countMessage += 1;
-              messageDisplay(countMessage);
-              setNotification(data);
-            });
-
-            socket.on('show_notification', data => {
-              showDesktopNotification(data.title, data.message, data.icon);
-            });
+              messageCount(countMessage);
+            });            
           </script>
         </body>
       </html>

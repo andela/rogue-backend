@@ -246,7 +246,7 @@ class RequestController {
             if (NotifyUser) {
               await Message.create({
                 message: `Hello ${user.username}, your request has been approved`,
-                userId: user.dataValues.id,
+                userId: user.id,
                 lineManager: req.decoded.id,
                 type: 'approval'
               });
@@ -263,7 +263,6 @@ class RequestController {
         'No pending request found or request has been previously approved', 404);
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
-      console.log(error)
       return HelperMethods.serverError(res);
     }
   }
