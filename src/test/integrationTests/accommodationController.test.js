@@ -5,7 +5,7 @@ import app from '../..';
 chai.use(chaiHttp);
 const { expect } = chai;
 
-describe('Integration tests for the accommodation controller', () => {
+describe('Integration tests for the accommodation controllers', () => {
   let userToken;
   before('Get user token', async () => {
     const loginResponse = await chai
@@ -171,6 +171,47 @@ describe('Integration tests for the accommodation controller', () => {
       expect(response.body.success).to.equal(false);
       expect(response.body).to.have.property('message');
       expect(response.body.message).to.equal('Accommodation does not exist');
+    });
+  });
+  describe('Test For Commenting on An Accomodation Facility', () => {
+    it('should not comment on an accommodation facility if required details are missing',
+      async () => {
+        const send = {
+          comment: 'Wonderful service!'
+        };
+        const response = await chai
+          .request(app)
+          .post('/api/v1/accommodation/comment')
+          .set({
+            'x-access-token': userToken
+          })
+          .send(send);
+        expect(response.status).to.deep.equal(400);
+        expect(response.body).to.have.property('message');
+        // eslint-disable-next-line quotes
+        expect(response.body.message).to
+          .equal("Invalid request. 'accommodationFacility' field is required");
+        expect(response.body).to.have.property('success');
+        expect(response.body.success).to.equal(false);
+      });
+    it('should comment on an accommodation facility', async () => {
+      const send = {
+        accommodationFacility: 'Chevron',
+        comment: 'Wonderful service!'
+      };
+      const response = await chai
+        .request(app)
+        .post('/api/v1/accommodation/comment')
+        .set({
+          'x-access-token': userToken
+        })
+        .send(send);
+      expect(response.status).to.deep.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data).to.have.property('data');
+      expect(response.body.data.message).to.equal('Comment created successfully');
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
     });
   });
 });
