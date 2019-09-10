@@ -4,7 +4,7 @@ import requestRoute from './requestRoute';
 import userRoute from './userRoute';
 import socialAuthRoute from './socialAuthRoute';
 import notificationRoute from './notificationRoute';
-import accommodationRoutes from './accommodationRoute';
+import accommodationRoute from './accommodationRoute';
 /**
  * Handles request
  * @param {object} app - An instance of the express module
@@ -22,7 +22,7 @@ const routes = app => {
   userRoute(app);
   socialAuthRoute(app);
   notificationRoute(app);
-  accommodationRoutes(app);
+  accommodationRoute(app);
 };
 
 export default routes;
