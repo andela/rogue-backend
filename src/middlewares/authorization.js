@@ -59,7 +59,7 @@ class Authorization {
    * @returns {object} res - Response object containing an error due
    * to unauthorized user
    */
-  static async confirmRole(req, res, next) {
+  static async confirmManagerRole(req, res, next) {
     if (req.decoded.role !== 'Manager') {
       return HelperMethods.clientError(res, 'Only managers can perform this action', 401);
     }
@@ -77,7 +77,7 @@ class Authorization {
    * @returns {object} res - Response object containing an error due
    * to unauthorized user
    */
-  static async confirmAdmin(req, res, next) {
+  static async confirmTravelAdminRole(req, res, next) {
     if (req.decoded.role !== 'Travel Administrator') {
       return HelperMethods.clientError(res,
         'Only Travel Administrators can perform this action', 401);

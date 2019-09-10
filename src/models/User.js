@@ -159,10 +159,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    isSubscribed: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -194,6 +190,10 @@ export default (sequelize, DataTypes) => {
         User.hasMany(models.Requests, {
           foreignKey: 'userId',
           as: 'users_request',
+        });
+        User.hasMany(models.Accommodation, {
+          foreignKey: 'userId',
+          as: 'users_accommodation',
         });
       }
     }

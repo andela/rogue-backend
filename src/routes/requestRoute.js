@@ -20,14 +20,14 @@ const requestRoutes = app => {
   app.get(
     '/api/v1/requests',
     Authorization.checkToken,
-    Authorization.confirmRole,
+    Authorization.confirmManagerRole,
     RequestController.getPendingRequests
   );
 
   app.patch(
     '/api/v1/request/approve',
     Authorization.checkToken,
-    Authorization.confirmRole,
+    Authorization.confirmManagerRole,
     RequestController.approveRequest
   );
   app.patch(
@@ -39,7 +39,7 @@ const requestRoutes = app => {
   app.patch(
     '/api/v1/request/reject',
     Authorization.checkToken,
-    Authorization.confirmRole,
+    Authorization.confirmManagerRole,
     RequestController.rejectRequest
   );
 
@@ -61,7 +61,7 @@ const requestRoutes = app => {
   app.patch(
     '/api/v1/request/confirm',
     Authorization.checkToken,
-    Authorization.confirmRole,
+    Authorization.confirmManagerRole,
     Validate.validateConfirmRequest,
     RequestController.confirmRequestApproval
   );

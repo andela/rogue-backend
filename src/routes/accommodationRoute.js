@@ -2,20 +2,28 @@ import { AccommodationController } from '../controllers';
 import { Authorization } from '../middlewares';
 import Validate from '../validation';
 
-const accommodationRoutes = app => {
+const accommodationRoute = app => {
   app.patch(
     '/api/v1/accommodation/like',
     Authorization.checkToken,
     Validate.validateLikeAccommodation,
     AccommodationController.likeAccommodation
   );
+
   app.post(
     '/api/v1/accommodation',
-    Validate.validateUserInput,
     Authorization.checkToken,
-    Authorization.confirmAdmin,
+    Authorization.confirmTravelAdminRole,
+    Validate.validateUserInput,
     AccommodationController.createAccommodation
+  );
+
+  app.post(
+    '/api/v1/accommodation',
+    Authorization.checkToken,
+    Validate.validateUserInput,
+    AccommodationController.bookAnAccommodation
   );
 };
 
-export default accommodationRoutes;
+export default accommodationRoute;
