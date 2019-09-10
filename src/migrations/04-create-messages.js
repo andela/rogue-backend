@@ -6,11 +6,7 @@ module.exports = {
       defaultValue: Sequelize.UUIDV4
     },
     userId: {
-      type: Sequelize.UUID,
-      references: {
-        model: 'Users',
-        key: 'id',
-      }
+      type: Sequelize.STRING,
     },
     lineManager: {
       type: Sequelize.UUID,
@@ -42,4 +38,3 @@ module.exports = {
 
   down: queryInterface => queryInterface.dropTable('Messages')
 };
-

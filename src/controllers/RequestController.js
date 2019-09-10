@@ -1,11 +1,10 @@
 /* eslint-disable import/no-cycle */
 import models from '../models';
-import { HelperMethods } from '../utils';
-import Notification from '../utils/notificationEngine';
+import { HelperMethods, SendEmail, Notification } from '../utils';
 
-
-const { Request, User, Sequelize } = models;
-const { Op } = Sequelize;
+const {
+  Request, User, Message, Sequelize: { Op }
+} = models;
 
 /**
  * Class representing the Request controller
@@ -145,19 +144,39 @@ class RequestController {
             }
           }
 
-          const updatedRequest = await requestExist.update({ ...body, });
-       
-          return HelperMethods.requestSuccessful(res, {
-            success: true,
-            message: 'Trip updated successfully',
-            updatedData: updatedRequest.dataValues,
-          }, 200);
+          const updatedRequest = await requestExist.update({ ...body });
+          if (updatedRequest.id) {
+            const user = await User.findByPk(id);
+            if (user.dataValues) {
+              if (user.dataValues && user.isSubscribed) {
+                const isEmailSent = await
+                SendEmail.sendEmailNotificationForEditedRequest({
+                  user, updatedRequest
+                });
+                const isNotified = await Notification.editedTripRequest(req, user);
+                if (isEmailSent && isNotified) {
+                  await Message.create({
+                    message: 'You edited a travel request',
+                    lineManager: null,
+                    userId: id,
+                    type: 'edition'
+                  });
+                }
+              }
+            }
+
+            return HelperMethods.requestSuccessful(res, {
+              success: true,
+              message: 'Trip updated successfully',
+              updatedData: updatedRequest.dataValues,
+            }, 200);
+          }
+          return HelperMethods.clientError(res, 'Forbidden', 403);
         }
-        return HelperMethods.clientError(res, 'Forbidden', 403);
+        return HelperMethods.clientError(
+          res, 'The request you are trying to edit does not exist', 404
+        );
       }
-      return HelperMethods.clientError(
-        res, 'The request you are trying to edit does not exist', 404
-      );
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
     }
@@ -205,7 +224,6 @@ class RequestController {
       }
       return HelperMethods.clientError(res, 'There are no pending requests', 404);
     } catch (error) {
-      console.log(error);
       return HelperMethods.serverError(res);
     }
   }
@@ -386,7 +404,6 @@ class RequestController {
         200
       );
     } catch (error) {
-      console.log(error);
       return HelperMethods.serverError(res);
     }
   }

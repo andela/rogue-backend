@@ -5,6 +5,9 @@ export default (sequelize, DataTypes) => {
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
+    userId: {
+      type: DataTypes.UUID,
+    },
     lineManager: {
       type: DataTypes.UUID,
       primaryKey: true,

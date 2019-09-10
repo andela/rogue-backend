@@ -57,9 +57,16 @@ describe('Integration tests for the request controller', () => {
   });
 
   describe('Test notification controller', () => {
-    it('should serve a html file', async () => {
+    it('should serve a html file  to show notification page for new request', async () => {
       const response = await chai.request(app)
         .get('/api/v1/managerNotification/3821b930-ce48-4ac8-9ddf-ee3bf7980d08');
+      expect(response.headers['content-type']).to.equal('text/html; charset=utf-8');
+    });
+  });
+  describe('Test notification controller', () => {
+    it('should serve a html file to show notification page for edited request', async () => {
+      const response = await chai.request(app)
+        .get('/api/v1/userNotification/4712fc7e-ca41-457f-872e-4a64b79efbba');
       expect(response.headers['content-type']).to.equal('text/html; charset=utf-8');
     });
   });

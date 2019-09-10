@@ -160,8 +160,7 @@ export default (sequelize, DataTypes) => {
     },
     isSubscribed: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
-
+      defaultValue: true,
     },
     password: {
       type: DataTypes.STRING,
