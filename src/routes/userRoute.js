@@ -35,13 +35,6 @@ const userRoutes = app => {
     Validate.validateUserEmail,
     UserController.resetPassword
   );
-
-  app.patch(
-    '/api/v1/like_accommodation',
-    Authorization.checkToken,
-    Validate.validateLikeAccommodation,
-    UserController.likeAccommodation
-  );
 };
 
 export default userRoutes;

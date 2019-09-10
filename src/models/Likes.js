@@ -1,5 +1,5 @@
 export default (sequelize, DataTypes) => {
-  const LikedAccommodation = sequelize.define('LikedAccommodation', {
+  const Like = sequelize.define('Like', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -9,5 +9,5 @@ export default (sequelize, DataTypes) => {
     userId: DataTypes.UUID
   });
 
-  return LikedAccommodation;
+  return Like;
 };

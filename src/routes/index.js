@@ -4,12 +4,13 @@ import requestRoute from './requestRoute';
 import userRoute from './userRoute';
 import socialAuthRoute from './socialAuthRoute';
 import notificationRoute from './notificationRoute';
+import accommodationRoute from './accommodationRoute';
+
 /**
  * Handles request
  * @param {object} app - An instance of the express module
  * @returns {object} - An object containing all routes
  */
-
 const routes = app => {
   app.get('/api/v1/', (req, res) => {
     res.status(200).send({
@@ -22,6 +23,7 @@ const routes = app => {
   userRoute(app);
   socialAuthRoute(app);
   notificationRoute(app);
+  accommodationRoute(app);
 };
 
 export default routes;

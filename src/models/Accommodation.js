@@ -43,8 +43,8 @@ export default (sequelize, DataTypes) => {
     });
 
     Accommodation.belongsToMany(models.User, {
-      through: 'Liked_ccommodation',
-      as: 'Accommodation'
+      through: 'like',
+      as: 'User'
     });
   };
 
