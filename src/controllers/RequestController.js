@@ -240,6 +240,18 @@ class RequestController {
           status: 'approved' || pendingRequest.status,
         }, { hooks: false });
         if (requestApproved.dataValues.id) {
+          const user = await User.findByPk(requestApproved.dataValues.userId);
+          if (user.dataValues) {
+            const NotifyUser = await Notification.approvedTripRequest(req, user);
+            if (NotifyUser) {
+              await Message.create({
+                message: `Hello ${user.username}, your request has been approved`,
+                userId: user.dataValues.id,
+                lineManager: req.decoded.id,
+                type: 'approval'
+              });
+            }
+          }
           return HelperMethods
             .requestSuccessful(res, {
               success: true,
@@ -251,6 +263,7 @@ class RequestController {
         'No pending request found or request has been previously approved', 404);
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      console.log(error)
       return HelperMethods.serverError(res);
     }
   }

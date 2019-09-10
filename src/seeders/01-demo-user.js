@@ -58,7 +58,7 @@ module.exports = {
       isVerified: true,
       isSubscribed: true,
       role: 'Requester',
-      lineManager: '3821b930-ce48-4ac8-9ddf-ee3bf7980d08',
+      lineManager: '79ddfd3b-5c83-4beb-815e-55b1c95230e1',
       createdAt: new Date(),
       updatedAt: new Date()
     },
