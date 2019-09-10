@@ -1,12 +1,10 @@
+/* eslint-disable import/no-cycle */
 import models from '../models';
-import {
-  HelperMethods, SendEmail, Notification, EmailData
-} from '../utils';
+import { HelperMethods, SendEmail, Notification } from '../utils';
 
 const {
-  Request, User, Message, Sequelize
+  Request, User, Message, Sequelize: { Op }
 } = models;
-const { Op } = Sequelize;
 
 /**
  * Class representing the Request controller
@@ -28,40 +26,32 @@ class RequestController {
       const { body } = req;
       const { dataValues } = await Request.create({ ...body, userId: id, });
       if (dataValues.id) {
-        HelperMethods.requestSuccessful(res, {
+        const user = await User.findByPk(id);
+        if (user.dataValues) {
+          const manager = await User.findByPk(user.lineManager);
+          if (manager.dataValues && manager.isSubscribed) {
+            const isEmailSent = await SendEmail.sendEmailNotification({
+              user, manager, dataValues, type: 'one-way trip',
+            });
+            const isNotified = await Notification.newTripRequest(req, user);
+            if (isEmailSent && isNotified) {
+              await Message.create({
+                userId: id,
+                message: `${user.username} created a new travel request`,
+                lineManager: user.dataValues.lineManager,
+                type: 'creation'
+              });
+            }
+          }
+        }
+        return HelperMethods.requestSuccessful(res, {
           success: true,
           message: 'Trip booked successfully',
           tripCreated: dataValues,
         }, 201);
-        const user = await User.findByPk(id);
-        if (user.dataValues) {
-          const manager = await User.findByPk(user.lineManager);
-          if (manager.dataValues.id) {
-            if (manager.isSubscribed) {
-              const emailData = await SendEmail.newTripData(
-                user, manager, dataValues, 'one-way trip'
-              );
-              const isEmailSent = await SendEmail.sendRequestNotification(emailData);
-              if (isEmailSent) {
-                const createMessage = await Message.create({
-                  message: `${user.username} created a new travel request`,
-                  userId: id,
-                  lineManager: user.dataValues.lineManager,
-                  type: 'creation'
-                });
-                if (!createMessage.dataValues) {
-                  return HelperMethods.serverError(res);
-                }
-              } else return HelperMethods.serverError(res);
-              const isNotified = await Notification.newTripRequest(req, user);
-              if (!isNotified) {
-                return HelperMethods.serverError(res);
-              }
-            }
-          } else return HelperMethods.serverError(res);
-        } else return HelperMethods.serverError(res);
-        
       }
+      return HelperMethods.serverError(res,
+        'Could not create a one-way trip. Please, try again');
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
@@ -85,38 +75,29 @@ class RequestController {
       }
       const { dataValues } = await Request.create({ ...req.body, userId: id });
       if (dataValues.id) {
-        HelperMethods.requestSuccessful(res, {
-          success: true,
-          message: 'Trip booked successfully',
-          tripCreated: dataValues,
-        }, 201);
         const user = await User.findByPk(id);
         if (user.dataValues) {
           const manager = await User.findByPk(user.lineManager);
-          if (manager.dataValues.id) {
-            if (manager.isSubscribed) {
-              const emailData = await SendEmail.newTripData(
-                user, manager, dataValues, 'return trip'
-              );
-              const isEmailSent = await SendEmail.sendRequestNotification(emailData);
-              if (!isEmailSent) {
-                const createMessage = await Message.create({
-                  message: `${user.username} created a new travel request`,
-                  userId: id,
-                  lineManager: user.dataValues.lineManager,
-                  type: 'creation'
-                });
-                if (!createMessage.dataValues) {
-                  return HelperMethods.serverError(res);
-                }
-              } else return HelperMethods.serverError(res);
-              const isNotified = await Notification.newTripRequest(req, user);
-              if (!isNotified) {
-                return HelperMethods.serverError(res);
-              }
+          if (manager.dataValues && manager.isSubscribed) {
+            const isEmailSent = await SendEmail.sendEmailNotification({
+              user, manager, dataValues, type: 'return trip'
+            });
+            const isNotified = await Notification.newTripRequest(req, user);
+            if (isEmailSent && isNotified) {
+              await Message.create({
+                message: `${user.username} created a new travel request`,
+                userId: id,
+                lineManager: user.dataValues.lineManager,
+                type: 'creation'
+              });
             }
-          } else return HelperMethods.serverError(res);
-        } else return HelperMethods.serverError(res);
+          }
+        }
+        return HelperMethods.requestSuccessful(res, {
+          success: true,
+          message: 'Return-trip booked successfully',
+          tripCreated: dataValues,
+        }, 201);
       }
       return HelperMethods.clientError(res,
         'Could not book your return trip. please try again.',
@@ -313,40 +294,32 @@ class RequestController {
         multiflightDate: [...flightDate],
       });
       if (dataValues.id) {
-        HelperMethods.requestSuccessful(res, {
-          success: true,
-          message: 'Trip booked successfully',
-          tripBooked: dataValues,
-        }, 201);
         const user = await User.findByPk(id);
         if (user.dataValues) {
           const manager = await User.findByPk(user.lineManager);
-          if (manager.dataValues.id) {
-            if (manager.isSubscribed) {
-              const emailData = await SendEmail.newTripData(
-                user, manager, dataValues, 'one-way trip'
-              );
-              const isEmailSent = await SendEmail.sendRequestNotification(emailData);
-              if (isEmailSent) {
-                const createMessage = await Message.create({
-                  message: `${user.username} created a new travel request`,
-                  userId: id,
-                  lineManager: user.dataValues.lineManager,
-                  type: 'creation'
-                });
-                if (!createMessage.dataValues) {
-                  return HelperMethods.serverError(res);
-                }
-              } else return HelperMethods.serverError(res);
-              const isNotified = await Notification.newTripRequest(req, user);
-              if (!isNotified) {
-                return HelperMethods.serverError(res);
-              }
+          if (manager.dataValues.id && manager.isSubscribed) {
+            const isEmailSent = await SendEmail.sendEmailNotification({
+              user, manager, dataValues, type: 'multi-city trip'
+            });
+            const isNotified = await Notification.newTripRequest(req, user);
+            if (isEmailSent && isNotified) {
+              await Message.create({
+                message: `${user.username} created a new travel request`,
+                userId: id,
+                lineManager: user.dataValues.lineManager,
+                type: 'creation'
+              });
             }
-          } else return HelperMethods.serverError(res);
-        } else return HelperMethods.serverError(res);
+          }
+        }
+        return HelperMethods.requestSuccessful(res, {
+          success: true,
+          message: 'Multi-city trip booked successfully',
+          tripBooked: dataValues,
+        }, 201);
       }
-      return HelperMethods.serverError(res);
+      return HelperMethods.serverError(res,
+        'Could not create a multi-city trip. Please, try again');
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
