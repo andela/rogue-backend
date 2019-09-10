@@ -41,6 +41,11 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'accommodationId',
       as: 'accommodation',
     });
+
+    Accommodation.belongsToMany(models.User, {
+      through: 'Liked_ccommodation',
+      as: 'Accommodation'
+    });
   };
 
   return Accommodation;
