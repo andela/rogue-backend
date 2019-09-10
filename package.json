@@ -33,6 +33,7 @@
     "jsonwebtoken": "^8.3.0",
     "method-override": "^2.3.10",
     "methods": "^1.1.2",
+    "moment": "^2.24.0",
     "mongoose": "^5.2.2",
     "morgan": "^1.9.1",
     "passport": "^0.4.0",

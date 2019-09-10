@@ -69,10 +69,6 @@ class RequestController {
   static async bookAReturnTrip(req, res) {
     try {
       const { id } = req.decoded;
-      const { returnDate } = req.body;
-      if (!returnDate) {
-        return HelperMethods.clientError(res, 'The returnDate field is required.');
-      }
       const { dataValues } = await Request.create({ ...req.body, userId: id });
       if (dataValues.id) {
         const user = await User.findByPk(id);

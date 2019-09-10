@@ -5,15 +5,20 @@ import Validate from '../validation';
 const requestRoutes = app => {
   app.post(
     '/api/v1/request/book_trip',
-    Validate.validateUserInput,
     Authorization.checkToken,
+    Validate.validateBookTrip,
+    Validate.validateFlightDateFormat,
+    Authorization.convertDateToValidFormat,
     RequestController.bookATrip
   );
 
   app.post(
     '/api/v1/request/book_return_trip',
     Authorization.checkToken,
-    Validate.validateUserInput,
+    Validate.validateBookTrip,
+    Validate.validateReturnDate,
+    Validate.validateReturnDateFormat,
+    Authorization.convertDateToValidFormat,
     RequestController.bookAReturnTrip
   );
 
@@ -47,6 +52,8 @@ const requestRoutes = app => {
     '/api/v1/request/multicity',
     Authorization.checkToken,
     Validate.validateMulticity,
+    Validate.validateFlightDateFormat,
+    Authorization.convertDateToValidFormat,
     RequestController.bookMulticity
   );
 

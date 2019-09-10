@@ -65,6 +65,28 @@ class Authorization {
     }
     next();
   }
+
+  /**
+  *
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request
+  * to the next handler
+  * @returns {callback} next - The callback that passes the request
+  * to the next handler
+  * @returns {object} res - Response object containing an error due
+  * to unauthorized user
+  */
+  static async convertDateToValidFormat(req, res, next) {
+    const { flightDate, returnDate } = req.body;
+    const convertFlightDate = await new Date(flightDate).toISOString();
+    if (convertFlightDate === undefined || convertFlightDate === null) {
+      return HelperMethods.clientError(res, 'Invalid date format');
+    }
+    next();
+    const convertReturnDate = new Date(returnDate).toISOString();
+    if (convertReturnDate) next();
+  }
 }
 
 export default Authorization;

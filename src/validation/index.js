@@ -1,3 +1,6 @@
+import moment from 'moment';
+import { HelperMethods } from '../utils';
+
 /**
  * Trims input values from user
  * @param {object} objectWithValuesToTrim - request body to trim
@@ -71,6 +74,71 @@ class Validate {
     const { email, password } = req.body;
     if (!email) return allFieldsRequired(res, 'email');
     if (!password) return allFieldsRequired(res, 'password');
+    next();
+  }
+
+  /**
+ * @param {object} req - Request object
+ * @param {object} res - Response object
+ * @param {callback} next - The callback that passes the request to the next handler
+ * @returns {object} res - Response object when query is invalid
+ * @memberof Validate
+ */
+  static validateBookTrip(req, res, next) {
+    req.body = trimValues(req.body);
+    const emptyField = checkForEmptyFields(req.body);
+    if (emptyField) return allFieldsRequired(res, emptyField);
+    const { origin, destination, flightDate } = req.body;
+    if (!origin) return allFieldsRequired(res, 'origin');
+    if (!destination) return allFieldsRequired(res, 'destination');
+    if (!flightDate) return allFieldsRequired(res, 'flightDate');
+    next();
+  }
+
+  /**
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request to the next handler
+  * @returns {object} res - Response object when query is invalid
+  * @memberof Validate
+  */
+  static async validateReturnDate(req, res, next) {
+    const { returnDate } = req.body;
+    if (!returnDate) {
+      return HelperMethods.clientError(res, 'The returnDate field is required.');
+    }
+    next();
+  }
+
+  /**
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request to the next handler
+  * @returns {object} res - Response object when query is invalid
+  * @memberof Validate
+  */
+  static validateFlightDateFormat(req, res, next) {
+    req.body = trimValues(req.body);
+    const { flightDate } = req.body;
+    if (flightDate === null || !moment(flightDate).isValid()) {
+      return HelperMethods.clientError(res, 'Invalid date format');
+    }
+    next();
+  }
+
+  /**
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request to the next handler
+  * @returns {object} res - Response object when query is invalid
+  * @memberof Validate
+  */
+  static validateReturnDateFormat(req, res, next) {
+    req.body = trimValues(req.body);
+    const { returnDate } = req.body;
+    if (returnDate === null || !moment(returnDate).isValid()) {
+      return HelperMethods.clientError(res, 'Invalid date format');
+    }
     next();
   }
 
