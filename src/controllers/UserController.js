@@ -1,13 +1,7 @@
 import models from '../models';
-import {
-  Authentication,
-  SendEmail,
-  HelperMethods
-} from '../utils';
+import { Authentication, SendEmail, HelperMethods } from '../utils';
 
-const {
-  User
-} = models;
+const { User } = models;
 
 /**
  * Class representing the user controller
@@ -99,17 +93,11 @@ class UserController {
    */
   static async signUp(req, res) {
     const {
-      email,
-      firstName,
-      lastName,
-      password,
-      username,
+      email, firstName, lastName, password, username,
     } = req.body;
     try {
       const userExist = await User.findOne({
-        where: {
-          email
-        }
+        where: { email }
       });
       if (userExist && userExist.dataValues.id) {
         if (userExist.dataValues.isVerified === false) {
@@ -387,46 +375,6 @@ class UserController {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
     }
-  }
-
-  /**
-   * Update rememberDetails column of a user
-   * Route: POST: api/v1/
-   * @param {object} req - HTTP Request object
-   * @param {object} res - HTTP Response object
-   * @return {res} res - HTTP Response object
-   * @memberof UserController
-   */
-  static async notify(req, res) {
-    const { id } = req.params;
-    const notify = `
-    <!DOCTYPE html>
-<html lang="en">
-<head>
- <meta charset="UTF-8">
- <meta http-equiv="X-UA-Compatible" content="ie=edge">
- <title>Document</title>
- <script src="/socket.io/socket.io.js"></script>
-</head>
-<body>
-  <script>
-    const messageDisplay = (message) => {
-    const div = document.getElementById('message-container');
-    let paragraph = document.createElement('p');
-    paragraph.appendChild(document.createTextNode(message));
-    div.appendChild(paragraph);
-    };
-    const socket = io();
-       socket.on('${id}', (data) => {
-         messageDisplay(data)
-       });
-  </script>
-  <div id="message-container">
-    <h1>Notification</h1>
-  </div>
-</body>
-</html>`;
-    res.send(notify);
   }
 }
 

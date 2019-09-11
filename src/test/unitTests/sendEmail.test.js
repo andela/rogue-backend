@@ -11,6 +11,17 @@ describe('Utility to send emails', () => {
     expect(response).to.equal(true);
     stubEmailSender.restore();
   });
+  it('should send verification email after new trip request', async () => {
+    const emailDetails = {
+      user: { firstName: 'name', lastName: 'myName' },
+      manager: { email: 'email', firtName: 'fisrtName' },
+      dataValues: { id: '', origin: '', flightDate: '' }
+    };
+    const stubEmailSender = sinon.stub(SendEmail, 'emailSender').returns(true);
+    const response = await SendEmail.sendEmailNotification(emailDetails);
+    expect(response).to.equal(true);
+    stubEmailSender.restore();
+  });
   it('should send email when passed the email details', async () => {
     const details = {
       email: 'jideajayi11@gmail.com',

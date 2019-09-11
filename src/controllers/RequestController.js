@@ -1,10 +1,10 @@
+/* eslint-disable import/no-cycle */
 import models from '../models';
-import { HelperMethods, Sockets } from '../utils';
+import { HelperMethods, SendEmail, Notification } from '../utils';
 
 const {
-  Request, User, Sequelize, Notification
+  Request, User, Message, Sequelize: { Op }
 } = models;
-const { Op } = Sequelize;
 
 /**
  * Class representing the Request controller
@@ -26,12 +26,32 @@ class RequestController {
       const { body } = req;
       const { dataValues } = await Request.create({ ...body, userId: id, });
       if (dataValues.id) {
-        HelperMethods.requestSuccessful(res, {
+        const user = await User.findByPk(id);
+        if (user.dataValues) {
+          const manager = await User.findByPk(user.lineManager);
+          if (manager.dataValues && manager.isSubscribed) {
+            const isEmailSent = await SendEmail.sendEmailNotification({
+              user, manager, dataValues, type: 'one-way trip',
+            });
+            const isNotified = await Notification.newTripRequest(req, user);
+            if (isEmailSent && isNotified) {
+              await Message.create({
+                userId: id,
+                message: `${user.username} created a new travel request`,
+                lineManager: user.dataValues.lineManager,
+                type: 'creation'
+              });
+            }
+          }
+        }
+        return HelperMethods.requestSuccessful(res, {
           success: true,
           message: 'Trip booked successfully',
           tripCreated: dataValues,
         }, 201);
       }
+      return HelperMethods.serverError(res,
+        'Could not create a one-way trip. Please, try again');
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
@@ -55,9 +75,27 @@ class RequestController {
       }
       const { dataValues } = await Request.create({ ...req.body, userId: id });
       if (dataValues.id) {
+        const user = await User.findByPk(id);
+        if (user.dataValues) {
+          const manager = await User.findByPk(user.lineManager);
+          if (manager && manager.isSubscribed) {
+            const isEmailSent = await SendEmail.sendEmailNotification({
+              user, manager, dataValues, type: 'return trip'
+            });
+            const isNotified = await Notification.newTripRequest(req, user);
+            if (isEmailSent && isNotified) {
+              await Message.create({
+                message: `${user.username} created a new travel request`,
+                userId: id,
+                lineManager: user.dataValues.lineManager,
+                type: 'creation'
+              });
+            }
+          }
+        }
         return HelperMethods.requestSuccessful(res, {
           success: true,
-          message: 'Trip booked successfully',
+          message: 'Return-trip booked successfully',
           tripCreated: dataValues,
         }, 201);
       }
@@ -80,21 +118,17 @@ class RequestController {
   */
   static async editRequest(req, res) {
     try {
-      const { id, username } = req.decoded;
-      const {
-        body
-      } = req;
+      const { id, } = req.decoded;
+      const { body, } = req;
 
       const requestExist = await Request.findOne({
-        where: {
-          id: body.requestId,
-          userId: id,
-        }
+        where: { id: body.requestId, userId: id, }
       });
 
       if (requestExist) {
-        if (requestExist.dataValues.status === 'open') {
-          if (requestExist.dataValues.returnDate) {
+        if ((requestExist.status !== 'confirmed')
+          || (requestExist.status !== 'rejected')) {
+          if (requestExist.returnDate) {
             const convertFlightDate = body.flightDate
               ? new Date(body.flightDate).toISOString() : requestExist.flightDate;
             const convertReturnDate = body.returnDate
@@ -105,25 +139,31 @@ class RequestController {
               );
             }
           }
-
           const updatedRequest = await requestExist.update({ ...body, });
-          await Notification.create({
-            message: `${username} edited travel request`,
-            isRead: false
-          });
-          const user = await User.findOne({
-            where: {
-              id,
+          if (updatedRequest) {
+            const user = await User.findByPk(id);
+            if (user) {
+              const manager = await User.findByPk(user.lineManager);
+              if (manager && manager.isSubscribed) {
+                const isNotified = await Notification.editTripRequest(req, user);
+                if (isNotified) {
+                  await Message.create({
+                    message: `${user.username} edited a travel request`,
+                    userId: id,
+                    lineManager: user.dataValues.lineManager,
+                    type: 'edition'
+                  });
+                }
+              }
             }
-          });
-          Sockets.emiter(`${user.lineManager}`, `${username} edited travel request`);
-          return HelperMethods.requestSuccessful(res, {
-            success: true,
-            message: 'Trip udpdated successfully',
-            updatedData: updatedRequest.dataValues,
-          }, 200);
+            return HelperMethods.requestSuccessful(res, {
+              success: true,
+              message: 'Trip updated successfully',
+              updatedData: updatedRequest.dataValues,
+            }, 200);
+          }
         }
-        return HelperMethods.clientError(res, 'Forbidden', 403);
+        return HelperMethods.clientError(res, 'This request cannot be edited.', 400);
       }
       return HelperMethods.clientError(
         res, 'The request you are trying to edit does not exist', 404
@@ -226,7 +266,8 @@ class RequestController {
   static async rejectRequest(req, res) {
     try {
       const requestExist = await Request.findByPk(req.body.id);
-      if (requestExist.dataValues.status === 'open' && requestExist.dataValues.id) {
+      if ((requestExist.dataValues.status === 'open'
+      || requestExist.dataValues.status === 'approved') && requestExist.dataValues.id) {
         await requestExist.update({ status: 'rejected' });
         return HelperMethods
           .requestSuccessful(res, {
@@ -265,13 +306,32 @@ class RequestController {
         multiflightDate: [...flightDate],
       });
       if (dataValues.id) {
+        const user = await User.findByPk(id);
+        if (user.dataValues) {
+          const manager = await User.findByPk(user.lineManager);
+          if (manager.dataValues.id && manager.isSubscribed) {
+            const isEmailSent = await SendEmail.sendEmailNotification({
+              user, manager, dataValues, type: 'multi-city trip'
+            });
+            const isNotified = await Notification.newTripRequest(req, user);
+            if (isEmailSent && isNotified) {
+              await Message.create({
+                message: `${user.username} created a new travel request`,
+                userId: id,
+                lineManager: user.dataValues.lineManager,
+                type: 'creation'
+              });
+            }
+          }
+        }
         return HelperMethods.requestSuccessful(res, {
           success: true,
-          message: 'Trip booked successfully',
+          message: 'Multi-city trip booked successfully',
           tripBooked: dataValues,
         }, 201);
       }
-      return HelperMethods.serverError(res);
+      return HelperMethods.serverError(res,
+        'Could not create a multi-city trip. Please, try again');
     } catch (error) {
       if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
       return HelperMethods.serverError(res);
