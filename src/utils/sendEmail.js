@@ -114,6 +114,7 @@ class SendEmail {
     };
     return SendEmail.emailSender(details);
   }
+
   /* eslint-enable max-len */
 
   /**

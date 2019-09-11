@@ -150,10 +150,19 @@ class RequestController {
                   await Message.create({
                     message: `${user.username} edited a travel request`,
                     userId: id,
-                    lineManager: user.dataValues.lineManager,
+                    lineManager: user.lineManager,
                     type: 'edition'
                   });
                 }
+              }
+              const NotifyUser = await Notification.userEditedRequest(req, user);
+              if (NotifyUser) {
+                await Message.create({
+                  message: `Hello ${user.username}, You edited a travel request`,
+                  userId: user.id,
+                  lineManager: user.lineManager,
+                  type: 'edition'
+                });
               }
             }
             return HelperMethods.requestSuccessful(res, {
