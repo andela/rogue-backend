@@ -5,5 +5,5 @@ import CryptData from './cryptData';
 import Notification from './notificationHelper';
 
 export {
-  Authentication, SendEmail, HelperMethods, CryptData, Notification
+  Authentication, SendEmail, HelperMethods, CryptData, Notification,
 };

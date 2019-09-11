@@ -42,65 +42,27 @@ class Notification {
         </head>
         <body>
           <h1>Barefoot Nomad</h1>
-          <h2 id="message"></h2>
+          <h2 id="messageCount"></h2>
+          <div id="message-container">
+          </div>
           <script>
             const socket = io();
             let countMessage = ${messageCount};
-            const messageDisplay = messageCount => {
-              const message = document.getElementById('message');
+            const messageCount = messageCount => {
+              const message = document.getElementById('messageCount');
               message.textContent = 'Messages:' + messageCount;
             };
-            messageDisplay(${messageCount});
-            const showDesktopNotification = (message, body, icon, sound, timeout) => {
-              if (!timeout) {
-                timeout = 4000;
-              }
-              const Notification = window.Notification || window.mozNotification 
-              || window.webkitNotification;
-              Notification.requestPermission(permission => {});
-
-              const requestNotificationPermissions = () => {
-                if (Notification.permission !== 'denied') {
-                  Notification.requestPermission(permission => {});
-                }
-              }
-              requestNotificationPermissions();
-              const instance = new Notification(message, {
-                body,
-                icon,
-                sound
-              });
-              if (sound) {
-                instance.sound;
-              }
-              setTimeout(instance.close.bind(instance), timeout);
-              return false;
+            const messageDisplay = (message) => {
+              const div = document.getElementById('message-container');
+              let paragraph = document.createElement('p');
+              paragraph.appendChild(document.createTextNode(message));
+              div.appendChild(paragraph);
             };
-            const sendNodeNotification = (title, message, icon) => {
-              socket.emit('new_notification', {
-                message,
-                title,
-                icon
-              });
-            };
-
-            const setNotification = data => {
-              showDesktopNotification('Barefoot Nomad', data, '/index.png');
-              sendNodeNotification(
-                'Barefoot Nomad',
-                'Browser Notification..!',
-                '/index.png'
-              );
-            };
-
+            messageCount(${messageCount});
             socket.on('${id}', data => {
+              messageDisplay(data)
               countMessage += 1;
-              messageDisplay(countMessage);
-              setNotification(data);
-            });
-
-            socket.on('show_notification', data => {
-              showDesktopNotification(data.title, data.message, data.icon);
+              messageCount(countMessage);
             });
           </script>
         </body>

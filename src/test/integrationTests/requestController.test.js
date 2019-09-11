@@ -1,6 +1,8 @@
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+import sinon from 'sinon';
 import app from '../../index';
+import { Notification } from '../../utils';
 
 chai.use(chaiHttp);
 const { expect } = chai;
@@ -19,6 +21,7 @@ describe('Integration tests for the request controller', () => {
   let token;
   let requestId;
   before('login with an existing user details from the seeded data', async () => {
+    const stubbedMethod = sinon.stub(Notification, 'newTripRequest').returns(true);
     const response = await chai.request(app).post('/api/v1/auth/login')
       .send({
         email: 'demo4@demo.com',
@@ -35,6 +38,7 @@ describe('Integration tests for the request controller', () => {
         accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c'
       });
     requestId = bookTrip.body.data.tripCreated.id;
+    stubbedMethod.restore();
   });
   let managerToken;
   let nonLineManagerToken;

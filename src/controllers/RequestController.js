@@ -78,7 +78,7 @@ class RequestController {
         const user = await User.findByPk(id);
         if (user.dataValues) {
           const manager = await User.findByPk(user.lineManager);
-          if (manager.dataValues && manager.isSubscribed) {
+          if (manager && manager.isSubscribed) {
             const isEmailSent = await SendEmail.sendEmailNotification({
               user, manager, dataValues, type: 'return trip'
             });
@@ -118,21 +118,17 @@ class RequestController {
   */
   static async editRequest(req, res) {
     try {
-      const { id } = req.decoded;
-      const {
-        body
-      } = req;
+      const { id, } = req.decoded;
+      const { body, } = req;
 
       const requestExist = await Request.findOne({
-        where: {
-          id: body.requestId,
-          userId: id,
-        }
+        where: { id: body.requestId, userId: id, }
       });
 
       if (requestExist) {
-        if (requestExist.dataValues.status === 'open') {
-          if (requestExist.dataValues.returnDate) {
+        if ((requestExist.status !== 'confirmed')
+          || (requestExist.status !== 'rejected')) {
+          if (requestExist.returnDate) {
             const convertFlightDate = body.flightDate
               ? new Date(body.flightDate).toISOString() : requestExist.flightDate;
             const convertReturnDate = body.returnDate
@@ -143,15 +139,31 @@ class RequestController {
               );
             }
           }
-
           const updatedRequest = await requestExist.update({ ...body, });
-          return HelperMethods.requestSuccessful(res, {
-            success: true,
-            message: 'Trip updated successfully',
-            updatedData: updatedRequest.dataValues,
-          }, 200);
+          if (updatedRequest) {
+            const user = await User.findByPk(id);
+            if (user) {
+              const manager = await User.findByPk(user.lineManager);
+              if (manager && manager.isSubscribed) {
+                const isNotified = await Notification.editTripRequest(req, user);
+                if (isNotified) {
+                  await Message.create({
+                    message: `${user.username} edited a travel request`,
+                    userId: id,
+                    lineManager: user.dataValues.lineManager,
+                    type: 'edition'
+                  });
+                }
+              }
+            }
+            return HelperMethods.requestSuccessful(res, {
+              success: true,
+              message: 'Trip updated successfully',
+              updatedData: updatedRequest.dataValues,
+            }, 200);
+          }
         }
-        return HelperMethods.clientError(res, 'Forbidden', 403);
+        return HelperMethods.clientError(res, 'This request cannot be edited.', 400);
       }
       return HelperMethods.clientError(
         res, 'The request you are trying to edit does not exist', 404

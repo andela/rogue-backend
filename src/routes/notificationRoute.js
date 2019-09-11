@@ -6,4 +6,5 @@ const notificationRoute = app => {
     NotificationController.notify
   );
 };
+
 export default notificationRoute;
