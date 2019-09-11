@@ -211,6 +211,11 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
     });
+
+    User.belongsToMany(models.Accommodation, {
+      through: 'like',
+      as: 'Accommodation'
+    });
   };
 
   // eslint-disable-next-line func-names
@@ -219,5 +224,6 @@ export default (sequelize, DataTypes) => {
       .decryptData(clearPassword, this.password);
     return isPasswordCorrect;
   };
+
   return User;
 };

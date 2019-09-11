@@ -1,7 +1,7 @@
 import models from '../models';
 import { Authentication, SendEmail, HelperMethods } from '../utils';
 
-const { User } = models;
+const { User, } = models;
 
 /**
  * Class representing the user controller
@@ -356,12 +356,7 @@ class UserController {
       });
 
       if (!update) {
-        return HelperMethods.clientError(
-          res, {
-            success: false,
-            message: 'User not found'
-          }, 404
-        );
+        return HelperMethods.clientError(res, 'User not found', 404);
       }
 
       return HelperMethods.requestSuccessful(
