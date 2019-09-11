@@ -27,5 +27,17 @@ class Notification {
     if (isEmitted) return true;
     return false;
   }
+
+  /**
+   * @param {object} req HTTP request object
+   * @param {object} user Sequelize instance of the user who edited a request
+   * @returns {boolean} sends notifications
+   */
+  static async approvedTripRequest(req, user) {
+    const message = `Hello ${user.username}, Your Request has been approved `;
+    const isEmitted = await req.io.emit(user.id, message);
+    if (isEmitted) return true;
+    return false;
+  }
 }
 export default Notification;

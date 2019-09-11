@@ -19,7 +19,10 @@ export default (sequelize, DataTypes) => {
     isRead: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
-    }
+    },
+    userId: {
+      type: DataTypes.UUID,
+    },
   },
   {
     classMethods: {
