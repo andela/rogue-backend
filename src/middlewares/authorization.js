@@ -65,6 +65,25 @@ class Authorization {
     }
     next();
   }
+
+  /**
+   *
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request
+   * to the next handler
+   * @returns {callback} next - The callback that passes the request
+   * to the next handler
+   * @returns {object} res - Response object containing an error due
+   * to unauthorized user
+   */
+  static async confirmAdmin(req, res, next) {
+    if (req.decoded.role !== 'Travel Administrator') {
+      return HelperMethods.clientError(res,
+        'Only Travel Administrators can perform this action', 401);
+    }
+    next();
+  }
 }
 
 export default Authorization;

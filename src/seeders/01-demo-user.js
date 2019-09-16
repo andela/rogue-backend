@@ -71,7 +71,7 @@ module.exports = {
       password: await init(),
       isVerified: true,
       isSubscribed: true,
-      role: 'Requester',
+      role: 'Travel Administrator',
       lineManager: '3821b930-ce48-4ac8-9ddf-ee3bf7980d08',
       createdAt: new Date(),
       updatedAt: new Date()

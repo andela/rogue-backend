@@ -317,7 +317,7 @@ describe('Integration tests for the user controller', () => {
       expect(response.body.data).to.have.property('message');
       expect(response.body.data.message)
         .to.equal('An email has been sent to your email '
-        + 'address that explains how to reset your password');
+          + 'address that explains how to reset your password');
       sinon.assert.calledOnce(stubSendMethod);
       stubSendMethod.restore();
     });

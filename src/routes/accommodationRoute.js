@@ -9,6 +9,13 @@ const accommodationRoutes = app => {
     Validate.validateLikeAccommodation,
     AccommodationController.likeAccommodation
   );
+  app.post(
+    '/api/v1/accommodation',
+    Validate.validateUserInput,
+    Authorization.checkToken,
+    Authorization.confirmAdmin,
+    AccommodationController.createAccommodation
+  );
 };
 
 export default accommodationRoutes;

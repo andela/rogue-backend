@@ -1,10 +1,7 @@
 import models from '../models';
 import { HelperMethods } from '../utils';
 
-const {
-  Sequelize,
-  Like
-} = models;
+const { Sequelize, Like, Accommodation } = models;
 
 /**
  * Class representing the accommodation controller
@@ -57,6 +54,32 @@ class AccommodationController {
       }
 
       return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+   * Create a Accommodation Facility
+   * Route: POST: /Accommodation
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof AccommodationController
+   */
+  static async createAccommodation(req, res) {
+    try {
+      const { dataValues } = await Accommodation.create({ ...req.body });
+      if (dataValues.id) {
+        return HelperMethods.requestSuccessful(res, {
+          success: true,
+          message: 'Accommodation created successfully',
+          data: dataValues,
+        }, 201);
+      }
+      return HelperMethods.serverError(res,
+        'Could not create an accommodation. Please try again');
+    } catch (error) {
+      if (error.errors) return HelperMethods.sequelizeValidationError(res, error);
+      return HelperMethods.serverError(res, 'Something failed');
     }
   }
 }

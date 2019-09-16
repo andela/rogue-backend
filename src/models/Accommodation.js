@@ -3,6 +3,7 @@ export default (sequelize, DataTypes) => {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
+      allowNull: false,
       defaultValue: DataTypes.UUIDV4,
     },
     name: {
@@ -34,12 +35,11 @@ export default (sequelize, DataTypes) => {
         }
       }
     },
-  });
+  }, { tableName: 'Accommodations' });
 
   Accommodation.associate = models => {
     Accommodation.hasMany(models.Request, {
       foreignKey: 'accommodationId',
-      as: 'accommodation',
     });
 
     Accommodation.belongsToMany(models.User, {
@@ -50,3 +50,4 @@ export default (sequelize, DataTypes) => {
 
   return Accommodation;
 };
+

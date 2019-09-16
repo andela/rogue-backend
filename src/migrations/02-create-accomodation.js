@@ -22,7 +22,8 @@ module.exports = {
       allowNull: false,
     },
     vacantNumber: {
-      type: Sequelize.INTEGER
+      type: Sequelize.INTEGER,
+      allowNull: false,
     },
     image: {
       type: Sequelize.STRING,
