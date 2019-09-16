@@ -1,7 +1,9 @@
 import models from '../models';
 import { HelperMethods } from '../utils';
 
-const { Sequelize, Like, Accommodation } = models;
+const {
+  Sequelize, Like, Accommodation, BookedAccommodation
+} = models;
 
 /**
  * Class representing the accommodation controller
@@ -46,11 +48,63 @@ class AccommodationController {
       }
     } catch (error) {
       if (error instanceof Sequelize.ForeignKeyConstraintError) {
-        return HelperMethods.clientError(res, 'Accommodation does not exist', 404);
+        return HelperMethods
+          .clientError(res, 'Accommodation does not exist', 404);
       }
 
       if (error instanceof Sequelize.DatabaseError) {
-        return HelperMethods.clientError(res, '"accommodationId" field is invalid', 400);
+        return HelperMethods
+          .clientError(res, '"accommodationId" field is invalid', 400);
+      }
+
+      return HelperMethods.serverError(res);
+    }
+  }
+
+  /**
+   * Update user to like/unlike accommodation
+   * Route: POST: api/v1/
+   * @param {object} req - HTTP Request object
+   * @param {object} res - HTTP Response object
+   * @return {res} res - HTTP Response object
+   * @memberof UserController
+   */
+  static async bookAccommodation(req, res) {
+    try {
+      const { id: userId } = req.decoded;
+      const { book, accommodationId } = req.body;
+      const where = { userId, accommodationId };
+      const isAlreadyBooked = await BookedAccommodation.findOne({ where });
+      const success = isBooked => HelperMethods.requestSuccessful(
+        res,
+        {
+          success: true,
+          message: 'Transaction successful',
+          book: isBooked
+        },
+        200
+      );
+
+      if (isAlreadyBooked && book) return success(true);
+      if (!isAlreadyBooked && !book) return success(false);
+      if (book) {
+        await BookedAccommodation.create({ ...where });
+        return success(true);
+      }
+
+      if (!book) {
+        await BookedAccommodation.destroy({ where });
+        return success(false);
+      }
+    } catch (error) {
+      if (error instanceof Sequelize.ForeignKeyConstraintError) {
+        return HelperMethods
+          .clientError(res, 'Accommodation does not exist', 404);
+      }
+
+      if (error instanceof Sequelize.DatabaseError) {
+        return HelperMethods
+          .clientError(res, '"accommodationId" field is invalid', 400);
       }
 
       return HelperMethods.serverError(res);

@@ -41,9 +41,11 @@ export default (sequelize, DataTypes) => {
     Accommodation.hasMany(models.Request, {
       foreignKey: 'accommodationId',
     });
-
+    Accommodation.hasMany(models.BookedAccommodation, {
+      foreignKey: 'accommodationId',
+    });
     Accommodation.belongsToMany(models.User, {
-      through: 'like',
+      through: 'booked',
       as: 'User'
     });
   };
