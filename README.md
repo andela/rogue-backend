@@ -62,14 +62,14 @@ Admins can delete bookings
 
 ## Contributors
 * [Ademola Hussain](https://github.com/Daymorelah)
-* [Nwodo Christian Chukwuemeka](https://github.com/userName)
-* [Atawodi Emmanuel](https://github.com/userName)
-* [Abiola Ojo](https://github.com/userName)
-* [Mba Ifeanyi](https://github.com/userName)
-* [Chiamaka Obitube](https://github.com/userName)
-* [Amadi Justice Chinonso](https://github.com/userName)
-* [Nnabugwu Chidozie Gabriel](https://github.com/userName)
-* [Okikiola Apelehin](https://github.com/userName)
+* [Nwodo Christian Chukwuemeka](https://github.com/chrismeeky)
+* [Atawodi Emmanuel](https://github.com/gmemmy)
+* [Abiola Ojo](https://github.com/victor-shagor)
+* [Mba Ifeanyi](https://github.com/minilinx)
+* [Chiamaka Obitube](https://github.com/ChiamakaObitube)
+* [Amadi Justice Chinonso](https://github.com/NonsoAmadi10)
+* [Nnabugwu Chidozie Gabriel](https://github.com/ChidozieGabriel)
+* [Okikiola Apelehin](https://github.com/okikiola11)
 
 ## License
 [MIT](https://github.com/andela/rogue-backend/blob/develop/LICENSE)
