@@ -151,6 +151,27 @@ class Validate {
    * @returns {object} res - Response object when query is invalid
    * @memberof Validate
    */
+  static validateBookAccommodation(req, res, next) {
+    req.body = trimValues(req.body);
+    const { book, accommodationId } = req.body;
+    if (!accommodationId) return allFieldsRequired(res, 'accommodationId');
+    if (book !== true && book !== false) {
+      return res.status(400).send({
+        success: false,
+        message: '"book" field is required and must be a boolean'
+      });
+    }
+
+    next();
+  }
+
+  /**
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @param {callback} next - The callback that passes the request to the next handler
+   * @returns {object} res - Response object when query is invalid
+   * @memberof Validate
+   */
   static validateMulticity(req, res, next) {
     const emptyField = checkForEmptyFields(req.body);
     if (emptyField) return allFieldsRequired(res, emptyField);

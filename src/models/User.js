@@ -195,6 +195,10 @@ export default (sequelize, DataTypes) => {
           foreignKey: 'userId',
           as: 'users_request',
         });
+        User.hasMany(models.BookedAccommodations, {
+          foreignKey: 'userId',
+          as: 'users_request',
+        });
       }
     }
   });
@@ -209,6 +213,10 @@ export default (sequelize, DataTypes) => {
 
   User.associate = models => {
     User.hasMany(models.Request, {
+      foreignKey: 'userId',
+      onDelete: 'CASCADE'
+    });
+    User.hasMany(models.BookedAccommodation, {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
     });

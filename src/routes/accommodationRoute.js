@@ -9,6 +9,12 @@ const accommodationRoutes = app => {
     Validate.validateLikeAccommodation,
     AccommodationController.likeAccommodation
   );
+  app.patch(
+    '/api/v1/accommodation/book',
+    Authorization.checkToken,
+    Validate.validateBookAccommodation,
+    AccommodationController.bookAccommodation
+  );
   app.post(
     '/api/v1/accommodation',
     Validate.validateUserInput,

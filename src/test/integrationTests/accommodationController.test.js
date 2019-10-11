@@ -173,4 +173,160 @@ describe('Integration tests for the accommodation controller', () => {
       expect(response.body.message).to.equal('Accommodation does not exist');
     });
   });
+  describe('Test for book/unbook Accommodation Facility', () => {
+    it('should book accommodation', async () => {
+      const send = {
+        book: true,
+        accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c'
+      };
+
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/accommodation/book')
+        .set({
+          'x-access-token': userToken
+        })
+        .send(send);
+      expect(response.status).to.deep.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Transaction successful');
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+      expect(response.body.data.book).to.equal(true);
+    });
+    it('should unbook accommodation', async () => {
+      const send = {
+        book: false,
+        accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c'
+      };
+
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/accommodation/book')
+        .set({
+          'x-access-token': userToken
+        })
+        .send(send);
+      expect(response.status).to.deep.equal(200);
+      expect(response.body.data).to.have.property('message');
+      expect(response.body.data.message).to.equal('Transaction successful');
+      expect(response.body.data).to.have.property('success');
+      expect(response.body.data.success).to.equal(true);
+      expect(response.body.data.book).to.equal(false);
+    });
+    it('should return client error 401 when token is missing', async () => {
+      const send = {
+        book: true,
+        accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c'
+      };
+
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/accommodation/book')
+        .send(send);
+      expect(response.status).to.deep.equal(401);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+    });
+    it('should return client error when "book" is missing', async () => {
+      const send = {
+        accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c'
+      };
+
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/accommodation/book')
+        .set({
+          'x-access-token': userToken
+        })
+        .send(send);
+      expect(response.status).to.deep.equal(400);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message).to.equal(
+        '"book" field is required and must be a boolean'
+      );
+    });
+    it('should return client error when "accommodationId" is missing', async () => {
+      const send = {
+        book: true
+      };
+
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/accommodation/book')
+        .set({
+          'x-access-token': userToken
+        })
+        .send(send);
+      expect(response.status).to.deep.equal(400);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message).to.equal(
+        "Invalid request. 'accommodationId' field is required"
+      );
+    });
+    it('should return client error when "book" is invalid', async () => {
+      const send = {
+        book: 'invalid',
+        accommodationId: '2125be7b-f1f1-4f0a-af86-49c657870b5c'
+      };
+
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/accommodation/book')
+        .set({
+          'x-access-token': userToken
+        })
+        .send(send);
+      expect(response.status).to.deep.equal(400);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message).to.equal(
+        '"book" field is required and must be a boolean'
+      );
+    });
+    it('should return client error when "accommodationId" is invalid', async () => {
+      const send = {
+        book: true,
+        accommodationId: 'invalid'
+      };
+
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/accommodation/book')
+        .set({
+          'x-access-token': userToken
+        })
+        .send(send);
+      expect(response.status).to.deep.equal(400);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message).to.equal('"accommodationId" field is invalid');
+    });
+    it('should return client error when "accommodationId" does not exist', async () => {
+      const send = {
+        book: true,
+        accommodationId: '8bda0fe3-a55a-4fd9-914d-9d93b53491b6'
+      };
+
+      const response = await chai
+        .request(app)
+        .patch('/api/v1/accommodation/book')
+        .set({
+          'x-access-token': userToken
+        })
+        .send(send);
+      expect(response.status).to.deep.equal(404);
+      expect(response.body).to.have.property('success');
+      expect(response.body.success).to.equal(false);
+      expect(response.body).to.have.property('message');
+      expect(response.body.message).to.equal('Accommodation does not exist');
+    });
+  });
 });
