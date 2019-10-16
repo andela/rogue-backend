@@ -145,6 +145,20 @@ class Validate {
   }
 
   /**
+  * @param {object} req - Request object
+  * @param {object} res - Response object
+  * @param {callback} next - The callback that passes the request to the next handler
+  * @returns {object} res - Response object when query is invalid
+  * @memberof Validate
+  */
+  static commentOnAccommodation(req, res, next) {
+    const { comment, accommodationFacility } = req.body;
+    if (!accommodationFacility) return allFieldsRequired(res, 'accommodationFacility');
+    if (!comment) return allFieldsRequired(res, 'comment');
+    next();
+  }
+
+  /**
    * @param {object} req - Request object
    * @param {object} res - Response object
    * @param {callback} next - The callback that passes the request to the next handler

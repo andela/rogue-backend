@@ -16,6 +16,12 @@ const accommodationRoutes = app => {
     Authorization.confirmAdmin,
     AccommodationController.createAccommodation
   );
+  app.post(
+    '/api/v1/accommodation/comment',
+    Authorization.checkToken,
+    Validate.commentOnAccommodation,
+    AccommodationController.commentOnAccommodation
+  );
 };
 
 export default accommodationRoutes;
